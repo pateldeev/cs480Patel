@@ -30,4 +30,8 @@ make
 ```
 
 ## Shaders
-The data of each shader should be located in a file under the '/shaders' directory. By default, the vertex shader file is called 'vertShader.vert' and the fragment shader is 'fragShader.frag'. 
+The data of the vertex shader and fragment shader should be located in a file under the '/shaders' directory. By default, the vertex shader file is called 'vertShader.vert' and the fragment shader is 'fragShader.frag'. To change this default behavior, you can pass the names of files as command line argument. The file must still be located in the '/shaders' subdirectory. Below is an example of the default behavior.
+
+```bash
+./Tutorial vertexFile=vertShader.vert fragmentFile=fragShader.frag
+```
