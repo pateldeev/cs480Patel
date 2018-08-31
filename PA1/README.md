@@ -28,3 +28,6 @@ cmake ..
 make
 ./Tutorial
 ```
+
+## Shaders
+The data of each shader should be located in a file under the '/shaders' directory. By default, the vertex shader file is called 'vertShader.vert' and the fragment shader is 'fragShader.frag'. 
