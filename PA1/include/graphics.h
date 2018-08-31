@@ -9,26 +9,25 @@ using namespace std;
 #include "shader.h"
 #include "object.h"
 
-class Graphics
-{
-  public:
-    Graphics();
-    ~Graphics();
-    bool Initialize(int width, int height);
-    void Update(unsigned int dt);
-    void Render();
+class Graphics {
+public:
+	Graphics();
+	~Graphics();
+	bool Initialize(int width, int height, const std::string & vShaderFile, const std::string & fShaderFile);
+	void Update(unsigned int dt);
+	void Render();
 
-  private:
-    std::string ErrorString(GLenum error);
+private:
+	std::string ErrorString(GLenum error);
 
-    Camera *m_camera;
-    Shader *m_shader;
+	Camera *m_camera;
+	Shader *m_shader;
 
-    GLint m_projectionMatrix;
-    GLint m_viewMatrix;
-    GLint m_modelMatrix;
+	GLint m_projectionMatrix;
+	GLint m_viewMatrix;
+	GLint m_modelMatrix;
 
-    Object *m_cube;
+	Object *m_cube;
 };
 
 #endif /* GRAPHICS_H */
