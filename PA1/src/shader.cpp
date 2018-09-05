@@ -1,10 +1,21 @@
 #include "shader.h"
 
-Shader::Shader() {
+std::string Shader::vertexFile = "";
+std::string Shader::fragmentFile = "";
+
+void Shader::SetVertexFile(const std::string & fileName) {
+	vertexFile = fileName;
+}
+
+void Shader::SetFragmentFile(const std::string & fileName) {
+	fragmentFile = fileName;
+}
+
+Shader::Shader(void) {
 	m_shaderProg = 0;
 }
 
-Shader::~Shader() {
+Shader::~Shader(void) {
 	for (std::vector<GLuint>::iterator it = m_shaderObjList.begin(); it != m_shaderObjList.end(); it++) {
 		glDeleteShader(*it);
 	}
@@ -15,7 +26,7 @@ Shader::~Shader() {
 	}
 }
 
-bool Shader::Initialize() {
+bool Shader::Initialize(void) {
 	m_shaderProg = glCreateProgram();
 
 	if (m_shaderProg == 0) {
@@ -27,13 +38,17 @@ bool Shader::Initialize() {
 }
 
 // Use this method to add shaders to the program. When finished - call finalize()
-bool Shader::AddShader(GLenum ShaderType, const std::string & fileName) {
+bool Shader::AddShader(GLenum ShaderType) {
 	std::stringstream ss;
 	std::ifstream inputFile;
 
-	inputFile.open(fileName);
+	if (ShaderType == GL_VERTEX_SHADER)
+		inputFile.open(vertexFile);
+	else if (ShaderType == GL_FRAGMENT_SHADER)
+		inputFile.open(fragmentFile);
+
 	if (!inputFile.is_open()) {
-		std::cerr << "Could not open shader file: " << fileName << std::endl;
+		std::cerr << "Could not open shader file for type: " << ShaderType << std::endl;
 		return false;
 	}
 
@@ -75,7 +90,7 @@ bool Shader::AddShader(GLenum ShaderType, const std::string & fileName) {
 
 // After all the shaders have been added to the program call this function
 // to link and validate the program.
-bool Shader::Finalize() {
+bool Shader::Finalize(void) {
 	GLint Success = 0;
 	GLchar ErrorLog[1024] = { 0 };
 
@@ -106,11 +121,11 @@ bool Shader::Finalize() {
 	return true;
 }
 
-void Shader::Enable() {
+void Shader::Enable(void) {
 	glUseProgram (m_shaderProg);
 }
 
-GLint Shader::GetUniformLocation(const char* pUniformName) {
+GLint Shader::GetUniformLocation(const char * pUniformName) {
 	GLuint Location = glGetUniformLocation(m_shaderProg, pUniformName);
 
 	if (Location == INVALID_UNIFORM_LOCATION) {

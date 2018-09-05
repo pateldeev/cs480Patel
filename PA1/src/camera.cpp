@@ -1,22 +1,22 @@
 #include "camera.h"
 
-Camera::Camera()
+Camera::Camera(void)
 {
 
 }
 
-Camera::~Camera()
+Camera::~Camera(void)
 {
 
 }
 
-bool Camera::Initialize(int w, int h)
+bool Camera::Initialize(int w, int h, const glm::vec3 & eyePos)
 {
   //--Init the view and projection matrices
   //  if you will be having a moving camera the view matrix will need to more dynamic
   //  ...Like you should update it before you render more dynamic 
   //  for this project having them static will be fine
-  view = glm::lookAt( glm::vec3(0.0, 8.0, -16.0), //Eye Position
+  view = glm::lookAt( eyePos, //Eye Position
                       glm::vec3(0.0, 0.0, 0.0), //Focus point
                       glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
 
@@ -27,12 +27,12 @@ bool Camera::Initialize(int w, int h)
   return true;
 }
 
-glm::mat4 Camera::GetProjection()
+glm::mat4 Camera::GetProjection(void)
 {
   return projection;
 }
 
-glm::mat4 Camera::GetView()
+glm::mat4 Camera::GetView(void)
 {
   return view;
 }

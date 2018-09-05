@@ -6,11 +6,11 @@
 class Camera
 {
   public:
-    Camera();
-    ~Camera();
-    bool Initialize(int w, int h);
-    glm::mat4 GetProjection();
-    glm::mat4 GetView();
+    Camera(void);
+    ~Camera(void);
+    bool Initialize(int w, int h, const glm::vec3 & eyePos );
+    glm::mat4 GetProjection(void);
+    glm::mat4 GetView(void);
   
   private:
     glm::mat4 projection;

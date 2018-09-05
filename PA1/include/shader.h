@@ -9,15 +9,21 @@
 
 class Shader {
 public:
-	Shader();
-	~Shader();
-	bool Initialize();
-	void Enable();
-	bool AddShader(GLenum ShaderType, const std::string & fileName = "");
-	bool Finalize();
-	GLint GetUniformLocation(const char* pUniformName);
+	static void SetVertexFile(const std::string & fileName);
+	static void SetFragmentFile(const std::string & fileName);
+
+	Shader(void);
+	~Shader(void);
+	bool Initialize(void);
+	void Enable(void);
+	bool AddShader(GLenum ShaderType);
+	bool Finalize(void);
+	GLint GetUniformLocation(const char * pUniformName);
 
 private:
+	static std::string vertexFile;
+	static std::string fragmentFile;
+
 	GLuint m_shaderProg;
 	std::vector<GLuint> m_shaderObjList;
 };

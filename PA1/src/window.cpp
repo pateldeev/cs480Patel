@@ -1,11 +1,11 @@
 #include <window.h>
 
-Window::Window()
+Window::Window(void)
 {
   gWindow = NULL;
 }
 
-Window::~Window()
+Window::~Window(void)
 {
   SDL_StopTextInput();
   SDL_DestroyWindow(gWindow);
@@ -13,9 +13,9 @@ Window::~Window()
   SDL_Quit();
 }
 
-bool Window::Initialize(const string &name, int* width, int* height)
+bool Window::Initialize(const std::string & name, int * width, int * height)
 {
-    // Start SDL
+  // Start SDL
   if(SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     printf("SDL failed to initialize: %s\n", SDL_GetError());
@@ -67,7 +67,7 @@ bool Window::Initialize(const string &name, int* width, int* height)
   return true;
 }
 
-void Window::Swap()
+void Window::Swap(void)
 {
   SDL_GL_SwapWindow(gWindow);
 }

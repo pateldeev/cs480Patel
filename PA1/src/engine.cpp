@@ -1,27 +1,27 @@
 #include "engine.h"
 
-Engine::Engine(string name, int width, int height) {
+Engine::Engine(const std::string & name, int width, int height) {
 	m_WINDOW_NAME = name;
 	m_WINDOW_WIDTH = width;
 	m_WINDOW_HEIGHT = height;
 	m_FULLSCREEN = false;
 }
 
-Engine::Engine(string name) {
+Engine::Engine(const std::string & name) {
 	m_WINDOW_NAME = name;
 	m_WINDOW_HEIGHT = 0;
 	m_WINDOW_WIDTH = 0;
 	m_FULLSCREEN = true;
 }
 
-Engine::~Engine() {
+Engine::~Engine(void) {
 	delete m_window;
 	delete m_graphics;
 	m_window = NULL;
 	m_graphics = NULL;
 }
 
-bool Engine::Initialize(const std::string & vShaderFile, const std::string & fShaderFile) {
+bool Engine::Initialize(const glm::vec3 & eyePos) {
 	// Start a window
 	m_window = new Window();
 	if (!m_window->Initialize(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT)) {
@@ -31,7 +31,7 @@ bool Engine::Initialize(const std::string & vShaderFile, const std::string & fSh
 
 	// Start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, vShaderFile, fShaderFile)) {
+	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos)) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
@@ -43,7 +43,7 @@ bool Engine::Initialize(const std::string & vShaderFile, const std::string & fSh
 	return true;
 }
 
-void Engine::Run() {
+void Engine::Run(void) {
 	m_running = true;
 
 	while (m_running) {
@@ -64,7 +64,7 @@ void Engine::Run() {
 	}
 }
 
-void Engine::Keyboard() {
+void Engine::Keyboard(void) {
 	if (m_event.type == SDL_QUIT) {
 		m_running = false;
 	} else if (m_event.type == SDL_KEYDOWN) {
@@ -75,7 +75,7 @@ void Engine::Keyboard() {
 	}
 }
 
-unsigned int Engine::getDT() {
+unsigned int Engine::getDT(void) {
 	long long TimeNowMillis = GetCurrentTimeMillis();
 	assert(TimeNowMillis >= m_currentTimeMillis);
 	unsigned int DeltaTimeMillis = (unsigned int) (TimeNowMillis - m_currentTimeMillis);
@@ -83,7 +83,7 @@ unsigned int Engine::getDT() {
 	return DeltaTimeMillis;
 }
 
-long long Engine::GetCurrentTimeMillis() {
+long long Engine::GetCurrentTimeMillis(void) {
 	timeval t;
 	gettimeofday(&t, NULL);
 	long long ret = t.tv_sec * 1000 + t.tv_usec / 1000;

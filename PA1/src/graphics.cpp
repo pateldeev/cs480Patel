@@ -1,17 +1,18 @@
 #include "graphics.h"
 
-Graphics::Graphics() {
+Graphics::Graphics(void) {
 
 }
 
-Graphics::~Graphics() {
+Graphics::~Graphics(void) {
 
 }
 
-bool Graphics::Initialize(int width, int height, const std::string & vShaderFile, const std::string & fShaderFile) {
-	// Used for the linux OS
+bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
+
+// Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
-	// cout << glewGetString(GLEW_VERSION) << endl;
+	// std::cout << glewGetString(GLEW_VERSION) << endl;
 	glewExperimental = GL_TRUE;
 
 	auto status = glewInit();
@@ -34,7 +35,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vShaderFile
 
 	// Init Camera
 	m_camera = new Camera();
-	if (!m_camera->Initialize(width, height)) {
+	if (!m_camera->Initialize(width, height, eyePos)) {
 		printf("Camera Failed to Initialize\n");
 		return false;
 	}
@@ -50,13 +51,13 @@ bool Graphics::Initialize(int width, int height, const std::string & vShaderFile
 	}
 
 	// Add the vertex shader
-	if (!m_shader->AddShader(GL_VERTEX_SHADER, vShaderFile)) {
+	if (!m_shader->AddShader(GL_VERTEX_SHADER)) {
 		printf("Vertex Shader failed to Initialize\n");
 		return false;
 	}
 
 	// Add the fragment shader
-	if (!m_shader->AddShader(GL_FRAGMENT_SHADER, fShaderFile)) {
+	if (!m_shader->AddShader(GL_FRAGMENT_SHADER)) {
 		printf("Fragment Shader failed to Initialize\n");
 		return false;
 	}
@@ -100,7 +101,7 @@ void Graphics::Update(unsigned int dt) {
 	m_cube->Update(dt);
 }
 
-void Graphics::Render() {
+void Graphics::Render(void) {
 	//clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -119,32 +120,24 @@ void Graphics::Render() {
 	// Get any errors from OpenGL
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		string val = ErrorString(error);
+		std::string val = ErrorString(error);
 		std::cout << "Error initializing OpenGL! " << error << ", " << val << std::endl;
 	}
 }
 
 std::string Graphics::ErrorString(GLenum error) {
-	if (error == GL_INVALID_ENUM) {
+	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
-	}
-
-	else if (error == GL_INVALID_VALUE) {
+	else if (error == GL_INVALID_VALUE)
 		return "GL_INVALID_VALUE: A numeric argument is out of range.";
-	}
-
-	else if (error == GL_INVALID_OPERATION) {
+	else if (error == GL_INVALID_OPERATION)
 		return "GL_INVALID_OPERATION: The specified operation is not allowed in the current state.";
-	}
-
-	else if (error == GL_INVALID_FRAMEBUFFER_OPERATION) {
+	else if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
 		return "GL_INVALID_FRAMEBUFFER_OPERATION: The framebuffer object is not complete.";
-	}
-
-	else if (error == GL_OUT_OF_MEMORY) {
+	else if (error == GL_OUT_OF_MEMORY)
 		return "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command.";
-	} else {
+	else
 		return "None";
-	}
+
 }
 
