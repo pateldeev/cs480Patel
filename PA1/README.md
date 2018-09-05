@@ -38,14 +38,14 @@ The movement of the planet is all done in the Update(unsigned int) function of t
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
 
--v: specify name of vertex shader file in '/shaders' directory
--f: specify name of fragement shader file in '/shaders' directory
--winH: specify window height
--winW: specify window width
--winN: specify window name
--eyeX: specify X-coordinate of camera eye position
--eyeY: specify Y-coordinate of camera eye position
--eyeZ: specify Z-coordinate of camera eye position
+-v: specify name of vertex shader file in '/shaders' directory <br>
+-f: specify name of fragement shader file in '/shaders' directory <br>
+-winH: specify window height <br>
+-winW: specify window width <br>
+-winN: specify window name <br>
+-eyeX: specify X-coordinate of camera eye position <br>
+-eyeY: specify Y-coordinate of camera eye position <br>
+-eyeZ: specify Z-coordinate of camera eye position <br>
 
 The default behavior can be achieved with the following arguments
 ```bash
