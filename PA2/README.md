@@ -37,7 +37,7 @@ The movement of the planet is all done in the Object::Update(unsigned int) funct
 
 ## Keyboard & Mouse Controls - For movement control
 The following keyboard keys can be used to control the movement of the cube <br>
-  s: stop all movements again - both orbit and rotation <br>
+  s: stop all movements - both orbit and rotation <br>
   c: continue all movements - both orbit and rotation <br>
   o: toggle orbit on/off <br>
   r: toggle rotation on/off <br>
@@ -47,9 +47,9 @@ The following keyboard keys can be used to control the movement of the cube <br>
   up arrow: rotate right <br>
   down arrow: rotate left <br> 
 <br><br>
-The orbit and rotation can also be changed with the mouse. 
-  Left click: reverse orbit direction
-  Right click reverse rotation direction.
+The orbit and rotation can also be changed with the mouse.  <br>
+  Left click: reverse orbit direction <br>
+  Right click: reverse rotation direction <br>
 
 ## Extra Credit - Menu
 I tried to impliment the extra credit menu system, but was only partially successful. I managed to build the imgui source code and run the sample menu they gave. However, when I 
