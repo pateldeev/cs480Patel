@@ -36,6 +36,7 @@ The data of the vertex shader and fragment shader must be located in a file unde
 The movement of the planet is all done in the Object::Update(unsigned int) function of the Object class. By default, the planet has an orbit radius of 4.0 units.
 
 ## Keyboard & Mouse Controls - For movement control
+IMPORTANT: For any of the controls to work, the cube windows must be selected. Simply click on that window if another one is selected instead <br>
 The following keyboard keys can be used to control the movement of the cube <br>
   s: stop all movements - both orbit and rotation <br>
   c: continue all movements - both orbit and rotation <br>
@@ -52,12 +53,9 @@ The orbit and rotation can also be changed with the mouse.  <br>
   Right click: reverse rotation direction <br>
 
 ## Extra Credit - Menu
-I tried to impliment the extra credit menu system, but was only partially successful. I managed to build the imgui source code and run the sample menu they gave. However, when I 
-put it on top of my cube window, I got a problem with updating the windows. It kept flickering as both the cube and menu were updating too fast. I couldn't figure it out in time. You can run the program with the partially working menu system with the -m command line argument. <br>
-```bash
-./Tutorial -m
-```
-Note: The menu system is still in development and as such only partially works
+
+<br>
+
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
@@ -69,6 +67,7 @@ The following command line arguments can be used to change the default behavior 
   -eyeX: specify X-coordinate of camera eye position <br>
   -eyeY: specify Y-coordinate of camera eye position <br>
   -eyeZ: specify Z-coordinate of camera eye position <br>
+  -m: specify if menu should be used (0 for false, anything else for true)
 
 The default behavior can be achieved with the following arguments
 ```bash
@@ -80,9 +79,10 @@ The default behavior can be achieved with the following arguments
 -eyeX 0.0
 -eyeY 8.0
 -eyeZ -16.0 
+-m 1
 ```
 
 Full Usage:
 ```bash
-./Tutorial -v vertShader.vert -f fragShader.frag -winW 1600 -winH 1200 -winN PA02_Deev_Patel -eyeX 0.0 -eyeY 8.0 -eyeZ -16.0 
+./Tutorial -v vertShader.vert -f fragShader.frag -winW 1600 -winH 1200 -winN PA02_Deev_Patel -eyeX 0.0 -eyeY 8.0 -eyeZ -16.0 -m 1
 ```

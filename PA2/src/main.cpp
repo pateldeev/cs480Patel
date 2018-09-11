@@ -115,7 +115,6 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				std::cerr << "ERROR: value of -m arguemnt could not be read" << std::endl;
 				return false;
 			}
-			parameters.menu = true;
 		} else {
 			std::cerr << "ERROR: Could not understand command line argument: " << argv[i] << std::endl;
 			return false;
