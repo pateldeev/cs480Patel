@@ -53,7 +53,11 @@ The orbit and rotation can also be changed with the mouse.  <br>
 
 ## Extra Credit - Menu
 I tried to impliment the extra credit menu system, but was only partially successful. I managed to build the imgui source code and run the sample menu they gave. However, when I 
-put it on top of my cube window, I got a problem with updating the windows. It kept flickering as both the cube and menu were updating too fast. I couldn't figure it out in time. You can run the program with the partially working menu system with the -m command line argument. Just run ./Tutorial -m. However, the menu system is nowhere near complete.
+put it on top of my cube window, I got a problem with updating the windows. It kept flickering as both the cube and menu were updating too fast. I couldn't figure it out in time. You can run the program with the partially working menu system with the -m command line argument. <br>
+```bash
+./Tutorial -m
+```
+Note: The menu system is still in development and as such only partially works
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
