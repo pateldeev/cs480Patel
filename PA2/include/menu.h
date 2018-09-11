@@ -9,22 +9,37 @@
 
 #include <GL/glew.h>    // Initialize with gl3wInit()
 
-#include <iostream>
+#include "graphics.h"
 
-class Menu{
+//struct for changable parameters
+struct params {
+	std::string vertexFile, fragmentFile, winName;
+	bool menu;
+	int winWidth, winHeight;
+	glm::vec3 eyePos;
+
+	//default parameters
+	params() :
+			vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA02_Deev_Patel"), menu(true), winWidth(1600), winHeight(
+					1200), eyePos(0.0, 8.0, -16.0) {
+	}
+};
+
+class Menu {
 
 public:
-Menu(void);
-~Menu(void);
+	Menu(void);
+	~Menu(void);
 
-bool Initialize(SDL_Window * window, SDL_GLContext & gl_context);
-bool Refresh(SDL_GLContext & gl_context);
+	bool Initialize(SDL_GLContext & gl_context);
+	bool Refresh(SDL_GLContext & gl_context); //returns if menu is closed
+
+	SDL_Window * GetWindow(void);
 
 private:
-SDL_Window * m_window;
+	SDL_Window * m_window;
 
-static ImVec4 clear_color;
-
+	static ImVec4 clear_color;
 
 };
 

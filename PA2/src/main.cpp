@@ -1,18 +1,5 @@
 #include "engine.h"
 
-struct params {
-	std::string vertexFile, fragmentFile, winName;
-	bool menu;
-	int winWidth, winHeight;
-	glm::vec3 eyePos;
-
-	//default parameters
-	params() :
-			vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA02_Deev_Patel"), menu(false), winWidth(1600), winHeight(
-					1200), eyePos(0.0, 8.0, -16.0) {
-	}
-};
-
 //function to parse command line arguments and get parameter values
 bool ParseCLArgs(int argc, char * argv[], params & parameters);
 
@@ -28,25 +15,36 @@ int main(int argc, char * argv[]) {
 		return 0;
 	}
 
-	//Set shader filenames
-	Shader::SetVertexFile(paramVals.vertexFile);
-	Shader::SetFragmentFile(paramVals.fragmentFile);
+	Engine * engine = StartEngine(paramVals);
 
-	// Start an engine and run it then cleanup after
-	Engine *engine = new Engine(paramVals.winName, paramVals.winWidth, paramVals.winHeight);
-	if (!engine->Initialize(paramVals.eyePos, paramVals.menu)) {
-		printf("The engine failed to start.\n");
-		delete engine;
-		engine = NULL;
-		return 1;
+	if (!engine) {
+		std::cerr << "Error starting engine! " << std::endl;
+		return 0;
 	}
 
 	engine->Run();
-
 	delete engine;
-	engine = NULL;
+	engine = nullptr;
 
 	return 0;
+}
+
+//initializes engine with give parameter values
+Engine * StartEngine(const params & parameters) {
+
+	//Set shader filenames
+	Shader::SetVertexFile(parameters.vertexFile);
+	Shader::SetFragmentFile(parameters.fragmentFile);
+
+	// Start an engine and run it then cleanup after
+	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
+	if (!engine->Initialize(parameters.eyePos, parameters.menu)) {
+		printf("The engine failed to start.\n");
+		delete engine;
+		engine = nullptr;
+	}
+
+	return engine;
 }
 
 bool ParseCLArgs(int argc, char * argv[], params & parameters) {
@@ -111,9 +109,14 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				return false;
 			}
 		} else if (!std::strcmp(argv[i], "-m")) {
+			if (++i < argc) {
+				parameters.menu = std::atof(argv[i]) != 0;
+			} else {
+				std::cerr << "ERROR: value of -m arguemnt could not be read" << std::endl;
+				return false;
+			}
 			parameters.menu = true;
-		}
-		else {
+		} else {
 			std::cerr << "ERROR: Could not understand command line argument: " << argv[i] << std::endl;
 			return false;
 		}

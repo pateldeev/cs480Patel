@@ -17,8 +17,7 @@ Engine::Engine(const std::string & name) {
 Engine::~Engine(void) {
 	delete m_window;
 	delete m_graphics;
-	m_window = NULL;
-	m_graphics = NULL;
+	delete m_menu;
 }
 
 bool Engine::Initialize(const glm::vec3 & eyePos, bool initMenu) {
@@ -39,11 +38,11 @@ bool Engine::Initialize(const glm::vec3 & eyePos, bool initMenu) {
 	// Start imgui menu if necessasry
 	if (initMenu) {
 		m_menu = new Menu();
-		if (!m_menu->Initialize(m_window->GetWindow(), m_window->GetContext())) {
+		if (!m_menu->Initialize(m_window->GetContext())) {
 			printf("The imgui menu failed to initialize.\n");
 			return false;
 		}
-	}else{
+	} else {
 		m_menu = nullptr;
 	}
 
@@ -58,6 +57,9 @@ void Engine::Run(void) {
 	m_running = true;
 
 	while (m_running) {
+
+		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
+
 		// Update the DT
 		m_DT = getDT();
 
@@ -82,18 +84,32 @@ void Engine::Run(void) {
 }
 
 void Engine::Keyboard(void) {
+
 	if (m_event.type == SDL_QUIT) {
 		m_running = false;
-	} else if (m_event.type == SDL_KEYDOWN) {
-		if (m_event.key.keysym.sym == SDLK_ESCAPE) {
-			m_running = false;
-		} else {
-			if (!m_graphics->handleEvent(m_event)) {
-				printf("Unhandeled SDL key press: %d \n", m_event.key.keysym.sym);
+	}
+
+	//check for events on cube window
+	if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
+		if (m_event.type == SDL_KEYDOWN) {
+			if (m_event.key.keysym.sym == SDLK_ESCAPE) {
+				m_running = false;
+			} else {
+				if (!m_graphics->handleEvent(m_event)) {
+					printf("Unhandeled SDL key press: %d \n", m_event.key.keysym.sym);
+				}
 			}
+		} else {
+			m_graphics->handleEvent(m_event);
 		}
-	} else {
-		m_graphics->handleEvent(m_event);
+	}
+
+	//check for events on menu window if necessasry
+	else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
+		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
+			delete m_menu;
+			m_menu = nullptr;
+		}
 	}
 }
 
