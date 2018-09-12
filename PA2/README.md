@@ -47,8 +47,8 @@ Keyboard controls - to control the movement of the cube <br>
   * down arrow: rotate left <br> 
 <br>
 Mouse controls - to change directions <br>
-  * left click: reverse orbit direction <br>
-  * right click: reverse rotation direction <br>
+  + left click: reverse orbit direction <br>
+  + right click: reverse rotation direction <br>
 <br>
 Exiting - press the ESC key during execution to close everything correctly.
 
