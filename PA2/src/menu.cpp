@@ -2,8 +2,8 @@
 
 ImVec4 Menu::clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-Menu::Menu(void) {
-
+Menu::Menu(const glm::vec3 & camPos) :
+		m_camLoc(camPos) {
 }
 
 Menu::~Menu(void) {
@@ -15,7 +15,7 @@ Menu::~Menu(void) {
 
 bool Menu::Initialize(SDL_GLContext & gl_context) {
 
-	m_window = SDL_CreateWindow("Extra Credit - Menu", 50, 50, 500, 300, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	m_window = SDL_CreateWindow("Menu - Extra Credit", 50, 50, 500, 300, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	const char * glsl_version = "#version 330";
 
@@ -33,32 +33,34 @@ bool Menu::Initialize(SDL_GLContext & gl_context) {
 
 }
 
-bool Menu::Refresh(SDL_GLContext & gl_context) {
+bool Menu::Update(SDL_GLContext & gl_context) {
 
-	bool done = false;
+	bool updated = false;
 
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame (m_window);
 	ImGui::NewFrame();
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	static float f = 0.0f;
-	static int counter = 0;
 
-	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Camera Position");
 
-	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+	ImGui::Text("Use this menu to change the camera position.");
 
-	bool ckbox;
-	ImGui::Checkbox("Another Window", &ckbox);
+	static float x = m_camLoc.x, y = m_camLoc.y, z = m_camLoc.z;
 
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+	ImGui::SliderFloat("x", &x, -20.0f, 20.0f);
+	ImGui::SliderFloat("y", &y, -20.0f, 20.0f);
+	ImGui::SliderFloat("z", &z, -20.0f, 20.0f);
 
-	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		counter++;
-
-	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
+	ImGui::Text("Current camera position: (%.2f, %.2f, %.2f)", m_camLoc.x, m_camLoc.y, m_camLoc.z);
+	ImGui::Text("\n");
+	
+	if (ImGui::Button("Restart with new camera position")) {
+		updated = true;
+		m_camLoc.x = x;
+		m_camLoc.y = y;
+		m_camLoc.z = z;
+	}
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
@@ -71,9 +73,13 @@ bool Menu::Refresh(SDL_GLContext & gl_context) {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	SDL_GL_SwapWindow(m_window);
 
-	return done;
+	return updated;
 }
 
 SDL_Window * Menu::GetWindow(void) {
 	return m_window;
+}
+
+glm::vec3 Menu::GetNewPosition(void) const{
+	return m_camLoc;
 }

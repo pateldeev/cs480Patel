@@ -28,17 +28,20 @@ struct params {
 class Menu {
 
 public:
-	Menu(void);
+	Menu(const glm::vec3 & camPos);
 	~Menu(void);
 
 	bool Initialize(SDL_GLContext & gl_context);
-	bool Refresh(SDL_GLContext & gl_context); //returns if menu is closed
+	bool Update(SDL_GLContext & gl_context); //returns if menu has been undated
 
 	SDL_Window * GetWindow(void);
+	glm::vec3 GetNewPosition(void) const;
 
 private:
 	SDL_Window * m_window;
-
+	glm::vec3 m_camLoc;
+	
+	
 	static ImVec4 clear_color;
 
 };

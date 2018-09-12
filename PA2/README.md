@@ -36,7 +36,7 @@ The data of the vertex shader and fragment shader must be located in a file unde
 The movement of the planet is all done in the Object::Update(unsigned int) function of the Object class. By default, the planet has an orbit radius of 4.0 units.
 
 ## Keyboard & Mouse Controls - For movement control
-IMPORTANT: For any of the controls to work, the cube windows must be selected. Simply click on that window if another one is selected instead <br>
+IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br>
 The following keyboard keys can be used to control the movement of the cube <br>
   s: stop all movements - both orbit and rotation <br>
   c: continue all movements - both orbit and rotation <br>
@@ -51,9 +51,11 @@ The following keyboard keys can be used to control the movement of the cube <br>
 The orbit and rotation can also be changed with the mouse.  <br>
   Left click: reverse orbit direction <br>
   Right click: reverse rotation direction <br>
+<br><br>
+To exit the application, you can press the escape key during execution and everything will close.
 
 ## Extra Credit - Menu
-
+I have also implimented an extra credit menu system. It is turned on by default, but can be turned off with the -m command line argument. The menu can be used to reinitalize the program at a different camera position. This is helpful in debugging and viewing the exact movement of the cube. Simply change the coordinates and click the button to change the camera location.
 <br>
 
 

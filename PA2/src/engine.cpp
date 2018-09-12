@@ -37,7 +37,7 @@ bool Engine::Initialize(const glm::vec3 & eyePos, bool initMenu) {
 
 	// Start imgui menu if necessasry
 	if (initMenu) {
-		m_menu = new Menu();
+		m_menu = new Menu(eyePos);
 		if (!m_menu->Initialize(m_window->GetContext())) {
 			printf("The imgui menu failed to initialize.\n");
 			return false;
@@ -75,10 +75,16 @@ void Engine::Run(void) {
 		// Swap to the Window
 		m_window->Swap();
 
-		//update menu if necessary
-		if (m_menu && m_menu->Refresh(m_window->GetContext())) {
-			delete m_menu;
-			m_menu = nullptr;
+		//update camera position if necessary
+		if (m_menu && m_menu->Update(m_window->GetContext())) {
+			delete m_graphics;
+			m_graphics = nullptr;
+			m_graphics = new Graphics();
+			if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetNewPosition())) {
+				printf("The graphics failed to change camera position.\n");
+				m_running = false;
+				break;
+			}
 		}
 	}
 }
