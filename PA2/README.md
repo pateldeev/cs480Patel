@@ -1,4 +1,4 @@
-# PA2: Keyboard Input
+# PA2: Keyboard/Mouse Input & Menu Debugging
 
 ## Dependency Instructions
 For both of the operating systems to run this project installation of these three programs are required [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), and [SDL2](https://wiki.libsdl.org/Tutorials).
@@ -44,12 +44,10 @@ Keyboard controls - to control the movement of the cube <br>
   * right arrow: orbit counterclockwise <br>
   * left arrow: orbit clockwise <br>
   * up arrow: rotate right <br>
-  * down arrow: rotate left <br> 
-<br>
+  * down arrow: rotate left <br><br>
 Mouse controls - to change directions <br>
-  + left click: reverse orbit direction <br>
-  + right click: reverse rotation direction <br>
-<br>
+  * left click: reverse orbit direction <br>
+  * right click: reverse rotation direction <br><br>
 Exiting - press the ESC key during execution to close everything correctly.
 
 ## Menu - Extra Credit
