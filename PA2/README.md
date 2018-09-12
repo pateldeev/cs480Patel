@@ -40,16 +40,15 @@ Keyboard controls - to control the movement of the cube <br>
   * s: stop all movements - both orbit and rotation <br>
   * c: continue all movements - both orbit and rotation <br>
   * o: toggle orbit on/off <br>
-  * r: toggle rotation on/off <br> 
-<br>
+  * r: toggle rotation on/off <br>
   * right arrow: orbit counterclockwise <br>
   * left arrow: orbit clockwise <br>
   * up arrow: rotate right <br>
   * down arrow: rotate left <br> 
 <br>
 Mouse controls - to change directions <br>
-  * Left click: reverse orbit direction <br>
-  * Right click: reverse rotation direction <br>
+  * left click: reverse orbit direction <br>
+  * right click: reverse rotation direction <br>
 <br>
 Exiting - press the ESC key during execution to close everything correctly.
 
