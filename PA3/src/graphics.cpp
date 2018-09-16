@@ -43,9 +43,9 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 		return false;
 	}
 
-	// Create the objects
+	//Create the objects
 	m_planet = new Object(4.5, .001, .0004);
-	m_moon = new Object(3.0, .0005, .0002);
+	m_moon = new Object(3.0, .0005, .001);
 	m_moon->SetScale(glm::vec3(0.35, 0.35, 0.35));
 
 	// Set up the shaders
@@ -102,33 +102,35 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 }
 
 void Graphics::Update(unsigned int dt) {
-	// Update the object
+	//Update the planet
 	m_planet->Update(dt);
+
+	//Update moon after setting its new orbit center
 	m_moon->SetOrbitCenter(m_planet->GetOrbitLoc());
-	//printf("C: %3f ; %3f - L: %3f ; %3f \n", m_moon->GetOrbitCenter().x, m_moon->GetOrbitCenter().y, m_moon->GetOrbitLoc().x, m_moon->GetOrbitLoc().y);
 	m_moon->Update(dt);
 }
 
 void Graphics::Render(void) {
-	//clear the screen
+	//Clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Start the correct program
+	//Start the correct program
 	m_shader->Enable();
 
-	// Send in the projection and view to the shader
+	//Send in the projection and view to the shader
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-	// Render the objects
+	//Render the planet
 	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planet->GetModel()));
 	m_planet->Render();
 
+	//Render the moon
 	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
 	m_moon->Render();
 
-	// Get any errors from OpenGL
+	//Get any errors from OpenGL
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
 		std::string val = ErrorString(error);
@@ -207,5 +209,14 @@ std::string Graphics::ErrorString(GLenum error) {
 	else
 		return "None";
 
+}
+
+std::string Graphics::GetMovementMsg(void) const {
+	if (!m_planet->IsOrbiting())
+		return "Planet is NOT moving!";
+	else if (m_planet->GetOrbitSpeed() > 0)
+		return "Planet is moving CLOCKWISE!";
+	else
+		return "Planet is moving COUNTER-CLOCKWISE!";
 }
 

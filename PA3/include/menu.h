@@ -34,6 +34,8 @@ public:
 	bool Initialize(SDL_GLContext & gl_context);
 	bool Update(SDL_GLContext & gl_context); //returns if menu has been undated
 
+	void ChangeMovementMsg(const std::string & msg);
+
 	SDL_Window * GetWindow(void);
 	glm::vec3 GetNewPosition(void) const;
 
@@ -41,6 +43,7 @@ private:
 	SDL_Window * m_window;
 	glm::vec3 m_camLoc;
 	
+	std::string m_movementMsg;
 	
 	static ImVec4 clear_color;
 

@@ -17,6 +17,8 @@ public:
 	void Render(void);
 	bool handleEvent(const SDL_Event & event);
 	
+	std::string GetMovementMsg(void) const; //returns if planet is moving
+	
 private:
 	std::string ErrorString(GLenum error);
 	

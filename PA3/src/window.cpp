@@ -1,13 +1,12 @@
 #include <window.h>
 
 Window::Window(void) {
-	gWindow = NULL;
+	gWindow = nullptr;
 }
 
 Window::~Window(void) {
 	SDL_StopTextInput();
 	SDL_DestroyWindow (gWindow);
-	gWindow = NULL;
 	SDL_Quit();
 }
 
@@ -38,14 +37,14 @@ bool Window::Initialize(const std::string & name, int * width, int * height) {
 	}
 
 	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, *width, *height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	if (gWindow == NULL) {
+	if (!gWindow) {
 		printf("Widow failed to create: %s\n", SDL_GetError());
 		return false;
 	}
 
 	// Create context
 	gContext = SDL_GL_CreateContext(gWindow);
-	if (gContext == NULL) {
+	if (!gContext) {
 		printf("OpenGL context not created: %s\n", SDL_GetError());
 		return false;
 	}
