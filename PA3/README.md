@@ -29,7 +29,7 @@ The movement of the planet and moon is all done in the Object::Update(unsigned i
 ## Keyboard & Mouse Controls - For movement control
 IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br><br>
 
-* Keyboard controls - to control the movement of the cubes <br>
+* Keyboard controls - to control the movement of the cube <br>
   * s: stop all movements - both orbit and rotation <br>
   * c: continue all movements - both orbit and rotation <br>
   * o: toggle orbit on/off <br>
@@ -44,7 +44,7 @@ IMPORTANT: For any of the controls to work, the cube window must be selected. Si
 * Exiting <br>
   * ESC: Will properly close all windows
 <br>
-Moon control: you can also control the moon's movement by pressing any of the above keys in conjuction with the left shift key. For instace: <br>
+You can also control the moon's movement by pressing any of the above keys in conjuction with the left shift key. For instace: <br>
 &nbsp;&nbsp;&nbsp; lShift + s: stops rotation and orbit of moon only <br>
 &nbsp;&nbsp;&nbsp; lShift + rightClick: reverse rotation direction of moon only <br>
 
