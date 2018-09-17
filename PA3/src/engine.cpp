@@ -76,17 +76,14 @@ void Engine::Run(void) {
 		m_window->Swap();
 
 		//update menu and change camera position if necessary
-		if (m_menu) {
-			m_menu->ChangeMovementMsg(m_graphics->GetMovementMsg());
-			if (m_menu->Update(m_window->GetContext())) {
-				delete m_graphics;
-				m_graphics = nullptr;
-				m_graphics = new Graphics();
-				if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetNewPosition())) {
-					printf("The graphics failed to change camera position.\n");
-					m_running = false;
-					break;
-				}
+		if (m_menu && m_menu->Update(m_window->GetContext())) {
+			delete m_graphics;
+			m_graphics = nullptr;
+			m_graphics = new Graphics(); 
+			if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetNewPosition())) {
+				printf("The graphics failed to change camera position.\n");
+				m_running = false;
+				break;
 			}
 		}
 	}

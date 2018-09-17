@@ -83,15 +83,10 @@ void Object::Update(unsigned int dt) {
 	if (!pauseOrbit)
 		angleOrbit += dt * M_PI * speedOrbit;
 
-	if (!pauseRotation || !pauseOrbit) {
-		orbitLoc = orbitCenter + glm::vec3(orbitRadius * std::cos(angleOrbit), 0.0 , orbitRadius * std::sin(angleOrbit));
+	orbitLoc = orbitCenter + glm::vec3(orbitRadius * std::cos(angleOrbit), 0.0, orbitRadius * std::sin(angleOrbit));
 
-		//model = glm::scale(objectScale); 
-		//model = glm::rotate(model, (angleRotation), glm::vec3(0.0, 1.0, 0.0)); 
-		//model = glm::translate(model, orbitLoc);
-		
-		model =  glm::translate(orbitLoc) * glm::rotate((angleRotation), glm::vec3(0.0, 1.0, 0.0)) * glm::scale(objectScale);
-	}
+	//model = glm::scale(objectScale); //model = glm::rotate(model, (angleRotation), glm::vec3(0.0, 1.0, 0.0)); //model = glm::translate(model, orbitLoc);
+	model = glm::translate(orbitLoc) * glm::rotate((angleRotation), glm::vec3(0.0, 1.0, 0.0)) * glm::scale(objectScale);
 }
 
 void Object::Render(void) {

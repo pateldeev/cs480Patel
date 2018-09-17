@@ -45,7 +45,7 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 
 	//Create the objects
 	m_planet = new Object(4.5, .001, .0004);
-	m_moon = new Object(3.0, .0005, .001);
+	m_moon = new Object(3.0, .002, .001);
 	m_moon->SetScale(glm::vec3(0.35, 0.35, 0.35));
 
 	// Set up the shaders
@@ -140,53 +140,69 @@ void Graphics::Render(void) {
 
 bool Graphics::handleEvent(const SDL_Event & event) {
 
+	static bool lShift = false; //keeps track if right shift key is curently pressed
+
 	if (event.type == SDL_KEYDOWN) {
+
+		if (event.key.keysym.sym == SDLK_LSHIFT) {
+			lShift = true;
+			return true;
+		}
+
+		Object * affectedObj = (lShift) ? m_moon : m_planet;
 
 		switch (event.key.keysym.sym) {
 
 		case SDLK_s:
-			m_planet->ToggleRotation(false);
-			m_planet->ToggleOrbit(false);
+			affectedObj->ToggleRotation(false);
+			affectedObj->ToggleOrbit(false);
 			return true;
 
 		case SDLK_c:
-			m_planet->ToggleRotation(true);
-			m_planet->ToggleOrbit(true);
+			affectedObj->ToggleRotation(true);
+			affectedObj->ToggleOrbit(true);
 			return true;
 
 		case SDLK_r:
-			m_planet->ToggleRotation(!m_planet->IsRotating());
+			affectedObj->ToggleRotation(!affectedObj->IsRotating());
 			return true;
 
 		case SDLK_o:
-			m_planet->ToggleOrbit(!m_planet->IsOrbiting());
+			affectedObj->ToggleOrbit(!affectedObj->IsOrbiting());
 			return true;
 
 		case SDLK_LEFT:
-			m_planet->SetOrbitSpeed(std::abs(m_planet->GetOrbitSpeed()));
+			affectedObj->SetOrbitSpeed(std::abs(affectedObj->GetOrbitSpeed()));
 			return true;
 
 		case SDLK_RIGHT:
-			m_planet->SetOrbitSpeed(-1 * std::abs(m_planet->GetOrbitSpeed()));
+			affectedObj->SetOrbitSpeed(-1 * std::abs(affectedObj->GetOrbitSpeed()));
 			return true;
 
 		case SDLK_UP:
-			m_planet->SetRotationSpeed(std::abs(m_planet->GetRotationSpeed()));
+			affectedObj->SetRotationSpeed(std::abs(affectedObj->GetRotationSpeed()));
 			return true;
 
 		case SDLK_DOWN:
-			m_planet->SetRotationSpeed(-1 * std::abs(m_planet->GetRotationSpeed()));
+			affectedObj->SetRotationSpeed(-1 * std::abs(affectedObj->GetRotationSpeed()));
 			return true;
-
 		}
 	}
 
+	if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_LSHIFT) {
+		lShift = false;
+		return true;
+	}
+
 	if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+		Object * affectedObj = (lShift) ? m_moon : m_planet;
+
 		if (event.button.button == SDL_BUTTON_LEFT) {
-			m_planet->SetOrbitSpeed(-1 * m_planet->GetOrbitSpeed());
+			affectedObj->SetOrbitSpeed(-1 * affectedObj->GetOrbitSpeed());
 			return true;
 		} else if (event.button.button == SDL_BUTTON_RIGHT) {
-			m_planet->SetRotationSpeed(-1 * m_planet->GetRotationSpeed());
+			affectedObj->SetRotationSpeed(-1 * affectedObj->GetRotationSpeed());
 			return true;
 		} else {
 			printf("Unhandeled SDL mouse press. Could not understand button pressed: %d \n", event.button.button);
@@ -210,13 +226,3 @@ std::string Graphics::ErrorString(GLenum error) {
 		return "None";
 
 }
-
-std::string Graphics::GetMovementMsg(void) const {
-	if (!m_planet->IsOrbiting())
-		return "Planet is NOT moving!";
-	else if (m_planet->GetOrbitSpeed() > 0)
-		return "Planet is moving CLOCKWISE!";
-	else
-		return "Planet is moving COUNTER-CLOCKWISE!";
-}
-

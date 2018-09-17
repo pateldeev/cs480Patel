@@ -3,7 +3,7 @@
 ImVec4 Menu::clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 Menu::Menu(const glm::vec3 & camPos) :
-		m_camLoc(camPos), m_movementMsg("") {
+		m_camLoc(camPos){
 }
 
 Menu::~Menu(void) {
@@ -65,10 +65,6 @@ bool Menu::Update(SDL_GLContext & gl_context) {
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 
-	ImGui::Begin("Movement_Message");
-        ImGui::Text("%s", m_movementMsg.c_str());
-        ImGui::End();
-
 	// Rendering
 	ImGui::Render();
 	SDL_GL_MakeCurrent(m_window, gl_context);
@@ -78,10 +74,6 @@ bool Menu::Update(SDL_GLContext & gl_context) {
 	SDL_GL_SwapWindow(m_window);
 
 	return updated;
-}
-
-void Menu::ChangeMovementMsg(const std::string & msg){
-	m_movementMsg = msg;
 }
 
 SDL_Window * Menu::GetWindow(void) {

@@ -29,26 +29,31 @@ The movement of the planet and moon is all done in the Object::Update(unsigned i
 ## Keyboard & Mouse Controls - For movement control
 IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br><br>
 
-* Keyboard controls - to control the movement of the main cube/planet <br>
+* Keyboard controls - to control the movement of the cubes <br>
   * s: stop all movements - both orbit and rotation <br>
   * c: continue all movements - both orbit and rotation <br>
   * o: toggle orbit on/off <br>
   * r: toggle rotation on/off <br>
-  * right arrow: orbit counterclockwise <br>
-  * left arrow: orbit clockwise <br>
-  * up arrow: rotate right <br>
-  * down arrow: rotate left <br>
-* Mouse controls - to change directions for main cube/planet <br>
-  * left click: reverse orbit direction <br>
-  * right click: reverse rotation direction <br>
+  * rightArrow: orbit counterclockwise <br>
+  * leftArrow: orbit clockwise <br>
+  * upArrow: rotate right <br>
+  * downArrow: rotate left <br>
+* Mouse controls - to change directions of cube <br>
+  * leftClick: reverse orbit direction <br>
+  * rightClick: reverse rotation direction <br>
 * Exiting <br>
   * ESC: Will properly close all windows
+<br>
+* Moon control: you can also control the moon's movement by pressing any of the above keys in conjuction with the left shift key. For instace: <br>
+  * lShift + s: stops rotation and orbit of moon only <br>
+  * lShift + rightClick: reverse rotation direction of moon only <br>
+
 
 ## Menu
 I have also implimented an extra credit menu system. It is turned on by default, but can be turned off with the -m command line argument. The menu can be used to reinitalize the program at a different camera position. This is helpful in debugging and viewing the exact movement of the cube. Simply change the coordinates and click the button to change the camera location.
 
-## Text output of direction
-I tried to impliment the extra text system by using an external library, SDL2_ttf, but I couldn't figure it out in time. In the end, I just ended up displaying the movement on the menu system as everything was already in place for that.
+## Text output of direction - Extra Credit
+I added text to a seperate window, called "direction", indicating which direction the main planet cube is orbiting. All possible texts were created in blendar and saved to an OBJ file in the "objects" directory. They were then loaded as necessary for displaying on the window.
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
