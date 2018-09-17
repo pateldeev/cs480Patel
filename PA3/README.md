@@ -45,8 +45,8 @@ IMPORTANT: For any of the controls to work, the cube window must be selected. Si
   * ESC: Will properly close all windows
 <br>
 You can also control the moon's movement by pressing any of the above keys in conjuction with the left shift key. For instace: <br>
-&nbsp;&nbsp;&nbsp; lShift + s: stops rotation and orbit of moon only <br>
-&nbsp;&nbsp;&nbsp; lShift + rightClick: reverse rotation direction of moon only <br>
+&nbsp;&nbsp;&nbsp; lShift + s: stops rotation and orbit of moon <br>
+&nbsp;&nbsp;&nbsp; lShift + rightClick: reverse rotation direction of moon <br>
 
 
 ## Menu
