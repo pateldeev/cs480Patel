@@ -14,7 +14,7 @@ int main(int argc, char * argv[]) {
 		std::cerr << "Error getting paramter values " << std::endl;
 		return 0;
 	}
-	
+
 	Engine * engine = StartEngine(paramVals);
 
 	if (!engine) {

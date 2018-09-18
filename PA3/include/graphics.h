@@ -8,6 +8,8 @@
 #include "shader.h"
 #include "object.h"
 
+#include "text.h"
+
 class Graphics {
 public:
 	Graphics(void);
@@ -29,6 +31,12 @@ private:
 	
 	Object * m_planet;
 	Object * m_moon;
+	
+	Text * m_textPlanetIntro;
+	Text * m_textMoonIntro;
+	Text * m_textC;
+	Text * m_textCC;
+	Text * m_textNot;
 };
 
 #endif /* GRAPHICS_H */

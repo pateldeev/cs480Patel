@@ -7,7 +7,7 @@
 
 class Object {
 public:
-	Object(float orbitalRadius, float rotationSpeed, float orbitSpeed);
+	Object(float orbitRadiusX, float orbitRadiusZ, float rotationSpeed, float orbitSpeed);
 	~Object(void);
 	void Update(unsigned int dt);
 	void Render(void);
@@ -39,7 +39,8 @@ private:
 
 	float angleRotation;
 	float angleOrbit;
-	float orbitRadius;
+	float orbitRadiusX;
+	float orbitRadiusZ;
 	
 	glm::vec3 orbitCenter; //center of object's orbital
 	glm::vec3 orbitLoc; //position of object on the orbit 

@@ -23,10 +23,10 @@ make
 ## Shaders
 The data of the vertex shader and fragment shader must be located in a file under the '/shaders' directory. By default, the vertex shader file is called 'vertShader.vert' and the fragment shader is called 'fragShader.frag'. You can specify the name of the file via command line arguments, as documented below.
 
-## Orbit/Rotation
-The movement of the planet and moon is all done in the Object::Update(unsigned int) function of the Object class. The planet has an orbital radius of 4.5 units around the origin. The moon has an orbital radius of 3.0 units around the planet.
+## Elliptical Orbits & Rotation
+The movement of the planet and moon is all done in the Object::Update(unsigned int) function of the Object class. The planet has an elliptical orbit with a major radius of 6.25 units and a minor radius of 3.75 around the origin. The moon has an elliptical orbit with a major radius of 3.1 and a minor radius of 2.9 units around the planet.
 
-## Keyboard & Mouse Controls - For movement control
+## Keyboard & Mouse Controls - For movement control of Planet & Moon
 IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br><br>
 
 * Keyboard controls - to control the movement of the cube <br>
@@ -48,12 +48,11 @@ You can also control the moon's movement by pressing any of the above keys in co
 &nbsp;&nbsp;&nbsp; lShift + s: stops rotation and orbit of moon <br>
 &nbsp;&nbsp;&nbsp; lShift + rightClick: reverse rotation direction of moon <br>
 
-
 ## Menu
-I have also implimented an extra credit menu system. It is turned on by default, but can be turned off with the -m command line argument. The menu can be used to reinitalize the program at a different camera position. This is helpful in debugging and viewing the exact movement of the cube. Simply change the coordinates and click the button to change the camera location.
+I implimented an extra credit menu system. It is turned on by default, but can be turned off with the -m command line argument. The menu can be used to reinitalize the program at a different camera position. This is helpful in debugging and viewing the exact movement of the cube. Simply change the coordinates and click the button to change the camera location.
 
 ## Text output of direction - Extra Credit
-I added text to a seperate window, called "direction", indicating which direction the main planet cube is orbiting. All possible texts were created in blendar and saved to an OBJ file in the "objects" directory. They were then loaded as necessary for displaying on the window.
+I implimented the extra credit text output. In anticipation of the next assignment, I created all the possibilties in Blender and used a OBJ file loader. The OBJ files of the texts are located in the "objFiles" directory. They must be there for the text to be rendered. The text output is sort of limited in that I hardcoded the rendering position. As such, the text will be best visible when run with the default window size and camera position. Given more time, I would have liked to create a system that could render the text dynamically for any specified camera postion and window so that it is always visible.
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project

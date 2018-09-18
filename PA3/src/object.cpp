@@ -1,7 +1,7 @@
 #include "object.h"
 
-Object::Object(float orbitalRadius, float rotationSpeed, float orbitSpeed) :
-		angleRotation(0.0f), angleOrbit(0.0f), orbitRadius(orbitalRadius), orbitCenter(glm::vec3(0.0f, 0.0f, 0.0f)), orbitLoc(
+Object::Object(float orbitRadiusX, float orbitRadiusZ, float rotationSpeed, float orbitSpeed) :
+		angleRotation(0.0f), angleOrbit(0.0f), orbitRadiusX(orbitRadiusX), orbitRadiusZ(orbitRadiusZ), orbitCenter(glm::vec3(0.0f, 0.0f, 0.0f)), orbitLoc(
 				glm::vec3(0.0f, 0.0f, 0.0f)), objectScale(glm::vec3(1.0f, 1.0f, 1.0f)), speedRotation(rotationSpeed), speedOrbit(orbitSpeed), pauseRotation(
 				false), pauseOrbit(false) {
 	/*
@@ -83,7 +83,7 @@ void Object::Update(unsigned int dt) {
 	if (!pauseOrbit)
 		angleOrbit += dt * M_PI * speedOrbit;
 
-	orbitLoc = orbitCenter + glm::vec3(orbitRadius * std::cos(angleOrbit), 0.0, orbitRadius * std::sin(angleOrbit));
+	orbitLoc = orbitCenter + glm::vec3(orbitRadiusX * std::cos(angleOrbit), 0.0, orbitRadiusZ * std::sin(angleOrbit));
 
 	//model = glm::scale(objectScale); //model = glm::rotate(model, (angleRotation), glm::vec3(0.0, 1.0, 0.0)); //model = glm::translate(model, orbitLoc);
 	model = glm::translate(orbitLoc) * glm::rotate((angleRotation), glm::vec3(0.0, 1.0, 0.0)) * glm::scale(objectScale);

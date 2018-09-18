@@ -44,11 +44,20 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 	}
 
 	//Create the objects
-	m_planet = new Object(4.5, .001, .0004);
-	m_moon = new Object(3.0, .002, .001);
+	m_planet = new Object(6.25, 3.75, 0.00120, 0.00038);
+	m_moon = new Object(2.9, 3.1, 0.00210, 0.00110);
 	m_moon->SetScale(glm::vec3(0.35, 0.35, 0.35));
 
-	// Set up the shaders
+	//Create text objects for information
+	m_textPlanetIntro = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/planetIntro.obj", glm::vec3(1.0, 0.0, 0.0));
+	m_textPlanetIntro->Update(glm::vec3(8.55, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
+	m_textMoonIntro = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/moonIntro.obj", glm::vec3(1.0, 0.0, 0.0));
+	m_textMoonIntro->Update(glm::vec3(8.75, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
+	m_textC = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_textCC = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_textNot = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
+
+	//Set up the shaders
 	m_shader = new Shader();
 	if (!m_shader->Initialize()) {
 		printf("Shader Failed to Initialize\n");
@@ -130,6 +139,22 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moon->GetModel()));
 	m_moon->Render();
 
+	//Render text information
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textPlanetIntro->GetModel()));
+	m_textPlanetIntro->Render();
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textMoonIntro->GetModel()));
+	m_textMoonIntro->Render();
+
+	Text * planetInfo = m_planet->IsOrbiting() ? (m_planet->GetOrbitSpeed() > 0.0 ? m_textC : m_textCC) : m_textNot;
+	planetInfo->Update(glm::vec3(5.15, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planetInfo->GetModel()));
+	planetInfo->Render();
+
+	Text * moonInfo = m_moon->IsOrbiting() ? (m_moon->GetOrbitSpeed() > 0.0 ? m_textC : m_textCC) : m_textNot;
+	planetInfo->Update(glm::vec3(5.05, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(moonInfo->GetModel()));
+	moonInfo->Render();
+
 	//Get any errors from OpenGL
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
@@ -140,7 +165,7 @@ void Graphics::Render(void) {
 
 bool Graphics::handleEvent(const SDL_Event & event) {
 
-	static bool lShift = false; //keeps track if right shift key is curently pressed
+	static bool lShift = false; //keeps track if left shift key is curently pressed
 
 	if (event.type == SDL_KEYDOWN) {
 
