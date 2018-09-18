@@ -11,8 +11,6 @@ FIND_PACKAGE(GLM REQUIRED)
 SET(CXX11_FLAGS -std=gnu++11)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
 
-#SET(TARGET_LIBRARIES "${OPENGL_LIBRARY} ${SDL2_LIBRARY}")
-
 IF(UNIX)
   ADD_DEFINITIONS(-DUNIX)
 ENDIF(UNIX)
@@ -48,8 +46,9 @@ add_custom_target("${PROJECT_NAME}_SUCCESSFUL" ALL
                   COMMAND ${CMAKE_COMMAND} -E echo "====================="
                   COMMAND ${CMAKE_COMMAND} -E echo "${CMAKE_CURRENT_BINARY_DIR}"
                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/shaders
+		  COMMAND ${CMAKE_COMMAND} -E echo "shaders folder copied!"
                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/objFiles/ ${CMAKE_CURRENT_BINARY_DIR}/objFiles
-                  COMMAND ${CMAKE_COMMAND} -E echo "shaders folder copied!"
+                  COMMAND ${CMAKE_COMMAND} -E echo "objFiles folder copied!"
                  )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OPENGL_LIBRARY} ${SDL2_LIBRARY})
