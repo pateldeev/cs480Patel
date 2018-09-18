@@ -2,14 +2,15 @@
 
 #include <fstream>
 #include <sstream> 
+#include <iostream>
 
 void ObjLoader::loadFile(const char * fileName, std::vector<Vertex> & Vertices, std::vector<unsigned int> & Indices, const glm::vec3 & color) {
 
-	std::fstream file;
+	std::ifstream file;
 	file.open(fileName);
 
 	if (!file.is_open()) {
-		printf("Could not open shader file for type: \n");
+		printf("ERR: Could not find obj file: %s \n", fileName);
 		return;
 	}
 

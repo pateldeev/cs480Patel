@@ -49,13 +49,13 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 	m_moon->SetScale(glm::vec3(0.35, 0.35, 0.35));
 
 	//Create text objects for information
-	m_textPlanetIntro = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/planetIntro.obj", glm::vec3(1.0, 0.0, 0.0));
+	m_textPlanetIntro = new Text("objFiles/planetIntro.obj", glm::vec3(1.0, 0.0, 0.0));
 	m_textPlanetIntro->Update(glm::vec3(8.55, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
-	m_textMoonIntro = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/moonIntro.obj", glm::vec3(1.0, 0.0, 0.0));
+	m_textMoonIntro = new Text("objFiles/moonIntro.obj", glm::vec3(1.0, 0.0, 0.0));
 	m_textMoonIntro->Update(glm::vec3(8.75, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
-	m_textC = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
-	m_textCC = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
-	m_textNot = new Text("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA3/objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_textC = new Text("objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_textCC = new Text("objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_textNot = new Text("objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
 
 	//Set up the shaders
 	m_shader = new Shader();
