@@ -15,4 +15,7 @@ This builds on PA1 and adds user input to change the cube's movement. It also in
 ## PA3: Moon
 This builds on PA2 and adds a "moon" cube to orbit and rotate around the already exisiting cube. To run this project ```cd PA3``` then follow the instructions in the README.md.
 
+## PA4: Object Loader
+This loads and renders an object exported from blendar as an .obj file. To run this project ```cd PA4``` then follow the instructions in the README.md.
+
 
