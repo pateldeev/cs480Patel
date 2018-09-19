@@ -1,4 +1,4 @@
-# PA3: Moon
+# PA3: Moon & Text
 
 ## Dependency Instructions
 To run this project installation of these three programs are required [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), and [SDL2](https://wiki.libsdl.org/Tutorials).
@@ -46,13 +46,13 @@ IMPORTANT: For any of the controls to work, the cube window must be selected. Si
 <br>
 You can also control the moon's movement by pressing any of the above keys in conjuction with the left shift key. For instace: <br>
 &nbsp;&nbsp;&nbsp; lShift + s: stops rotation and orbit of moon <br>
-&nbsp;&nbsp;&nbsp; lShift + rightClick: reverse rotation direction of moon <br>
+&nbsp;&nbsp;&nbsp; lShift + leftClick: reverse orbit direction of moon <br>
 
 ## Menu
 I implimented an extra credit menu system. It is turned on by default, but can be turned off with the -m command line argument. The menu can be used to reinitalize the program at a different camera position. This is helpful in debugging and viewing the exact movement of the cube. Simply change the coordinates and click the button to change the camera location.
 
 ## Text output of direction - Extra Credit
-I implimented the extra credit text output. In anticipation of the next assignment, I created all the possibilties in Blender and used a OBJ file loader. The OBJ files of the texts are located in the "objFiles" directory. They must be there for the text to be rendered. The text output is sort of limited in that I hardcoded the rendering position. As such, the text will be best visible when run with the default window size and camera position. Given more time, I would have liked to create a system that could render the text dynamically for any specified camera postion and window so that it is always visible.
+I implimented the extra credit text output. In anticipation of the next assignment, I created all the possibilties in Blender and wrote a simple OBJ file loader. The OBJ files of the texts are located in the "objFiles" directory. They must be there for the text to be rendered. The text output is sort of limited in that I hardcoded the rendering position. As such, the text will be best visible when run with the default window size and camera position. Given more time, I would have liked to create a system that could render the text dynamically for any specified camera position and window.
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project

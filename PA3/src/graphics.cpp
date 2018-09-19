@@ -53,9 +53,8 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos) {
 	m_textPlanetIntro->Update(glm::vec3(8.55, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
 	m_textMoonIntro = new Text("objFiles/moonIntro.obj", glm::vec3(1.0, 0.0, 0.0));
 	m_textMoonIntro->Update(glm::vec3(8.75, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
-	m_textC = new Text("objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
-	m_textCC = new Text("objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
-	m_textNot = new Text("objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
+	m_planetDir = m_moonDir = 1;
+	loadTexts();
 
 	//Set up the shaders
 	m_shader = new Shader();
@@ -117,6 +116,14 @@ void Graphics::Update(unsigned int dt) {
 	//Update moon after setting its new orbit center
 	m_moon->SetOrbitCenter(m_planet->GetOrbitLoc());
 	m_moon->Update(dt);
+
+	//Update text 
+	m_planetDir = m_planet->IsOrbiting() ? (m_planet->GetOrbitSpeed() > 0.0 ? 1 : -1) : 0;
+	m_moonDir = m_moon->IsOrbiting() ? (m_moon->GetOrbitSpeed() > 0.0 ? 1 : -1) : 0;
+	loadTexts();
+	m_textMoonInfo->Update(glm::vec3(5.05, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
+	m_textPlanetInfo->Update(glm::vec3(5.15, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
+
 }
 
 void Graphics::Render(void) {
@@ -142,18 +149,12 @@ void Graphics::Render(void) {
 	//Render text information
 	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textPlanetIntro->GetModel()));
 	m_textPlanetIntro->Render();
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textPlanetInfo->GetModel()));
+	m_textPlanetInfo->Render();
 	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textMoonIntro->GetModel()));
 	m_textMoonIntro->Render();
-
-	Text * planetInfo = m_planet->IsOrbiting() ? (m_planet->GetOrbitSpeed() > 0.0 ? m_textC : m_textCC) : m_textNot;
-	planetInfo->Update(glm::vec3(5.15, 7.75, 0.0), glm::vec3(0.70, 0.70, 0.70));
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planetInfo->GetModel()));
-	planetInfo->Render();
-
-	Text * moonInfo = m_moon->IsOrbiting() ? (m_moon->GetOrbitSpeed() > 0.0 ? m_textC : m_textCC) : m_textNot;
-	planetInfo->Update(glm::vec3(5.05, 6.5, 0.0), glm::vec3(0.70, 0.70, 0.70));
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(moonInfo->GetModel()));
-	moonInfo->Render();
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_textMoonInfo->GetModel()));
+	m_textMoonInfo->Render();
 
 	//Get any errors from OpenGL
 	auto error = glGetError();
@@ -236,7 +237,7 @@ bool Graphics::handleEvent(const SDL_Event & event) {
 	return false;
 }
 
-std::string Graphics::ErrorString(GLenum error) {
+std::string Graphics::ErrorString(GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
 	else if (error == GL_INVALID_VALUE)
@@ -250,4 +251,24 @@ std::string Graphics::ErrorString(GLenum error) {
 	else
 		return "None";
 
+}
+
+void Graphics::loadTexts(void) {
+	if (m_planetDir == 1)
+		m_textPlanetInfo = new Text("objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
+	else if (m_planetDir == 0)
+		m_textPlanetInfo = new Text("objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
+	else if (m_planetDir == -1)
+		m_textPlanetInfo = new Text("objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
+	else
+		printf("Error: could not get correct direction text for planet \n");
+	
+	if (m_moonDir == 1)
+		m_textMoonInfo = new Text("objFiles/msgOrbitC.obj", glm::vec3(1.0, 0.8, 0.6));
+	else if (m_moonDir == 0)
+		m_textMoonInfo = new Text("objFiles/msgOrbitNot.obj", glm::vec3(1.0, 0.8, 0.6));
+	else if (m_moonDir == -1)
+		m_textMoonInfo = new Text("objFiles/msgOrbitCC.obj", glm::vec3(1.0, 0.8, 0.6));
+	else
+		printf("Error: could not get correct direction text for moon \n");
 }

@@ -20,7 +20,7 @@ public:
 	bool handleEvent(const SDL_Event & event);
 		
 private:
-	std::string ErrorString(GLenum error);
+	std::string ErrorString(GLenum error) const;
 	
 	Camera * m_camera;
 	Shader * m_shader;
@@ -32,11 +32,15 @@ private:
 	Object * m_planet;
 	Object * m_moon;
 	
+	//variables for displaying text
 	Text * m_textPlanetIntro;
+	Text * m_textPlanetInfo;
+	int m_planetDir; //keeps track of which text needs to be displayed for planet orbit direction
 	Text * m_textMoonIntro;
-	Text * m_textC;
-	Text * m_textCC;
-	Text * m_textNot;
+	Text * m_textMoonInfo; 
+	int m_moonDir; //keeps track of which text needs to be displayed for moon orbit direction
+	
+	void loadTexts(void); //internal function to load new texts if needed
 };
 
 #endif /* GRAPHICS_H */
