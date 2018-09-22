@@ -1,6 +1,6 @@
 #include "object.h"
 
-Object::Object(const std::string & objFile) :
+Object::Object(const std::string & objFile, bool readColor) :
 		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0) {
 
 	//load object data

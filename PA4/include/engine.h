@@ -6,15 +6,16 @@
 
 #include "window.h"
 #include "graphics.h"
+#include "menu.h"
 
 class Engine {
 public:
 	Engine(const std::string & winName, int winWidth, int winHeight);
 	Engine(const std::string & name);
 	~Engine(void);
-	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile);
+	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool readColor);
 	void Run(void);
-	void Keyboard(void);
+	void Keyboard(const SDL_Event & event);
 
 private:
 	// Window related variables
@@ -25,6 +26,8 @@ private:
 	SDL_Event m_event;
 
 	Graphics * m_graphics;
+	
+	Menu * m_menu;
 
 	bool m_running;
 

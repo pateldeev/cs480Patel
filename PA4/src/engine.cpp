@@ -9,20 +9,28 @@ Engine::Engine(const std::string & winName, int winWidth, int winHeight) {
 Engine::~Engine(void) {
 	delete m_window;
 	delete m_graphics;
+	delete m_menu;
 }
 
-bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile) {
-	// Start a window
+bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool readColor) {
+	//Start the window
 	m_window = new Window();
 	if (!m_window->Initialize(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT)) {
 		printf("The window failed to initialize.\n");
 		return false;
 	}
 
-	// Start the graphics
+	//Start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos, objFile)) {
+	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos, objFile, readColor)) {
 		printf("The graphics failed to initialize.\n");
+		return false;
+	}
+
+	//Start the menu
+	m_menu = new Menu(eyePos);
+	if (!m_menu->Initialize(m_window->GetContext())) {
+		printf("The imgui menu failed to initialize.\n");
 		return false;
 	}
 
@@ -37,9 +45,22 @@ void Engine::Run(void) {
 
 		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
 
-		// Check the keyboard input
-		while (SDL_PollEvent(&m_event) != 0) {
-			Keyboard();
+		// Check for events input
+		while (SDL_PollEvent (&m_event)) {
+
+			if (m_event.type == SDL_QUIT) {
+				m_running = false;
+			}
+			if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
+				m_running = false;
+			}
+
+			if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
+				Keyboard(m_event);
+			} else if (m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
+				m_menu->HandleEvent(m_event);
+			}
+			
 		}
 
 		// Update and render the graphics
@@ -49,17 +70,20 @@ void Engine::Run(void) {
 		// Swap to the Window
 		m_window->Swap();
 
+		//update menu and change variables if necessary
+		if (m_menu->Update(m_window->GetContext())) {
+			if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), glm::vec3(0.0, 0.0, 0.0),
+					glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0))) {
+				m_running = false;
+			}
+		}
+
 	}
 }
 
-void Engine::Keyboard(void) {
-
-	if (m_event.type == SDL_QUIT) {
-		m_running = false;
-	}
-
-	if (m_event.type == SDL_KEYDOWN) {
-		if (m_event.key.keysym.sym == SDLK_ESCAPE) {
+void Engine::Keyboard(const SDL_Event & event) {
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
 		}
 	}

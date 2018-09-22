@@ -10,7 +10,7 @@ Graphics::~Graphics(void) {
 	delete m_shader;
 }
 
-bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile) {
+bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile, bool readColor) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -43,7 +43,7 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	}
 
 	//Create the objects
-	m_object = new Object(objFile);
+	m_object = new Object(objFile, readColor);
 
 	//Set up the shaders
 	m_shader = new Shader();
@@ -102,6 +102,19 @@ void Graphics::Update(void) {
 	m_object->Update(m_object->GetTranslation(), m_object->GetScale(), m_object->GetRotationAngles()); //Update the object
 }
 
+bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & tranlationMat, const glm::vec3 & scaleMat,
+		const glm::vec3 rotationAnglesMat) {
+
+	delete m_camera;
+	m_camera = nullptr;
+	m_camera = new Camera();
+	if (!m_camera->Initialize(width, height, eyePos)) {
+		printf("Camera Failed to Initialize\n");
+		return false;
+	}
+	return true;
+}
+
 void Graphics::Render(void) {
 	//Clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);
@@ -126,7 +139,7 @@ void Graphics::Render(void) {
 	}
 }
 
-std::string Graphics::ErrorString(GLenum error) {
+std::string Graphics::ErrorString(GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
 	else if (error == GL_INVALID_VALUE)

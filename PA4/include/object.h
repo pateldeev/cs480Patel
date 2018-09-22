@@ -5,7 +5,7 @@
 
 class Object {
 public:
-	Object(const std::string & objFile);
+	Object(const std::string & objFile, bool readColor);
 	~Object(void);
 	void Update(const glm::vec3 & translation, const glm::vec3 & scale, const glm::vec3 & rotationAngles);
 	void Render(void);

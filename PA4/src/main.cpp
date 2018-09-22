@@ -4,11 +4,15 @@
 struct params {
 	std::string objFile;
 	std::string vertexFile, fragmentFile;
+	std::string winName;
+	int winWidth, winHeight;
 	glm::vec3 eyePos;
+	bool randomColor;
 
 	//default parameters
 	params() :
-			objFile("objFiles/box.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), eyePos(0.0, 8.0, -16.0) {
+			objFile("objFiles/box.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA03_Deev_Patel"), winWidth(
+					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), randomColor(true) {
 	}
 };
 
@@ -50,8 +54,8 @@ Engine * StartEngine(const params & parameters) {
 	Shader::SetFragmentFile(parameters.fragmentFile);
 
 	// Start an engine and run it then cleanup after
-	Engine *engine = new Engine("PA04_Deev_Patel", 1600, 1200);
-	if (!engine->Initialize(parameters.eyePos, parameters.objFile)) {
+	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
+	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.randomColor)) {
 		printf("The engine failed to start.\n");
 		delete engine;
 		engine = nullptr;
@@ -79,27 +83,6 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				std::cerr << "ERROR: value of -f arguemnt could not be read" << std::endl;
 				return false;
 			}
-		} else if (!std::strcmp(argv[i], "-eyeX")) {
-			if (++i < argc) {
-				parameters.eyePos.x = std::atof(argv[i]);
-			} else {
-				std::cerr << "ERROR: value of -eyeX arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-eyeY")) {
-			if (++i < argc) {
-				parameters.eyePos.y = std::atof(argv[i]);
-			} else {
-				std::cerr << "ERROR: value of -eyeY arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-eyeZ")) {
-			if (++i < argc) {
-				parameters.eyePos.z = std::atof(argv[i]);
-			} else {
-				std::cerr << "ERROR: value of -eyeZ arguemnt could not be read" << std::endl;
-				return false;
-			}
 		} else if (!std::strcmp(argv[i], "-l")) {
 			if (++i < argc) {
 				parameters.objFile = argv[i];
@@ -107,6 +90,8 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				std::cerr << "ERROR: value of -l arguemnt could not be read" << std::endl;
 				return false;
 			}
+		} else if (!std::strcmp(argv[i], "-c")) {
+			parameters.randomColor = false;
 		} else {
 			std::cerr << "ERROR: Could not understand command line argument: " << argv[i] << std::endl;
 			return false;
