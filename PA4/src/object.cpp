@@ -4,12 +4,10 @@ Object::Object(const std::string & objFile, bool readColor) :
 		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0) {
 
 	//load object data
-	ObjLoader::loadObject(objFile, Vertices, Indices);
-
-	// The index works at a 0th index
-	for (unsigned int i = 0; i < Indices.size(); ++i) {
-		--Indices[i];
-	}
+	if (readColor)
+		ObjLoader::loadObjectWithColor(objFile, (objFile.substr(0, objFile.find_last_of('.')) + ".mtl"), Vertices, Indices);
+	else
+		ObjLoader::loadObjectRandColor(objFile, Vertices, Indices);
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -23,6 +21,10 @@ Object::Object(const std::string & objFile, bool readColor) :
 Object::~Object(void) {
 	Vertices.clear();
 	Indices.clear();
+}
+
+void Object::Update(void) {
+	Update(m_translation, m_scale, m_rotationAngles);
 }
 
 void Object::Update(const glm::vec3 & translation, const glm::vec3 & scale, const glm::vec3 & rotationAngles) {

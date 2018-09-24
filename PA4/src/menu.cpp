@@ -2,24 +2,24 @@
 
 ImVec4 Menu::clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-Menu::Menu(const glm::vec3 & camPos) :
-		m_eyeLoc(camPos), m_translationMat(0.0, 0.0, 0.0), m_scaleMat(1.0,1.0,1.0), m_rotationMat(0.0,0.0,0.0) {
+Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 & rotationAnglesVec) :
+		m_eyeLoc(eyeLoc), m_translation(translationVec), m_scale(scaleVec), m_rotation(rotationAnglesVec) {
 
 	mn_eyeLoc[0] = m_eyeLoc.x;
 	mn_eyeLoc[1] = m_eyeLoc.y;
 	mn_eyeLoc[2] = m_eyeLoc.z;
 
-	mn_translationMat[0] = m_translationMat.x;
-	mn_translationMat[1] = m_translationMat.y;
-	mn_translationMat[2] = m_translationMat.z;
+	mn_translation[0] = m_translation.x;
+	mn_translation[1] = m_translation.y;
+	mn_translation[2] = m_translation.z;
 
-	mn_scaleMat[0] = m_scaleMat.x;
-	mn_scaleMat[1] = m_scaleMat.y;
-	mn_scaleMat[2] = m_scaleMat.z;
+	mn_scale[0] = m_scale.x;
+	mn_scale[1] = m_scale.y;
+	mn_scale[2] = m_scale.z;
 
-	mn_rotationMatp3[0] = m_rotationMat.x;
-	mn_rotationMatp3[1] = m_rotationMat.y;
-	mn_rotationMatp3[2] = m_rotationMat.z;
+	mn_rotation[0] = m_rotation.x;
+	mn_rotation[1] = m_rotation.y;
+	mn_rotation[2] = m_rotation.z;
 }
 
 Menu::~Menu(void) {
@@ -58,23 +58,33 @@ bool Menu::Update(SDL_GLContext & gl_context) {
 	ImGui_ImplSDL2_NewFrame (m_window);
 	ImGui::NewFrame();
 
-	ImGui::SetNextWindowPos(ImVec2(0.0,0.0));
-	ImGui::SetNextWindowSize(ImVec2(630,680));
+	ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+	ImGui::SetNextWindowSize(ImVec2(630, 680));
 	ImGui::Begin("Menu");
 
 	ImGui::Text("Use this menu to change the parameters of the OPENGL rendering.");
 	ImGui::Text("\n");
 
-	ImGui::InputFloat3("Camera Position",mn_eyeLoc);
+	ImGui::InputFloat3("Camera Position", mn_eyeLoc);
 	ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", m_eyeLoc.x, m_eyeLoc.y, m_eyeLoc.z);
+	ImGui::Text("\n");
+
+	ImGui::InputFloat3("Object Traslation", mn_translation);
+	ImGui::Text("Current Translation Vector: (%.2f, %.2f, %.2f)", m_translation.x, m_translation.y, m_translation.z);
+	ImGui::Text("\n");
+
+	ImGui::InputFloat3("Object Scale", mn_scale);
+	ImGui::Text("Current Translation Vector: (%.2f, %.2f, %.2f)", m_scale.x, m_scale.y, m_scale.z);
+	ImGui::Text("\n");
+
+	ImGui::InputFloat3("Object Rotion", mn_rotation);
+	ImGui::Text("Current Rotation Angles (in Radians): (%.2f, %.2f, %.2f)", m_rotation.x, m_rotation.y, m_rotation.z);
+	ImGui::Text("\n");
 
 	ImGui::Text("\n");
-	
 	if (ImGui::Button("Update")) {
 		updated = true;
-		m_eyeLoc.x = mn_eyeLoc[0];
-		m_eyeLoc.y = mn_eyeLoc[1];
-		m_eyeLoc.z = mn_eyeLoc[2];
+		UpdateVariables();
 	}
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -91,7 +101,7 @@ bool Menu::Update(SDL_GLContext & gl_context) {
 	return updated;
 }
 
-void Menu::HandleEvent(SDL_Event & event){
+void Menu::HandleEvent(SDL_Event & event) {
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
@@ -99,6 +109,36 @@ SDL_Window * Menu::GetWindow(void) {
 	return m_window;
 }
 
-glm::vec3 Menu::GetEyePosition(void) const{
+glm::vec3 Menu::GetEyePosition(void) const {
 	return m_eyeLoc;
+}
+
+glm::vec3 Menu::GetTranslationVec(void) const {
+	return m_translation;
+}
+
+glm::vec3 Menu::GetScaleVec(void) const {
+	return m_scale;
+}
+
+glm::vec3 Menu::GetRotationVec(void) const {
+	return m_rotation;
+}
+
+void Menu::UpdateVariables(void) {
+	m_eyeLoc.x = mn_eyeLoc[0];
+	m_eyeLoc.y = mn_eyeLoc[1];
+	m_eyeLoc.z = mn_eyeLoc[2];
+
+	m_translation.x = mn_translation[0];
+	m_translation.y = mn_translation[1];
+	m_translation.z = mn_translation[2];
+
+	m_scale.x = mn_scale[0];
+	m_scale.y = mn_scale[1];
+	m_scale.z = mn_scale[2];
+
+	m_rotation.x = mn_rotation[0];
+	m_rotation.y = mn_rotation[1];
+	m_rotation.z = mn_rotation[2];
 }

@@ -60,7 +60,7 @@ void Engine::Run(void) {
 			} else if (m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
 				m_menu->HandleEvent(m_event);
 			}
-			
+
 		}
 
 		// Update and render the graphics
@@ -72,8 +72,8 @@ void Engine::Run(void) {
 
 		//update menu and change variables if necessary
 		if (m_menu->Update(m_window->GetContext())) {
-			if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), glm::vec3(0.0, 0.0, 0.0),
-					glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0))) {
+			if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
+					m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
 				m_running = false;
 			}
 		}

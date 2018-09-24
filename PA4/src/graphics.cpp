@@ -99,11 +99,11 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 }
 
 void Graphics::Update(void) {
-	m_object->Update(m_object->GetTranslation(), m_object->GetScale(), m_object->GetRotationAngles()); //Update the object
+	m_object->Update(); //Update the object
 }
 
-bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & tranlationMat, const glm::vec3 & scaleMat,
-		const glm::vec3 rotationAnglesMat) {
+bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
+		const glm::vec3 rotationAnglesVec) {
 
 	delete m_camera;
 	m_camera = nullptr;
@@ -112,6 +112,9 @@ bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos,
 		printf("Camera Failed to Initialize\n");
 		return false;
 	}
+
+	m_object->Update(translationVec, scaleVec, rotationAnglesVec);
+
 	return true;
 }
 

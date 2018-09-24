@@ -55,7 +55,7 @@ Engine * StartEngine(const params & parameters) {
 
 	// Start an engine and run it then cleanup after
 	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
-	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.randomColor)) {
+	if (!engine->Initialize(parameters.eyePos, parameters.objFile, !parameters.randomColor)) {
 		printf("The engine failed to start.\n");
 		delete engine;
 		engine = nullptr;
