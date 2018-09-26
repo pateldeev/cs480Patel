@@ -1,9 +1,9 @@
 #ifndef OBJLOADER_H
 #define OBJLOADER_H
 
-#include <vector>
-
 #include "graphics_headers.h"
+
+#include <vector>
 
 namespace ObjLoader {
 

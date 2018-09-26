@@ -3,6 +3,15 @@
 
 #include "objLoader.h"
 
+#include "graphics_headers.h"
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/color4.h>
+
+#include <vector>
+
 class Object {
 public:
 	Object(const std::string & objFile, bool readColor);
@@ -28,6 +37,9 @@ private:
 	std::vector<unsigned int> Indices;
 	GLuint VB;
 	GLuint IB;
+
+	Assimp::Importer m_importer;
+	const aiScene * m_scene;
 };
 
 #endif /* OBJECT_H */

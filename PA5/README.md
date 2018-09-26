@@ -1,4 +1,4 @@
-# PA5: Object Loader
+# PA5: Assimp Object Loader
 
 ## Dependency Instructions
 To run this project installation of four programs is required: [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), [SDL2](https://wiki.libsdl.org/Tutorials), and [assimp](https://github.com/assimp/assimp/wiki).

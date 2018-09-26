@@ -1,13 +1,22 @@
 #include "object.h"
 
 Object::Object(const std::string & objFile, bool readColor) :
-		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0) {
+		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0), m_scene(nullptr) {
 
+#define USEASSIMP 1
+
+#if USEASSIMP
+
+	m_scene = m_importer.ReadFile(objFile, aiProcess_Triangulate);
+
+#else
 	//load object data
 	if (readColor)
 		ObjLoader::loadObjectWithColor(objFile, (objFile.substr(0, objFile.find_last_of('.')) + ".mtl"), Vertices, Indices);
 	else
 		ObjLoader::loadObjectRandColor(objFile, Vertices, Indices);
+
+#endif
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -21,6 +30,8 @@ Object::Object(const std::string & objFile, bool readColor) :
 Object::~Object(void) {
 	Vertices.clear();
 	Indices.clear();
+
+	delete m_scene;
 }
 
 void Object::Update(void) {
