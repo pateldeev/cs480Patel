@@ -47,12 +47,12 @@ The default behavior can be achieved with the following arguments
 -v vertShader.vert
 -f fragShader.frag
 ```
-<br>
+
 Full Usage with Random Colors:
 ```bash
 ./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag
 ```
-<br>
+
 Extra Credit: Full Usage with Color Loading:
 ```bash
 ./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -c
