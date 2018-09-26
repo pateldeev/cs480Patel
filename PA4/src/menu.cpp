@@ -74,7 +74,7 @@ bool Menu::Update(SDL_GLContext & gl_context) {
 	ImGui::Text("\n");
 
 	ImGui::InputFloat3("Object Scale", mn_scale);
-	ImGui::Text("Current Translation Vector: (%.2f, %.2f, %.2f)", m_scale.x, m_scale.y, m_scale.z);
+	ImGui::Text("Current Scale Vector: (%.2f, %.2f, %.2f)", m_scale.x, m_scale.y, m_scale.z);
 	ImGui::Text("\n");
 
 	ImGui::InputFloat3("Object Rotion", mn_rotation);
