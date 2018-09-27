@@ -27,7 +27,7 @@ struct Vertex {
 	glm::vec3 vertex;
 	glm::vec3 color;
 
-	Vertex(glm::vec3 v, glm::vec3 c) :
+	Vertex(const glm::vec3 & v, const glm::vec3 & c) :
 			vertex(v), color(c) {
 	}
 };

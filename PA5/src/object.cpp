@@ -3,35 +3,52 @@
 Object::Object(const std::string & objFile, bool readColor) :
 		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0), m_scene(nullptr) {
 
-#define USEASSIMP 1
+	std::srand(time(0));
 
-#if USEASSIMP
+	m_scene = m_importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+	const aiMesh * currMesh;
+	glm::vec3 tempVertex, tempColor;
 
-	m_scene = m_importer.ReadFile(objFile, aiProcess_Triangulate);
+	if (!m_scene) {
+		printf("Error loading object: %s \n", m_importer.GetErrorString());
+	} else {
 
-#else
-	//load object data
-	if (readColor)
-		ObjLoader::loadObjectWithColor(objFile, (objFile.substr(0, objFile.find_last_of('.')) + ".mtl"), Vertices, Indices);
-	else
-		ObjLoader::loadObjectRandColor(objFile, Vertices, Indices);
+		for (unsigned int meshNum = 0; meshNum < m_scene->mNumMeshes; ++meshNum) {
+			currMesh = m_scene->mMeshes[meshNum];
 
-#endif
+			for (unsigned int faceNum = 0; faceNum < currMesh->mNumFaces; ++faceNum) {
 
-	glGenBuffers(1, &VB);
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
+				//iterate through each index of face - should be 3 for triangles
+				for (unsigned int indexNum = 0; indexNum < currMesh->mFaces[faceNum].mNumIndices; ++indexNum) {
+					tempVertex = {currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
 
-	glGenBuffers(1, &IB);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+					//get color
+					if(!readColor) {
+						tempColor = glm::vec3(std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX));
+					} else {
+						tempColor = glm::vec3(0.0,0.0,0.0);
+					}
+
+					Vertices.push_back(Vertex(tempVertex, tempColor));
+					Indices.push_back(Vertices.size()-1);
+				}
+
+			}
+		}
+
+		glGenBuffers(1, &VB);
+		glBindBuffer(GL_ARRAY_BUFFER, VB);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
+
+		glGenBuffers(1, &IB);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+	}
 }
 
 Object::~Object(void) {
 	Vertices.clear();
 	Indices.clear();
-
-	delete m_scene;
 }
 
 void Object::Update(void) {
