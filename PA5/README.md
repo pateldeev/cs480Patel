@@ -1,5 +1,11 @@
 # PA5: Assimp Object Loader
 
+## Group
+This is the main repository for the code. The group members include
+  * Jordan Andrieu
+  * Deev Patel
+  * Brandon Richards
+
 ## Dependency Instructions
 To run this project installation of four programs is required: [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), [SDL2](https://wiki.libsdl.org/Tutorials), and [assimp](https://github.com/assimp/assimp/wiki).
 This project uses OpenGL 3.3.

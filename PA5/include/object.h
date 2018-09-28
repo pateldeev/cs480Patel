@@ -1,8 +1,6 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "objLoader.h"
-
 #include "graphics_headers.h"
 
 #include <assimp/Importer.hpp>
@@ -40,6 +38,9 @@ private:
 
 	Assimp::Importer m_importer;
 	const aiScene * m_scene;
+	
+	void loadObjAssimp(const std::string & objFile, bool readColor);
+	
 };
 
 #endif /* OBJECT_H */
