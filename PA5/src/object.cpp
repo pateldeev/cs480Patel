@@ -32,7 +32,6 @@ Object::Object(const std::string & objFile, bool readColor) :
 					Vertices.push_back(Vertex(tempVertex, tempColor));
 					Indices.push_back(Vertices.size()-1);
 				}
-
 			}
 		}
 
