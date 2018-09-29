@@ -1,6 +1,7 @@
 #include "engine.h"
 
-Engine::Engine(const std::string & winName, int winWidth, int winHeight) {
+Engine::Engine(const std::string & winName, int winWidth, int winHeight) :
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr) {
 	m_WINDOW_NAME = winName;
 	m_WINDOW_WIDTH = winWidth;
 	m_WINDOW_HEIGHT = winHeight;
@@ -12,7 +13,7 @@ Engine::~Engine(void) {
 	delete m_menu;
 }
 
-bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool readColor) {
+bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu, bool readColor) {
 	//Start the window
 	m_window = new Window();
 	if (!m_window->Initialize(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT)) {
@@ -27,11 +28,13 @@ bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, b
 		return false;
 	}
 
-	//Start the menu
-	m_menu = new Menu(eyePos);
-	if (!m_menu->Initialize(m_window->GetContext())) {
-		printf("The imgui menu failed to initialize.\n");
-		return false;
+	//Start the menu if necessary
+	if (menu) {
+		m_menu = new Menu(eyePos);
+		if (!m_menu->Initialize(m_window->GetContext())) {
+			printf("The imgui menu failed to initialize. Running without it. \n");
+			m_menu = nullptr;
+		}
 	}
 
 	// No errors
@@ -51,13 +54,15 @@ void Engine::Run(void) {
 			if (m_event.type == SDL_QUIT) {
 				m_running = false;
 			}
+
 			if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
 				m_running = false;
 			}
 
+			//handle event based on correct window location
 			if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
 				Keyboard(m_event);
-			} else if (m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
+			} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
 				m_menu->HandleEvent(m_event);
 			}
 
@@ -71,13 +76,13 @@ void Engine::Run(void) {
 		m_window->Swap();
 
 		//update menu and change variables if necessary
-		if (m_menu->Update(m_window->GetContext())) {
+		if (m_menu && m_menu->Update(m_window->GetContext())) {
 			if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
 					m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
+				printf("Error updating parameters from menu update. Shutting down /n");
 				m_running = false;
 			}
 		}
-
 	}
 }
 

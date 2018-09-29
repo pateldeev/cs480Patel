@@ -1,6 +1,7 @@
 #include "graphics.h"
 
-Graphics::Graphics(void) {
+Graphics::Graphics(void) :
+		m_camera(nullptr), m_shader(nullptr), m_object(nullptr) {
 
 }
 

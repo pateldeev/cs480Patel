@@ -13,7 +13,7 @@ public:
 	Engine(const std::string & winName, int winWidth, int winHeight);
 	Engine(const std::string & name);
 	~Engine(void);
-	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool readColor);
+	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu, bool readColor);
 	void Run(void);
 	void Keyboard(const SDL_Event & event);
 

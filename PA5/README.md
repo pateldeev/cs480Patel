@@ -27,15 +27,16 @@ make
 ```
 
 ## Object Files
-This program can load any object from a correctly formatted .obj file. By default the "objFiles/box.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arugments section for details. <br>
+This program can load any object from a correctly formatted .obj file. By default the "objFiles/box.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
 Note: The object that is loaded is colored randomly unless otherwise specified.
 
 ## Extra Credit - Color Loading
-I also implimented the extra credit color loading via materials. By adding a '-c' flag at runtime, the program will look for a .mtl with the same name as the .obj file to load materials from. It will then load the color version if possible. <br>
-The default box object can be loaded in color with the '-c' flag.
+I also implimented the extra credit color loading via materials. By adding a '-c 1' flag at runtime, the program will look for a .mtl with the same name as the .obj file to load materials from. The .mtl file must be there for color loading to work. <br>
+The default box object can be loaded in color with the '-c 1' flag.
 
 ## IMGUI Menu System
-There is a menu system that runs in a seperate window. The menu system can be used to update various parameters related to object rendering.
+There is a menu system that runs in a seperate window. The menu system can be used to update various parameters related to object rendering. <br>
+This can be turned off using the '-m 0' command line flags. See Command Line Arguments section for deatils.
 
 ## Shaders
 The data of the vertex shader and fragment shader must be located in a file under the '/shaders/' directory. <br>
@@ -44,9 +45,11 @@ By default, the vertex shader file is called 'vertShader.vert' and the fragment 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
   * -l: specify the .obj file to load the object from.
-  * -c: add this flag to load the object with color. There must be corresponding .mtl file with the same name and location as the .obj file.
-  * -v: specify name of vertex shader file in '/shaders/' directory <br>
-  * -f: specify name of fragement shader file in '/shaders/' directory <br>
+  * -m: specify usage of menu (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default.
+  * -v: specify name of vertex shader file in '/shaders/' directory
+  * -f: specify name of fragement shader file in '/shaders/' directory
+  * -c: specify color loading (0 for false, 1 for true - any other argument may cause undefined behavior) - disabled by default
+
 
 The default behavior can be achieved with the following arguments
 ```bash
@@ -57,12 +60,12 @@ The default behavior can be achieved with the following arguments
 
 Full Usage with Random Colors:
 ```bash
-./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag
+./Tutorial -l objFiles/box.obj -m 1 -v vertShader.vert -f fragShader.frag -c 0
 ```
 
 Extra Credit: Full Usage with Color Loading:
 ```bash
-./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -c
+./Tutorial -l objFiles/box.obj -m 1 -v vertShader.vert -f fragShader.frag -c 1
 ```
 
 ## Exiting

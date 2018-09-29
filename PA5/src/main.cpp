@@ -7,12 +7,13 @@ struct params {
 	std::string winName;
 	int winWidth, winHeight;
 	glm::vec3 eyePos;
-	bool randomColor;
+	bool color;
+	bool menu;
 
 	//default parameters
 	params() :
 			objFile("objFiles/box.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA03_Deev_Patel"), winWidth(
-					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), randomColor(true) {
+					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), color(false), menu(true) {
 	}
 };
 
@@ -55,7 +56,7 @@ Engine * StartEngine(const params & parameters) {
 
 	// Start an engine and run it then cleanup after
 	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
-	if (!engine->Initialize(parameters.eyePos, parameters.objFile, !parameters.randomColor)) {
+	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.menu, parameters.color)) {
 		printf("The engine failed to start.\n");
 		delete engine;
 		engine = nullptr;
@@ -91,7 +92,19 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				return false;
 			}
 		} else if (!std::strcmp(argv[i], "-c")) {
-			parameters.randomColor = false;
+			if (++i < argc) {
+				parameters.color = std::atof(argv[i]) != 0;
+			} else {
+				std::cerr << "ERROR: value of -c arguemnt could not be read" << std::endl;
+				return false;
+			}
+		} else if (!std::strcmp(argv[i], "-m")) {
+			if (++i < argc) {
+				parameters.menu = std::atof(argv[i]) != 0;
+			} else {
+				std::cerr << "ERROR: value of -m arguemnt could not be read" << std::endl;
+				return false;
+			}
 		} else {
 			std::cerr << "ERROR: Could not understand command line argument: " << argv[i] << std::endl;
 			return false;
