@@ -51,7 +51,7 @@ void Engine::Run(void) {
 		// Check for events input
 		while (SDL_PollEvent (&m_event)) {
 
-			if (m_event.type == SDL_QUIT) {
+			if (m_event.type == SDL_QUIT) { //only works in no-menu mode
 				m_running = false;
 			}
 
@@ -61,9 +61,19 @@ void Engine::Run(void) {
 
 			//handle event based on correct window location
 			if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
+                            if(m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
+                                m_running = false;
+                            } else {
 				Keyboard(m_event);
+                            }
 			} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
-				m_menu->HandleEvent(m_event);
+                            if(m_event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                                delete m_menu;
+                                m_menu = nullptr;
+                            } else {
+                                m_menu->HandleEvent(m_event);
+
+                            }
 			}
 
 		}
@@ -76,14 +86,16 @@ void Engine::Run(void) {
 		m_window->Swap();
 
 		//update menu and change variables if necessary
-		if (m_menu && m_menu->Update(m_window->GetContext())) {
-			if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
-					m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
-				printf("Error updating parameters from menu update. Shutting down /n");
-				m_running = false;
-			}
-		}
-	}
+            if (m_running != false) {
+                if (m_menu && m_menu->Update(m_window->GetContext())) {
+                    if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
+                            m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
+                        printf("Error updating parameters from menu update. Shutting down /n");
+                        m_running = false;
+                }
+            }
+        }
+    }
 }
 
 void Engine::Keyboard(const SDL_Event & event) {
