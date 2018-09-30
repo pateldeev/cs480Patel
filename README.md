@@ -18,4 +18,7 @@ This builds on PA2 and adds a "moon" cube to orbit and rotate around the already
 ## PA4: Object Loader
 This loads and renders an object exported from blendar as an .obj file. To run this project ```cd PA4``` then follow the instructions in the README.md.
 
+## PA5: Assimp Object Loader
+This uses the assimp library to load and render an object exported from blendar as an .obj file. To run this project ```cd PA5``` then follow the instructions in the README.md.
+
 
