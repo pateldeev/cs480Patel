@@ -1,25 +1,25 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <vector>
-#include <fstream>
-#include <sstream> 
-
 #include "graphics_headers.h"
+
+#include <string>
+#include <vector> 
 
 class Shader {
 public:
+
 	static void SetVertexFile(const std::string & fileName);
 	static void SetFragmentFile(const std::string & fileName);
-	static std::string ShaderLoader(GLenum ShaderType);
+	static std::string LoadSourceCode(const GLenum ShaderType);
 
 	Shader(void);
 	~Shader(void);
 	bool Initialize(void);
 	void Enable(void);
-	bool AddShader(GLenum ShaderType);
+	bool AddShader(const GLenum ShaderType);
 	bool Finalize(void);
-	GLint GetUniformLocation(const char * pUniformName);
+	GLint GetUniformLocation(const char * pUniformName) const;
 
 private:
 	static std::string vertexFile;

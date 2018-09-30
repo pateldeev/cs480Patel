@@ -8,8 +8,8 @@ public:
 	Camera(void);
 	~Camera(void);
 	bool Initialize(int w, int h, const glm::vec3 & eyePos);
-	glm::mat4 GetProjection(void);
-	glm::mat4 GetView(void);
+	glm::mat4 GetProjection(void) const;
+	glm::mat4 GetView(void) const;
 
 private:
 	glm::mat4 projection;

@@ -21,14 +21,15 @@ bool Camera::Initialize(int w, int h, const glm::vec3 & eyePos) {
 			float(w) / float(h), //Aspect Ratio, so Circles stay Circular
 			0.01f, //Distance to the near plane, normally a small value like this
 			100.0f); //Distance to the far plane, 
+
 	return true;
 }
 
-glm::mat4 Camera::GetProjection(void) {
+glm::mat4 Camera::GetProjection(void) const {
 	return projection;
 }
 
-glm::mat4 Camera::GetView(void) {
+glm::mat4 Camera::GetView(void) const {
 	return view;
 }
 

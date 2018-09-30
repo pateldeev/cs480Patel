@@ -1,5 +1,7 @@
 #include "engine.h"
 
+#include <iostream>
+
 //struct for changable parameters
 struct params {
 	std::string objFile;

@@ -1,7 +1,7 @@
 #include <window.h>
 
-Window::Window(void) {
-	gWindow = nullptr;
+Window::Window(void) :
+		gWindow(nullptr) {
 }
 
 Window::~Window(void) {

@@ -3,7 +3,7 @@
 ImVec4 Menu::clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 & rotationAnglesVec) :
-		m_eyeLoc(eyeLoc), m_translation(translationVec), m_scale(scaleVec), m_rotation(rotationAnglesVec) {
+		m_window(nullptr), m_eyeLoc(eyeLoc), m_translation(translationVec), m_scale(scaleVec), m_rotation(rotationAnglesVec) {
 
 	mn_eyeLoc[0] = m_eyeLoc.x;
 	mn_eyeLoc[1] = m_eyeLoc.y;

@@ -1,13 +1,13 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <SDL2/SDL.h>
-
 #include "graphics_headers.h"
 
 #include "camera.h"
 #include "shader.h"
 #include "object.h"
+
+#include <SDL2/SDL.h>
 
 class Graphics {
 public:

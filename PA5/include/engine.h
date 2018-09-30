@@ -1,9 +1,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <sys/time.h>
-#include <assert.h>
-
 #include "window.h"
 #include "graphics.h"
 #include "menu.h"
@@ -26,7 +23,7 @@ private:
 	SDL_Event m_event;
 
 	Graphics * m_graphics;
-	
+
 	Menu * m_menu;
 
 	bool m_running;

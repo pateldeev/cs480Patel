@@ -26,7 +26,7 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 
 	//Check for error
 	if (status != GLEW_OK) {
-		std::cerr << "GLEW Error: " << glewGetErrorString(status) << "\n";
+		printf("GLEW Error: %s \n", glewGetErrorString(status));
 		return false;
 	}
 #endif
@@ -110,7 +110,7 @@ bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos,
 	m_camera = nullptr;
 	m_camera = new Camera();
 	if (!m_camera->Initialize(width, height, eyePos)) {
-		printf("Camera Failed to Initialize\n");
+		printf("Camera Failed to Initialize \n");
 		return false;
 	}
 
@@ -136,10 +136,10 @@ void Graphics::Render(void) {
 	m_object->Render();
 
 	//Get any errors from OpenGL
-	auto error = glGetError();
+	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		std::string val = ErrorString(error);
-		std::cout << "Error initializing OpenGL! " << error << ", " << val << std::endl;
+		printf("Error initializing OpenGL! %d: %s \n", error, val.c_str());
 	}
 }
 
