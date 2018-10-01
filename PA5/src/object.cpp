@@ -91,11 +91,15 @@ void Object::loadObjAssimp(const std::string & objFile, bool readColor) {
 					if(!readColor) {
 						tempColor = glm::vec3(std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX));
 					} else {
-                                            aiMaterial* tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
-                                            aiColor4D diffuse;
-                                            if (AI_SUCCESS == aiGetMaterialColor(tempMat, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
-						tempColor = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
-                                            }
+						const aiMaterial * tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
+						aiColor4D diffuse;
+						
+						if (AI_SUCCESS == aiGetMaterialColor(tempMat, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
+							tempColor = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
+						} else {
+							printf("Error getting material color a vertex. Using default color of black\n");
+							tempColor = glm::vec3(0.0, 0.0, 0.0);
+						}
 					}
 
 					Vertices.push_back(Vertex(tempVertex, tempColor));
