@@ -21,4 +21,6 @@ This loads and renders an object exported from blendar as an .obj file. To run t
 ## PA5: Assimp Object Loader
 This uses the assimp library to load and render an object exported from blendar as an .obj file. To run this project ```cd PA5``` then follow the instructions in the README.md.
 
+## PA6: Object & Texture Loader
+This is still in development.
 
