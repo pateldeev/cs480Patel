@@ -1,6 +1,6 @@
 #include "engine.h"
 
-#include <sys/time.h>
+#include <chrono>
 #include <assert.h>
 
 Engine::Engine(const std::string & winName, int winWidth, int winHeight) :
@@ -46,9 +46,13 @@ bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, b
 
 void Engine::Run(void) {
 	m_running = true;
+	std::chrono::high_resolution_clock::time_point t1;
+	std::chrono::high_resolution_clock::time_point t2;
+
 
 	while (m_running) {
 
+		t1 = std::chrono::high_resolution_clock::now();
 		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
 
 		// Check for events input
@@ -97,6 +101,14 @@ void Engine::Run(void) {
 					m_running = false;
 				}
 			}
+		}
+
+		float FPS = 120; //FPS cap, should obviously add a way to change this later
+		float minFrameTime = 1.0f / FPS * 1000;
+		t2 = std::chrono::high_resolution_clock::now();
+		float duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+		if (duration < minFrameTime) {
+			SDL_Delay(minFrameTime - duration);
 		}
 	}
 }

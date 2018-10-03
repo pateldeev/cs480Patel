@@ -1,7 +1,9 @@
 #include "engine.h"
 
-#include <sys/time.h>
+//#include <sys/time.h>
+#include <chrono>
 #include <assert.h>
+#include <iostream>
 
 Engine::Engine(const std::string & winName, int winWidth, int winHeight) :
 		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr) {
@@ -46,14 +48,17 @@ bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, b
 
 void Engine::Run(void) {
 	m_running = true;
+        std::chrono::high_resolution_clock::time_point t1;
+        std::chrono::high_resolution_clock::time_point t2;
 
 	while (m_running) {
 
-		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
-
+                t1 = std::chrono::high_resolution_clock::now();
+                SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
+                
 		// Check for events input
 		while (SDL_PollEvent (&m_event)) {
-
+                    
 			if (m_event.type == SDL_QUIT) { //only works in no-menu mode
 				m_running = false;
 			}
@@ -91,6 +96,7 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext())) {
+                                //SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
 				if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
 						m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
 					printf("Error updating parameters from menu update. Shutting down /n");
@@ -98,6 +104,12 @@ void Engine::Run(void) {
 				}
 			}
 		}
+                float FPS = 120;
+                t2 = std::chrono::high_resolution_clock::now();
+                double duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+                if (duration < ((1.0 / FPS) * 1000)) {
+                    SDL_Delay((1.0 / FPS * 1000) - duration);
+                }
 	}
 }
 
