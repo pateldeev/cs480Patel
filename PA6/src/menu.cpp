@@ -1,7 +1,5 @@
 #include "menu.h"
 
-ImVec4 Menu::clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
 Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 & rotationAnglesVec) :
 		m_window(nullptr), m_eyeLoc(eyeLoc), m_translation(translationVec), m_scale(scaleVec), m_rotation(rotationAnglesVec) {
 
@@ -29,7 +27,7 @@ Menu::~Menu(void) {
 	SDL_DestroyWindow (m_window);
 }
 
-bool Menu::Initialize(SDL_GLContext & gl_context) {
+bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 	m_window = SDL_CreateWindow("Updator_Menu", 50, 50, 650, 700, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
@@ -49,7 +47,7 @@ bool Menu::Initialize(SDL_GLContext & gl_context) {
 
 }
 
-bool Menu::Update(SDL_GLContext & gl_context) {
+bool Menu::Update(const SDL_GLContext & gl_context) {
 
 	bool updated = false;
 

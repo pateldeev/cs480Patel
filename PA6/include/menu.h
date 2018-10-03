@@ -18,8 +18,8 @@ public:
 			const glm::vec3 & rotationAnglesVec = { 0.0, 0.0, 0.0 });
 	~Menu(void);
 
-	bool Initialize(SDL_GLContext & gl_context);
-	bool Update(SDL_GLContext & gl_context); //returns if menu has been undated
+	bool Initialize(const SDL_GLContext & gl_context);
+	bool Update(const SDL_GLContext & gl_context); //returns if menu has been undated
 
 	void HandleEvent(SDL_Event & event);
 
@@ -45,9 +45,6 @@ private:
 	float mn_rotation[3];
 
 	void UpdateVariables(void);
-
-	static ImVec4 clear_color;
-
 };
 
 #endif /* MENU_H */

@@ -46,44 +46,18 @@ bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, b
 
 void Engine::Run(void) {
 	m_running = true;
-	std::chrono::high_resolution_clock::time_point t1;
-	std::chrono::high_resolution_clock::time_point t2;
 
+	std::chrono::high_resolution_clock::time_point t1, t2;
+	const float FPS = 120; //FPS cap, should obviously add a way to change this later
+	const float minFrameTime = 1.0f / FPS * 1000;
+	float duration;
 
 	while (m_running) {
 
 		t1 = std::chrono::high_resolution_clock::now();
 		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
 
-		// Check for events input
-		while (SDL_PollEvent (&m_event)) {
-
-			if (m_event.type == SDL_QUIT) { //only works in no-menu mode
-				m_running = false;
-			}
-
-			if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
-				m_running = false;
-			}
-
-			//handle event based on correct window location
-			if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
-				if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
-					m_running = false;
-				} else {
-					Keyboard(m_event);
-				}
-			} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
-				if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) {
-					delete m_menu;
-					m_menu = nullptr;
-				} else {
-					m_menu->HandleEvent(m_event);
-
-				}
-			}
-
-		}
+		EventChecker(); // Check for events input
 
 		// Update and render the graphics
 		m_graphics->Update();
@@ -103,20 +77,47 @@ void Engine::Run(void) {
 			}
 		}
 
-		float FPS = 120; //FPS cap, should obviously add a way to change this later
-		float minFrameTime = 1.0f / FPS * 1000;
+		//enforce max frame rate
 		t2 = std::chrono::high_resolution_clock::now();
-		float duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-		if (duration < minFrameTime) {
+		duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
+		if (duration < minFrameTime)
 			SDL_Delay(minFrameTime - duration);
+	}
+}
+
+void Engine::HandleEvent(const SDL_Event & event) {
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE) {
+			m_running = false;
 		}
 	}
 }
 
-void Engine::Keyboard(const SDL_Event & event) {
-	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_ESCAPE) {
+void Engine::EventChecker(void) {
+	while (SDL_PollEvent (&m_event)) {
+
+		if (m_event.type == SDL_QUIT) { //only works in no-menu mode
 			m_running = false;
+		}
+
+		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
+			m_running = false;
+		}
+
+		//handle event based on correct window location
+		if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
+			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
+				m_running = false;
+			} else {
+				HandleEvent(m_event);
+			}
+		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
+			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) {
+				delete m_menu;
+				m_menu = nullptr;
+			} else {
+				m_menu->HandleEvent(m_event);
+			}
 		}
 	}
 }

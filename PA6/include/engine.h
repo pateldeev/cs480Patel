@@ -12,7 +12,6 @@ public:
 	~Engine(void);
 	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu, bool readColor);
 	void Run(void);
-	void Keyboard(const SDL_Event & event);
 
 private:
 	// Window related variables
@@ -27,6 +26,9 @@ private:
 	Menu * m_menu;
 
 	bool m_running;
+	
+	void HandleEvent(const SDL_Event & event);
+	void EventChecker(void);
 
 };
 
