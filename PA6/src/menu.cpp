@@ -99,7 +99,7 @@ bool Menu::Update(const SDL_GLContext & gl_context) {
 	return updated;
 }
 
-void Menu::HandleEvent(SDL_Event & event) {
+void Menu::HandleEvent(SDL_Event event) {
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 

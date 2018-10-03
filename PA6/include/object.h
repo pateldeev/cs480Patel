@@ -12,7 +12,7 @@
 
 class Object {
 public:
-	Object(const std::string & objFile, bool readColor);
+	Object(const std::string & objFile, bool readColor);	
 	~Object(void);
 	void Update(void);
 	void Update(const glm::vec3 & translation, const glm::vec3 & scale, const glm::vec3 & rotationAngles);

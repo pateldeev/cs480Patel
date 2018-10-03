@@ -27,11 +27,12 @@ make
 
 ## Object Files
 This program can load any object from a correctly formatted .obj file. By default the "objFiles/box.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
-Note: The object that is loaded is colored randomly unless otherwise specified.
+Note: The object that is assumed to have an associated .mtl file unless otherwise specified. 
 
-## Extra Credit - Color Loading
-We also implimented the extra credit color loading via materials. By adding the '-c 1' flag at runtime, the program will look for a .mtl with the same name as the .obj file to load materials from. The .mtl file must be there for color loading to work. <br>
-The default box object can be loaded in color with the '-c 1' flag.
+## Color Loading
+Color loading is done via materials and textures. By adding the '-c 1' flag at runtime, the program will look for a .mtl with the same name as the .obj file to load materials from. The .mtl file must be there for color loading to work. If color loading is turned off, random colors will be choosen for each face. <br>
+
+## Textures
 
 ## IMGUI Menu System
 There is a menu system that runs in a seperate window. The menu system can be used to update various parameters related to object rendering. <br>
@@ -47,7 +48,7 @@ The following command line arguments can be used to change the default behavior 
   * -v: specify file with source code of vertex shader in "shaders/" directory
   * -f: specify file with source code of fragement shader in "shaders/" directory
   * -m: specify usage of menu (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default.
-  * -c: specify color loading (0 for false, 1 for true - any other argument may cause undefined behavior) - disabled by default
+  * -c: specify color loading (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default
 
 The default behavior can be achieved with the following arguments
 ```bash
@@ -55,15 +56,10 @@ The default behavior can be achieved with the following arguments
 -v vertShader.vert
 -f fragShader.frag
 -m 1
--c 0
+-c 1
 ```
 
-Full Usage with Random Colors:
-```bash
-./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -m 1 -c 0
-```
-
-Extra Credit: Full Usage with Color Loading:
+Full Usage with Textures:
 ```bash
 ./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -m 1 -c 1
 ```

@@ -1,5 +1,7 @@
 #include "object.h"
 
+#include <Magick++.h>
+
 Object::Object(const std::string & objFile, bool readColor) :
 		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0), m_scene(nullptr) {
 
@@ -93,7 +95,7 @@ void Object::loadObjAssimp(const std::string & objFile, bool readColor) {
 					} else {
 						const aiMaterial * tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
 						aiColor4D diffuse;
-						
+
 						if (AI_SUCCESS == aiGetMaterialColor(tempMat, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
 							tempColor = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
 						} else {

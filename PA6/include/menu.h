@@ -21,7 +21,7 @@ public:
 	bool Initialize(const SDL_GLContext & gl_context);
 	bool Update(const SDL_GLContext & gl_context); //returns if menu has been undated
 
-	void HandleEvent(SDL_Event & event);
+	void HandleEvent(SDL_Event event);
 
 	SDL_Window * GetWindow(void);
 

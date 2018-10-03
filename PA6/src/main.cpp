@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <Magick++.h>
-
 //struct for changable parameters
 struct params {
 	std::string objFile;
@@ -17,7 +15,7 @@ struct params {
 	//default parameters
 	params() :
 			objFile("objFiles/box.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA03_Deev_Patel"), winWidth(
-					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), color(false), menu(true) {
+					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), color(true), menu(true) {
 	}
 };
 
