@@ -11,12 +11,12 @@ To run this project installation for the following is required: [GLEW](http://gl
 This project uses OpenGL 3.3.
 
 ### Ubuntu 18.04
-```bash 
+```bash
  sudo apt-get install libglew-dev libglm-dev libsdl2-dev libassimp-dev libmagick++-dev
 ```
 
 ## Building and Running - CMake Instructions
-The building of the project is done using CMake. 
+The building of the project is done using CMake.
 ```bash
 mkdir build
 cd build
@@ -27,28 +27,24 @@ make
 
 ## Object Files
 This program can load any object from a correctly formatted .obj file. By default the "objFiles/box.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
-Note: The object that is assumed to have an associated .mtl file unless otherwise specified. 
-
-## Color Loading
-Color loading is done via materials and textures. By adding the '-c 1' flag at runtime, the program will look for a .mtl with the same name as the .obj file to load materials from. The .mtl file must be there for color loading to work. If color loading is turned off, random colors will be choosen for each face. <br>
+Note: The object that is assumed to have an associated .mtl file unless otherwise specified.
 
 ## Textures
 
 ## IMGUI Menu System
-There is a menu system that runs in a seperate window. The menu system can be used to update various parameters related to object rendering. <br>
-This can be turned off using the '-m 0' command line flags. See Command Line Arguments section for deatils.
+There is a menu system that runs in a separate window. The menu system can be used to update various parameters related to object rendering. <br>
+This can be turned off using the '-m 0' command line flags. See Command Line Arguments section for details.
 
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
-By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arugments section for details.
+By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arguments section for details.
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
   * -l: specify the name of .obj file to load the object from.
   * -v: specify file with source code of vertex shader in "shaders/" directory
-  * -f: specify file with source code of fragement shader in "shaders/" directory
+  * -f: specify file with source code of fragment shader in "shaders/" directory
   * -m: specify usage of menu (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default.
-  * -c: specify color loading (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default
 
 The default behavior can be achieved with the following arguments
 ```bash
@@ -56,13 +52,9 @@ The default behavior can be achieved with the following arguments
 -v vertShader.vert
 -f fragShader.frag
 -m 1
--c 1
 ```
 
-Full Usage with Textures:
-```bash
-./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -m 1 -c 1
-```
+Full Usage with Textures
 
 ## Exiting
 To correctly exit the program, press the ESC key.
