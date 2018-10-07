@@ -26,10 +26,11 @@ make
 ```
 
 ## Object Files
-This program can load any object from a correctly formatted .obj file. By default the "objFiles/box.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
+This program can load any object from a correctly formatted .obj file. By default the "objFiles/budda.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
 Note: The object that is assumed to have an associated .mtl file unless otherwise specified.
 
 ## Textures
+All objects being loaded must have a texture. If the obj file does not have texture coordiantes, the object will not be loaded. The texture files must be contained in the same directory as the .obj and .mtl files.
 
 ## IMGUI Menu System
 There is a menu system that runs in a separate window. The menu system can be used to update various parameters related to object rendering. <br>
@@ -54,7 +55,10 @@ The default behavior can be achieved with the following arguments
 -m 1
 ```
 
-Full Usage with Textures
+Full Usage - must have Textures
+```bash
+./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -m 1
+```
 
 ## Exiting
 To correctly exit the program, press the ESC key.

@@ -1,21 +1,33 @@
 #include "object.h"
 
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/color4.h>
+
 #include <Magick++.h>
 
+#include <algorithm>
+
 Object::Object(const std::string & objFile) :
-		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0), m_scene(nullptr) {
+		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0) {
 
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
-	loadObjAssimp(objFile);
-	loadTexture("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA6/objFiles/checker.jpg", texture);
+	if (!loadObjAssimp(objFile)) {
+		printf("Object not properly loaded \n");
+		return;
+	}
+
+	loadTextures(objFile);
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
 
-	glGenBuffers(1, &IB);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+	for (int i = 0; i < IB.size(); ++i) {
+		glGenBuffers(1, &IB[i]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices[i].size(), &Indices[i][0], GL_STATIC_DRAW);
+	}
 }
 
 Object::~Object(void) {
@@ -46,13 +58,14 @@ void Object::Render(void) {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+	for (int i = 0; i < IB.size(); ++i) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	
-	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+		glActiveTexture (GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
+		glDrawElements(GL_TRIANGLES, Indices[i].size(), GL_UNSIGNED_INT, 0);
+	}
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
@@ -73,23 +86,28 @@ glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
 }
 
-void Object::loadObjAssimp(const std::string & objFile) {
-
-	m_scene = m_importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+bool Object::loadObjAssimp(const std::string & objFile) {
+	Assimp::Importer importer;
+	const aiScene * scene = importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
-	glm::vec3 tempVertex;
-	glm::vec2 tempUV;
 
-	if (!m_scene) {
-		printf("Error loading object: %s \n", m_importer.GetErrorString());
+	glm::vec3 tempVertex;
+
+	glm::vec2 tempUV;
+	const aiVector3D * uv;
+	const aiMaterial * tempMat;
+	aiString path;
+
+	if (!scene) {
+		printf("Error loading object: %s \n", importer.GetErrorString());
 	} else {
 
-		for (unsigned int meshNum = 0; meshNum < m_scene->mNumMeshes; ++meshNum) {
-			currMesh = m_scene->mMeshes[meshNum];
+		for (unsigned int meshNum = 0; meshNum < scene->mNumMeshes; ++meshNum) {
+			currMesh = scene->mMeshes[meshNum];
 
 			if (!currMesh->HasTextureCoords(0)) {
 				printf("Object has no texture coordinates. Cannot load object \n");
-				return;
+				return false;
 			}
 
 			for (unsigned int faceNum = 0; faceNum < currMesh->mNumFaces; ++faceNum) {
@@ -98,33 +116,58 @@ void Object::loadObjAssimp(const std::string & objFile) {
 				for (unsigned int indexNum = 0; indexNum < currMesh->mFaces[faceNum].mNumIndices; ++indexNum) {
 					tempVertex = {currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
 
-					const aiVector3D uv = currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
-					tempUV = glm::vec2(uv.x,uv.y);
+					uv = &currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
+					tempUV = glm::vec2(uv->x,uv->y);
 
-					const aiMaterial * tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
-					aiString path;
+					//get texture file name
+					tempMat = scene->mMaterials[currMesh->mMaterialIndex];
 					tempMat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 
+					//check if texture file has already been encourned and add new one if needed
+					const std::vector<aiString>::const_iterator nameLoc = std::find(m_textureFiles.begin(), m_textureFiles.end(), path);
+					std::size_t textureIndex = nameLoc - m_textureFiles.begin();
+					if(textureIndex == m_textureFiles.size()) {
+						m_textureFiles.push_back(path);
+						GLuint newIB;
+						IB.push_back(newIB);
+						std::vector<unsigned int> newIndicyArr;
+						Indices.push_back(newIndicyArr);
+					}
+
+					//add vertex and index to correct texture and vertex
 					Vertices.push_back(Vertex(tempVertex, tempUV));
-					Indices.push_back(Vertices.size()-1);
+					Indices[textureIndex].push_back(Vertices.size()-1);
 				}
 			}
 		}
 	}
+	return true;
 }
 
-void Object::loadTexture(const char * file, GLuint & texture){
-	Magick::Blob blob;
+void Object::loadTextures(const std::string & objFile) {
+	GLuint tempTexture;
 	Magick::Image * img;
-	img = new Magick::Image(file);
-	img->write(&blob, "RGBA");
-	
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,img->columns(), img->rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	
-	delete img;
+	std::string fileNameStart = "";
+
+	//get leading information on filename
+	std::size_t tempPos = objFile.find_first_of('/');
+	if (tempPos != std::string::npos)
+		fileNameStart = objFile.substr(0, tempPos + 1);
+
+	for (const aiString & path : m_textureFiles) {
+		Magick::Blob blob;
+		img = new Magick::Image(std::string(fileNameStart + path.C_Str()).c_str());
+		img->write(&blob, "RGBA");
+
+		//store textures on GPU
+		glGenTextures(1, &tempTexture);
+		glBindTexture(GL_TEXTURE_2D, tempTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->columns(), img->rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		delete img;
+
+		m_textures.push_back(tempTexture);
+	}
 }

@@ -4,9 +4,6 @@
 #include "graphics_headers.h"
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <assimp/color4.h>
 
 #include <vector>
 
@@ -32,20 +29,16 @@ private:
 	glm::vec3 m_rotationAngles;
 
 	std::vector<Vertex> Vertices;
-	std::vector<unsigned int> Indices;
+	std::vector<std::vector<unsigned int>> Indices; //holds indicy set for each texture
 	
 	GLuint VB;
-	GLuint IB;
+	std::vector<GLuint> IB; //vector of index set buffers
 	
-	std::vector<GLuint> m_textures;
-	GLuint texture;
+	std::vector<GLuint> m_textures; //vector of texture locations on GPU
+	std::vector<aiString> m_textureFiles; //vector of text file names
 
-	Assimp::Importer m_importer;
-	const aiScene * m_scene;
-
-	void loadObjAssimp(const std::string & objFile);
-	
-	void loadTexture(const char * file, GLuint & texture);
+	bool loadObjAssimp(const std::string & objFile);
+	void loadTextures(const std::string & objFile);
 
 };
 

@@ -22,7 +22,7 @@ public:
 	glm::vec3 GetEyePos(void) const;
 
 private:
-	std::string ErrorString(GLenum error) const;
+	std::string ErrorString(const GLenum error) const;
 
 	Camera * m_camera;
 	Shader * m_shader;

@@ -143,7 +143,7 @@ void Graphics::Render(void) {
 	}
 }
 
-std::string Graphics::ErrorString(GLenum error) const {
+std::string Graphics::ErrorString(const GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
 	else if (error == GL_INVALID_VALUE)
