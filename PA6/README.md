@@ -57,7 +57,7 @@ The default behavior can be achieved with the following arguments
 
 Full Usage - must have Textures
 ```bash
-./Tutorial -l objFiles/budda/budda.obj -v vertShader.vert -f fragShader.frag -m 1
+./Tutorial -l objFiles/buddha/buddha.obj -v vertShader.vert -f fragShader.frag -m 1
 ```
 
 ## Exiting
