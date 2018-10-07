@@ -11,7 +11,7 @@ Graphics::~Graphics(void) {
 	delete m_shader;
 }
 
-bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile, bool readColor) {
+bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -44,7 +44,7 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	}
 
 	//Create the objects
-	m_object = new Object(objFile, readColor);
+	m_object = new Object(objFile);
 
 	//Set up the shaders
 	m_shader = new Shader();
@@ -156,5 +156,8 @@ std::string Graphics::ErrorString(GLenum error) const {
 		return "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command.";
 	else
 		return "None";
+}
 
+glm::vec3 Graphics::GetEyePos(void) const{
+	return m_camera->GetEyePos();
 }

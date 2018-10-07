@@ -1,16 +1,16 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "menu.h"
 #include "window.h"
 #include "graphics.h"
-#include "menu.h"
 
 class Engine {
 public:
 	Engine(const std::string & winName, int winWidth, int winHeight);
 	Engine(const std::string & name);
 	~Engine(void);
-	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu, bool readColor);
+	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu);
 	void Run(void);
 
 private:
@@ -30,6 +30,8 @@ private:
 	void HandleEvent(const SDL_Event & event);
 	void EventChecker(void);
 
+	bool StartMenu(const glm::vec3 & eyePos);
+	void CloseMenu(void);
 };
 
 #endif // ENGINE_H

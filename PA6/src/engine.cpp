@@ -16,7 +16,7 @@ Engine::~Engine(void) {
 	delete m_menu;
 }
 
-bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu, bool readColor) {
+bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu) {
 	//Start the window
 	m_window = new Window();
 	if (!m_window->Initialize(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT)) {
@@ -26,18 +26,14 @@ bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, b
 
 	//Start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos, objFile, readColor)) {
+	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos, objFile)) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
 
 	//Start the menu if necessary
 	if (menu) {
-		m_menu = new Menu(eyePos);
-		if (!m_menu->Initialize(m_window->GetContext())) {
-			printf("The imgui menu failed to initialize. Running without it. \n");
-			m_menu = nullptr;
-		}
+		StartMenu(m_graphics->GetEyePos());
 	}
 
 	// No errors
@@ -89,6 +85,11 @@ void Engine::HandleEvent(const SDL_Event & event) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
+		} else if (event.key.keysym.sym == SDLK_m) {
+			if (m_menu)
+				CloseMenu();
+			else
+				StartMenu(m_graphics->GetEyePos());
 		}
 	}
 }
@@ -113,11 +114,26 @@ void Engine::EventChecker(void) {
 			}
 		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) {
-				delete m_menu;
-				m_menu = nullptr;
+				CloseMenu();
 			} else {
 				m_menu->HandleEvent(m_event);
 			}
 		}
 	}
 }
+
+bool Engine::StartMenu(const glm::vec3 & eyePos) {
+	m_menu = new Menu(eyePos);
+	if (!m_menu->Initialize(m_window->GetContext())) {
+		printf("The imgui menu failed to initialize. Running without it. \n");
+		m_menu = nullptr;
+		return false;
+	}
+	return true;
+}
+
+void Engine::CloseMenu(void) {
+	delete m_menu;
+	m_menu = nullptr;
+}
+

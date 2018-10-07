@@ -9,13 +9,12 @@ struct params {
 	std::string winName;
 	int winWidth, winHeight;
 	glm::vec3 eyePos;
-	bool color;
 	bool menu;
 
 	//default parameters
 	params() :
-			objFile("objFiles/box.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA03_Deev_Patel"), winWidth(
-					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), color(true), menu(true) {
+			objFile("objFiles/buddha.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName("PA03_Deev_Patel"), winWidth(
+					1600), winHeight(1200), eyePos(0.0, 8.0, -16.0), menu(true) {
 	}
 };
 
@@ -58,7 +57,7 @@ Engine * StartEngine(const params & parameters) {
 
 	// Start an engine and run it then cleanup after
 	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
-	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.menu, parameters.color)) {
+	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.menu)) {
 		printf("The engine failed to start.\n");
 		delete engine;
 		engine = nullptr;
@@ -91,13 +90,6 @@ bool ParseCLArgs(int argc, char * argv[], params & parameters) {
 				parameters.objFile = argv[i];
 			} else {
 				std::cerr << "ERROR: value of -l arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-c")) {
-			if (++i < argc) {
-				parameters.color = std::atof(argv[i]) != 0;
-			} else {
-				std::cerr << "ERROR: value of -c arguemnt could not be read" << std::endl;
 				return false;
 			}
 		} else if (!std::strcmp(argv[i], "-m")) {

@@ -12,7 +12,7 @@
 
 class Object {
 public:
-	Object(const std::string & objFile, bool readColor);	
+	Object(const std::string & objFile);	
 	~Object(void);
 	void Update(void);
 	void Update(const glm::vec3 & translation, const glm::vec3 & scale, const glm::vec3 & rotationAngles);
@@ -33,13 +33,19 @@ private:
 
 	std::vector<Vertex> Vertices;
 	std::vector<unsigned int> Indices;
+	
 	GLuint VB;
 	GLuint IB;
+	
+	std::vector<GLuint> m_textures;
+	GLuint texture;
 
 	Assimp::Importer m_importer;
 	const aiScene * m_scene;
 
-	void loadObjAssimp(const std::string & objFile, bool readColor);
+	void loadObjAssimp(const std::string & objFile);
+	
+	void loadTexture(const char * file, GLuint & texture);
 
 };
 

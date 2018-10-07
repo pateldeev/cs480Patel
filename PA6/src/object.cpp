@@ -2,10 +2,12 @@
 
 #include <Magick++.h>
 
-Object::Object(const std::string & objFile, bool readColor) :
+Object::Object(const std::string & objFile) :
 		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0), m_scene(nullptr) {
 
-	loadObjAssimp(objFile, readColor);
+	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
+	loadObjAssimp(objFile);
+	loadTexture("/home/dp/Desktop/CS480_Workspace/cs480Patel/PA6/objFiles/checker.jpg", texture);
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -42,10 +44,13 @@ void Object::Render(void) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	
 	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(0);
@@ -68,13 +73,12 @@ glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
 }
 
-void Object::loadObjAssimp(const std::string & objFile, bool readColor) {
-
-	std::srand(time(0));
+void Object::loadObjAssimp(const std::string & objFile) {
 
 	m_scene = m_importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
-	glm::vec3 tempVertex, tempColor;
+	glm::vec3 tempVertex;
+	glm::vec2 tempUV;
 
 	if (!m_scene) {
 		printf("Error loading object: %s \n", m_importer.GetErrorString());
@@ -83,31 +87,44 @@ void Object::loadObjAssimp(const std::string & objFile, bool readColor) {
 		for (unsigned int meshNum = 0; meshNum < m_scene->mNumMeshes; ++meshNum) {
 			currMesh = m_scene->mMeshes[meshNum];
 
+			if (!currMesh->HasTextureCoords(0)) {
+				printf("Object has no texture coordinates. Cannot load object \n");
+				return;
+			}
+
 			for (unsigned int faceNum = 0; faceNum < currMesh->mNumFaces; ++faceNum) {
 
 				//iterate through each index of face - should be 3 for triangles
 				for (unsigned int indexNum = 0; indexNum < currMesh->mFaces[faceNum].mNumIndices; ++indexNum) {
 					tempVertex = {currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
 
-					//get color
-					if(!readColor) {
-						tempColor = glm::vec3(std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX), std::rand() / float(RAND_MAX));
-					} else {
-						const aiMaterial * tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
-						aiColor4D diffuse;
+					const aiVector3D uv = currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
+					tempUV = glm::vec2(uv.x,uv.y);
 
-						if (AI_SUCCESS == aiGetMaterialColor(tempMat, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) {
-							tempColor = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
-						} else {
-							printf("Error getting material color a vertex. Using default color of black\n");
-							tempColor = glm::vec3(0.0, 0.0, 0.0);
-						}
-					}
+					const aiMaterial * tempMat = m_scene->mMaterials[currMesh->mMaterialIndex];
+					aiString path;
+					tempMat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 
-					Vertices.push_back(Vertex(tempVertex, tempColor));
+					Vertices.push_back(Vertex(tempVertex, tempUV));
 					Indices.push_back(Vertices.size()-1);
 				}
 			}
 		}
 	}
+}
+
+void Object::loadTexture(const char * file, GLuint & texture){
+	Magick::Blob blob;
+	Magick::Image * img;
+	img = new Magick::Image(file);
+	img->write(&blob, "RGBA");
+	
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,img->columns(), img->rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	
+	delete img;
 }

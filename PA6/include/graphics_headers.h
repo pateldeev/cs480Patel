@@ -22,11 +22,11 @@
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 
 struct Vertex {
-	glm::vec3 vertex;
-	glm::vec3 color;
+	glm::vec3 m_vertex;
+	glm::vec2 m_texture;
 
-	Vertex(const glm::vec3 & v, const glm::vec3 & c) :
-			vertex(v), color(c) {
+	Vertex(const glm::vec3 & vertex, const glm::vec2 & texture) :
+			m_vertex(vertex), m_texture(texture) {
 	}
 };
 
