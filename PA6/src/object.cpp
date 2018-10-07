@@ -128,8 +128,6 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					std::size_t textureIndex = nameLoc - m_textureFiles.begin();
 					if(textureIndex == m_textureFiles.size()) {
 						m_textureFiles.push_back(path);
-						GLuint newIB;
-						IB.push_back(newIB);
 						std::vector<unsigned int> newIndicyArr;
 						Indices.push_back(newIndicyArr);
 					}
@@ -139,6 +137,8 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					Indices[textureIndex].push_back(Vertices.size()-1);
 				}
 			}
+			
+			IB.resize(m_textureFiles.size());
 		}
 	}
 	return true;
@@ -150,7 +150,7 @@ void Object::loadTextures(const std::string & objFile) {
 	std::string fileNameStart = "";
 
 	//get leading information on filename
-	std::size_t tempPos = objFile.find_first_of('/');
+	std::size_t tempPos = objFile.find_last_of('/');
 	if (tempPos != std::string::npos)
 		fileNameStart = objFile.substr(0, tempPos + 1);
 

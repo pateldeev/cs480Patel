@@ -8,6 +8,7 @@
 #include "object.h"
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 class Graphics {
 public:
@@ -31,7 +32,7 @@ private:
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;
 
-	Object * m_object;
+	std::vector<Object *> m_objects;
 };
 
 #endif /* GRAPHICS_H */

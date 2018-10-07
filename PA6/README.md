@@ -26,7 +26,7 @@ make
 ```
 
 ## Object Files
-This program can load any object from a correctly formatted .obj file. By default the "objFiles/budda.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
+This program can load any object from a correctly formatted .obj file. By default the "objFiles/budda/budda.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
 Note: The object that is assumed to have an associated .mtl file unless otherwise specified.
 
 ## Textures
@@ -49,7 +49,7 @@ The following command line arguments can be used to change the default behavior 
 
 The default behavior can be achieved with the following arguments
 ```bash
--l objFiles/box.obj
+-l objFiles/budda/budda.obj
 -v vertShader.vert
 -f fragShader.frag
 -m 1
@@ -57,7 +57,7 @@ The default behavior can be achieved with the following arguments
 
 Full Usage - must have Textures
 ```bash
-./Tutorial -l objFiles/box.obj -v vertShader.vert -f fragShader.frag -m 1
+./Tutorial -l objFiles/budda/budda.obj -v vertShader.vert -f fragShader.frag -m 1
 ```
 
 ## Exiting

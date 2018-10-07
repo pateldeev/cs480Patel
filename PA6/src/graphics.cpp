@@ -1,12 +1,14 @@
 #include "graphics.h"
 
 Graphics::Graphics(void) :
-		m_camera(nullptr), m_shader(nullptr), m_object(nullptr) {
+		m_camera(nullptr), m_shader(nullptr) {
 
 }
 
 Graphics::~Graphics(void) {
-	delete m_object;
+	for (Object * obj : m_objects)
+		delete obj;
+
 	delete m_camera;
 	delete m_shader;
 }
@@ -44,8 +46,8 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	}
 
 	//Create the objects
-	m_object = new Object(objFile);
-
+	m_objects.push_back(new Object(objFile));
+	
 	//Set up the shaders
 	m_shader = new Shader();
 	if (!m_shader->Initialize()) {
@@ -100,7 +102,8 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 }
 
 void Graphics::Update(void) {
-	m_object->Update(); //Update the object
+	for (Object * obj : m_objects)
+		obj->Update();
 }
 
 bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
@@ -114,7 +117,7 @@ bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos,
 		return false;
 	}
 
-	m_object->Update(translationVec, scaleVec, rotationAnglesVec);
+	m_objects[0]->Update(translationVec, scaleVec, rotationAnglesVec);
 
 	return true;
 }
@@ -131,9 +134,11 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-	//Render the object
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_object->GetModel()));
-	m_object->Render();
+	//Render each object
+	for (Object * obj : m_objects) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj->GetModel()));
+		obj->Render();
+	}
 
 	//Get any errors from OpenGL
 	GLenum error = glGetError();
@@ -158,6 +163,6 @@ std::string Graphics::ErrorString(const GLenum error) const {
 		return "None";
 }
 
-glm::vec3 Graphics::GetEyePos(void) const{
+glm::vec3 Graphics::GetEyePos(void) const {
 	return m_camera->GetEyePos();
 }
