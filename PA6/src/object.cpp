@@ -32,6 +32,8 @@ Object::Object(const std::string & objFile) :
 
 Object::~Object(void) {
 	Vertices.clear();
+	for(std::vector<unsigned int> & temp : Indices)
+		temp.clear();
 	Indices.clear();
 }
 
@@ -63,9 +65,10 @@ void Object::Render(void) {
 
 		glActiveTexture (GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
-
+		
 		glDrawElements(GL_TRIANGLES, Indices[i].size(), GL_UNSIGNED_INT, 0);
 	}
+	
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
@@ -156,7 +159,7 @@ void Object::loadTextures(const std::string & objFile) {
 
 	for (const aiString & path : m_textureFiles) {
 		Magick::Blob blob;
-		img = new Magick::Image(std::string(fileNameStart + path.C_Str()).c_str());
+		img = new Magick::Image(std::string(fileNameStart + path.C_Str()));
 		img->write(&blob, "RGBA");
 
 		//store textures on GPU

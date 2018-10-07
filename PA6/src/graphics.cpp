@@ -43,8 +43,8 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	if (!m_camera->Initialize(width, height, eyePos)) {
 		printf("Camera Failed to Initialize\n");
 		return false;
-	}
-
+	}	
+	
 	//Create the objects
 	m_objects.push_back(new Object(objFile));
 	
@@ -97,6 +97,10 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	//enable depth testing
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_LESS);
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	return true;
 }
