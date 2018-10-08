@@ -91,7 +91,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			else
 				StartMenu(m_graphics->GetEyePos());
 		}
-	}
+	} 
 }
 
 void Engine::EventChecker(void) {
@@ -101,7 +101,7 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
+		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym== SDLK_ESCAPE) {
 			m_running = false;
 		}
 
@@ -113,12 +113,12 @@ void Engine::EventChecker(void) {
 				HandleEvent(m_event);
 			}
 		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
-			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) {
+			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m)) {
 				CloseMenu();
 			} else {
 				m_menu->HandleEvent(m_event);
 			}
-		}
+		} 
 	}
 }
 
