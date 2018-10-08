@@ -1,4 +1,4 @@
-# PA6: Object & Texture Loader - STILL DEVELOPING
+# PA6: Object & Texture Loader
 
 ## Group
 This is the main repository for the code. The group members include
@@ -7,7 +7,7 @@ This is the main repository for the code. The group members include
   * Braeden Richards
 
 ## Dependency Instructions
-To run this project installation for the following is required: [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), [SDL2](https://wiki.libsdl.org/Tutorials), [assimp](https://github.com/assimp/assimp/wiki), and [magic](http://www.imagemagick.org/Magick%2B%2B/).
+To run this project installation for the following is required: [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), [SDL2](https://wiki.libsdl.org/Tutorials), [assimp](https://github.com/assimp/assimp/wiki), and [magick++](http://www.imagemagick.org/Magick%2B%2B/).
 This project uses OpenGL 3.3.
 
 ### Ubuntu 18.04
@@ -27,10 +27,10 @@ make
 
 ## Object Files
 This program can load any object from a correctly formatted .obj file. By default the "objFiles/budda/budda.obj" file is loaded. This can be changed using the '-l' command line flag. See Command Line Arguments section for details. <br>
-Note: The object that is assumed to have an associated .mtl file unless otherwise specified.
+Note: The object is assumed to have an associated .mtl file and textures.
 
 ## Textures
-All objects being loaded must have a texture. If the obj file does not have texture coordiantes, the object will not be loaded. The texture files must be contained in the same directory as the .obj and .mtl files.
+All objects being loaded must have a texture. If the obj file does not have any texture coordiantes, the object will not be loaded. The texture files must be contained in the same directory as the .obj and .mtl files.
 
 ## IMGUI Menu System
 There is a menu system that runs in a separate window. The menu system can be used to update various parameters related to object rendering. <br>
@@ -39,6 +39,13 @@ This can be turned off using the '-m 0' command line flags. See Command Line Arg
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
 By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arguments section for details.
+
+## Keyboard & Mouse Controls
+IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br><br>
+* Keyboard controls
+  * m: toggle (open/close) IMGUI menu window
+* Exiting
+  * ESC: Will properly close all windows and exit program
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
@@ -59,6 +66,3 @@ Full Usage - must have Textures
 ```bash
 ./Tutorial -l objFiles/buddha/buddha.obj -v vertShader.vert -f fragShader.frag -m 1
 ```
-
-## Exiting
-To correctly exit the program, press the ESC key.
