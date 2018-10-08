@@ -41,7 +41,7 @@ The GLSL source code for the vertex and fragment shaders must be located under t
 By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arguments section for details.
 
 ## Keyboard & Mouse Controls
-IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br><br>
+IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br>
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
 * Exiting
@@ -62,7 +62,7 @@ The default behavior can be achieved with the following arguments
 -m 1
 ```
 
-Full Usage - must have Textures
+Full Usage - object must have Textures
 ```bash
 ./Tutorial -l objFiles/buddha/buddha.obj -v vertShader.vert -f fragShader.frag -m 1
 ```
