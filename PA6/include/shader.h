@@ -8,11 +8,6 @@
 
 class Shader {
 public:
-
-	static void SetVertexFile(const std::string & fileName);
-	static void SetFragmentFile(const std::string & fileName);
-	static std::string LoadSourceCode(const GLenum ShaderType);
-
 	Shader(void);
 	~Shader(void);
 	bool Initialize(void);
@@ -21,6 +16,10 @@ public:
 	bool Finalize(void);
 	GLint GetUniformLocation(const char * pUniformName) const;
 
+	static void SetVertexFile(const std::string & fileName);
+	static void SetFragmentFile(const std::string & fileName);
+	static std::string LoadSourceCode(const GLenum ShaderType);
+	
 private:
 	static std::string vertexFile;
 	static std::string fragmentFile;

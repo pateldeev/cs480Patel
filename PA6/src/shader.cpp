@@ -6,36 +6,6 @@
 std::string Shader::vertexFile = "";
 std::string Shader::fragmentFile = "";
 
-void Shader::SetVertexFile(const std::string & fileName) {
-	vertexFile = fileName;
-}
-
-void Shader::SetFragmentFile(const std::string & fileName) {
-	fragmentFile = fileName;
-}
-
-std::string Shader::LoadSourceCode(const GLenum ShaderType) {
-	std::stringstream ss;
-	std::string data = "";
-	std::ifstream inputFile;
-
-	if (ShaderType == GL_VERTEX_SHADER)
-		inputFile.open(vertexFile);
-	else if (ShaderType == GL_FRAGMENT_SHADER)
-		inputFile.open(fragmentFile);
-
-	if (!inputFile.is_open()) {
-		printf("Could not open shader file for type: %d \n", ShaderType);
-		return data;
-	}
-
-	ss << inputFile.rdbuf();
-	inputFile.close();
-
-	data = ss.str();
-	return data;
-}
-
 Shader::Shader(void) :
 		m_shaderProg(0) {
 }
@@ -72,8 +42,7 @@ bool Shader::AddShader(const GLenum ShaderType) {
 	// Save the shader object - will be deleted in the destructor
 	m_shaderObjList.push_back(shaderObj);
 
-	const GLchar * p[1];
-	p[0] = source.c_str();
+	const GLchar * p[1] = { source.c_str() };
 	GLint Lengths[1] = { (GLint) source.size() };
 
 	glShaderSource(shaderObj, 1, p, Lengths);
@@ -137,4 +106,34 @@ GLint Shader::GetUniformLocation(const char * pUniformName) const {
 		fprintf(stderr, "Warning! Unable to get the location of uniform '%s'\n", pUniformName);
 
 	return Location;
+}
+
+void Shader::SetVertexFile(const std::string & fileName) {
+	vertexFile = fileName;
+}
+
+void Shader::SetFragmentFile(const std::string & fileName) {
+	fragmentFile = fileName;
+}
+
+std::string Shader::LoadSourceCode(const GLenum ShaderType) {
+	std::stringstream ss;
+	std::string data = "";
+	std::ifstream inputFile;
+
+	if (ShaderType == GL_VERTEX_SHADER)
+		inputFile.open(vertexFile);
+	else if (ShaderType == GL_FRAGMENT_SHADER)
+		inputFile.open(fragmentFile);
+
+	if (!inputFile.is_open()) {
+		printf("Could not open shader file for type: %d \n", ShaderType);
+		return data;
+	}
+
+	ss << inputFile.rdbuf();
+	inputFile.close();
+
+	data = ss.str();
+	return data;
 }

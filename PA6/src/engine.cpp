@@ -4,7 +4,7 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & winName, int winWidth, int winHeight) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr) {
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0) {
 	m_WINDOW_NAME = winName;
 	m_WINDOW_WIDTH = winWidth;
 	m_WINDOW_HEIGHT = winHeight;
@@ -81,17 +81,21 @@ void Engine::Run(void) {
 	}
 }
 
+long long Engine::GetCurrentTimeMillis() {
+	return std::chrono::duration_cast < std::chrono::milliseconds > (std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 void Engine::HandleEvent(const SDL_Event & event) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
-		} else if (event.key.keysym.sym == SDLK_m) {
+		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
 			if (m_menu)
 				CloseMenu();
 			else
 				StartMenu(m_graphics->GetEyePos());
 		}
-	} 
+	}
 }
 
 void Engine::EventChecker(void) {
@@ -101,7 +105,7 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym== SDLK_ESCAPE) {
+		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
 		}
 
@@ -113,12 +117,13 @@ void Engine::EventChecker(void) {
 				HandleEvent(m_event);
 			}
 		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
-			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m)) {
+			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
+					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis())) {
 				CloseMenu();
 			} else {
 				m_menu->HandleEvent(m_event);
 			}
-		} 
+		}
 	}
 }
 
@@ -126,14 +131,17 @@ bool Engine::StartMenu(const glm::vec3 & eyePos) {
 	m_menu = new Menu(eyePos);
 	if (!m_menu->Initialize(m_window->GetContext())) {
 		printf("The imgui menu failed to initialize. Running without it. \n");
+		delete m_menu;
 		m_menu = nullptr;
 		return false;
 	}
+	m_menuLastTime = Engine::GetCurrentTimeMillis();
 	return true;
 }
 
 void Engine::CloseMenu(void) {
 	delete m_menu;
 	m_menu = nullptr;
+	m_menuLastTime = Engine::GetCurrentTimeMillis();
 }
 
