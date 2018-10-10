@@ -39,8 +39,8 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	glBindVertexArray(vao);
 
 	// Init Camera
-	m_camera = new Camera();
-	if (!m_camera->Initialize(width, height, eyePos)) {
+	m_camera = new Camera(eyePos);
+	if (!m_camera->Initialize(width, height)) {
 		printf("Camera Failed to Initialize\n");
 		return false;
 	}	
@@ -113,13 +113,8 @@ void Graphics::Update(void) {
 bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
 		const glm::vec3 rotationAnglesVec) {
 
-	delete m_camera;
-	m_camera = nullptr;
-	m_camera = new Camera();
-	if (!m_camera->Initialize(width, height, eyePos)) {
-		printf("Camera Failed to Initialize \n");
-		return false;
-	}
+
+	m_camera->UpdatePosition(eyePos, m_camera->GetFocusPos());
 
 	m_objects[0]->Update(translationVec, scaleVec, rotationAnglesVec);
 

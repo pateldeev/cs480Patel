@@ -42,8 +42,8 @@ bool Shader::AddShader(const GLenum ShaderType) {
 	// Save the shader object - will be deleted in the destructor
 	m_shaderObjList.push_back(shaderObj);
 
-	const GLchar * p[1] = { source.c_str() };
-	glShaderSource(shaderObj, 1, p, NULL);
+	const GLchar * src[1] = { source.c_str() };
+	glShaderSource(shaderObj, 1, src, NULL);
 
 	glCompileShader(shaderObj);
 
@@ -98,7 +98,7 @@ void Shader::Enable(void) {
 }
 
 GLint Shader::GetUniformLocation(const char * pUniformName) const {
-	GLuint Location = glGetUniformLocation(m_shaderProg, pUniformName);
+	GLint Location = glGetUniformLocation(m_shaderProg, pUniformName);
 
 	if (Location == INVALID_UNIFORM_LOCATION)
 		fprintf(stderr, "Warning! Unable to get the location of uniform '%s'\n", pUniformName);

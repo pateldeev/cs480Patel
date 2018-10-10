@@ -5,18 +5,23 @@
 
 class Camera {
 public:
-	Camera(void);
+	Camera(const glm::vec3 & eyePos, const glm::vec3 & focusPos = glm::vec3(0.0, 0.0, 0.0));
 	~Camera(void);
-	bool Initialize(int w, int h, const glm::vec3 & eyePos);
+	bool Initialize(int width, int height);
 	
+	void UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos);
+
 	glm::mat4 GetProjection(void) const;
 	glm::mat4 GetView(void) const;
+	
 	glm::vec3 GetEyePos(void) const;
+	glm::vec3 GetFocusPos(void) const;
 
 private:
-	
+
 	glm::vec3 m_eyePos;
-	
+	glm::vec3 m_focusPos;
+
 	glm::mat4 m_projection;
 	glm::mat4 m_view;
 };
