@@ -34,14 +34,14 @@ All objects being loaded must have a texture. If the obj file does not have any 
 
 ## IMGUI Menu System
 There is a menu system that runs in a separate window. The menu system can be used to update various parameters related to object rendering. <br>
-This can be turned off using the '-m 0' command line flags. See Command Line Arguments section for details.
+This can be turned off using the '-m 0' command line flag. See Command Line Arguments section for details.
 
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
 By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arguments section for details.
 
 ## Keyboard & Mouse Controls
-IMPORTANT: For any of the controls to work, the cube window must be selected. Simply click on that window if another one is selected instead <br>
+IMPORTANT: For any of the controls to work, the main window (not menu window) must be selected. <br>
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
 * Exiting

@@ -43,9 +43,7 @@ bool Shader::AddShader(const GLenum ShaderType) {
 	m_shaderObjList.push_back(shaderObj);
 
 	const GLchar * p[1] = { source.c_str() };
-	GLint Lengths[1] = { (GLint) source.size() };
-
-	glShaderSource(shaderObj, 1, p, Lengths);
+	glShaderSource(shaderObj, 1, p, NULL);
 
 	glCompileShader(shaderObj);
 

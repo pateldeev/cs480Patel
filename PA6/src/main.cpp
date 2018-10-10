@@ -14,7 +14,7 @@ struct params {
 	//default parameters
 	params() :
 			objFile("objFiles/buddha/buddha.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName(
-					"PA03_Deev_Patel"), winWidth(1600), winHeight(1200), eyePos(0.0, 10.0, -25.0), menu(true) {
+					"PA06"), winWidth(1600), winHeight(1200), eyePos(0.0, 10.0, -25.0), menu(true) {
 	}
 };
 
