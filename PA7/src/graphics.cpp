@@ -13,7 +13,8 @@ Graphics::~Graphics(void) {
 	delete m_shader;
 }
 
-bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile) {
+bool Graphics::Initialize(int width, int height, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
+		const ::glm::vec3 & focusPos) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -39,15 +40,12 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	glBindVertexArray(vao);
 
 	// Init Camera
-	m_camera = new Camera(eyePos);
+	m_camera = new Camera(eyePos, focusPos);
 	if (!m_camera->Initialize(width, height)) {
 		printf("Camera Failed to Initialize\n");
 		return false;
-	}	
-	
-	//Create the objects
-	m_objects.push_back(new Object(objFile));
-	
+	}
+
 	//Set up the shaders
 	m_shader = new Shader();
 	if (!m_shader->Initialize()) {
@@ -56,13 +54,13 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	}
 
 	// Add the vertex shader
-	if (!m_shader->AddShader(GL_VERTEX_SHADER)) {
+	if (!m_shader->AddShader(GL_VERTEX_SHADER, vertShaderSrc)) {
 		printf("Vertex Shader failed to Initialize\n");
 		return false;
 	}
 
 	// Add the fragment shader
-	if (!m_shader->AddShader(GL_FRAGMENT_SHADER)) {
+	if (!m_shader->AddShader(GL_FRAGMENT_SHADER, fragShaderSrc)) {
 		printf("Fragment Shader failed to Initialize\n");
 		return false;
 	}
@@ -97,12 +95,15 @@ bool Graphics::Initialize(int width, int height, const glm::vec3 & eyePos, const
 	//enable depth testing
 	glEnable (GL_DEPTH_TEST);
 	glDepthFunc (GL_LESS);
-	
-	glEnable(GL_BLEND);
+
+	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
 	return true;
+}
+
+void Graphics::AddObject(const std::string & objFile) {
+	m_objects.push_back(new Object(objFile));
 }
 
 void Graphics::Update(void) {
@@ -110,9 +111,8 @@ void Graphics::Update(void) {
 		obj->Update();
 }
 
-bool Graphics::UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
+bool Graphics::UpdateParameters(const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
 		const glm::vec3 rotationAnglesVec) {
-
 
 	m_camera->UpdatePosition(eyePos, m_camera->GetFocusPos());
 

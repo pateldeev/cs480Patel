@@ -2,38 +2,22 @@
 
 #include <iostream>
 
-//struct for changable parameters
-struct params {
-	std::string objFile;
-	std::string vertexFile, fragmentFile;
-	std::string winName;
-	int winWidth, winHeight;
-	glm::vec3 eyePos;
-	bool menu;
-
-	//default parameters
-	params() :
-			objFile("objFiles/buddha/buddha.obj"), vertexFile("shaders/vertShader.vert"), fragmentFile("shaders/fragShader.frag"), winName(
-					"Solar_System"), winWidth(1600), winHeight(1200), eyePos(0.0, 10.0, -25.0), menu(true) {
-	}
-};
-
-//function to parse command line arguments and get parameter values
-bool ParseCLArgs(int argc, char * argv[], params & parameters);
+//function to parse command line arguments and get name of launch file
+bool GetLaunchFile(int argc, char * argv[], std::string & launchFile);
 
 //initializes engine with give parameter values
-Engine * StartEngine(const params & parameters);
+Engine * StartEngine(const std::string & launchFile);
 
 int main(int argc, char * argv[]) {
 
-	params paramVals;
+	std::string launchFile;
 
-	if (!ParseCLArgs(argc, argv, paramVals)) {
+	if (!GetLaunchFile(argc, argv, launchFile)) {
 		std::cerr << "Error getting paramter values " << std::endl;
 		return 0;
 	}
 
-	Engine * engine = StartEngine(paramVals);
+	Engine * engine = StartEngine(launchFile);
 
 	if (!engine) {
 		std::cerr << "Error starting engine! " << std::endl;
@@ -49,16 +33,12 @@ int main(int argc, char * argv[]) {
 }
 
 //initializes engine with give parameter values
-Engine * StartEngine(const params & parameters) {
+Engine * StartEngine(const std::string & launchFile) {
 
-	//Set shader filenames
-	Shader::SetVertexFile(parameters.vertexFile);
-	Shader::SetFragmentFile(parameters.fragmentFile);
-
-	// Start an engine and run it then cleanup after
-	Engine *engine = new Engine(parameters.winName, parameters.winWidth, parameters.winHeight);
-	if (!engine->Initialize(parameters.eyePos, parameters.objFile, parameters.menu)) {
-		printf("The engine failed to start.\n");
+	// Start engine
+	Engine * engine = new Engine(launchFile);
+	if (!engine->Initialize()) {
+		std::cout << std::endl << "The engine failed to start." << std::endl;
 		delete engine;
 		engine = nullptr;
 	}
@@ -66,43 +46,16 @@ Engine * StartEngine(const params & parameters) {
 	return engine;
 }
 
-bool ParseCLArgs(int argc, char * argv[], params & parameters) {
-	//get parameter values
-	for (int i = 1; i < argc; ++i) {
-		if (!std::strcmp(argv[i], "-v")) {
-			if (++i < argc) {
-				parameters.vertexFile = argv[i];
-				parameters.vertexFile = "shaders/" + parameters.vertexFile;
-			} else {
-				std::cerr << "ERROR: value of -v arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-f")) {
-			if (++i < argc) {
-				parameters.fragmentFile = argv[i];
-				parameters.fragmentFile = "shaders/" + parameters.fragmentFile;
-			} else {
-				std::cerr << "ERROR: value of -f arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-l")) {
-			if (++i < argc) {
-				parameters.objFile = argv[i];
-			} else {
-				std::cerr << "ERROR: value of -l arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else if (!std::strcmp(argv[i], "-m")) {
-			if (++i < argc) {
-				parameters.menu = std::atof(argv[i]) != 0;
-			} else {
-				std::cerr << "ERROR: value of -m arguemnt could not be read" << std::endl;
-				return false;
-			}
-		} else {
-			std::cerr << "ERROR: Could not understand command line argument: " << argv[i] << std::endl;
-			return false;
-		}
+bool GetLaunchFile(int argc, char * argv[], std::string & launchFile) {
+	if (argc == 1) {
+		launchFile = "launch/DefaultConfig.txt"; //default launch file 
+	} else if (argc == 3 && *argv[1] == '-' && *(argv[1] + 1) == 'l') {
+		launchFile = argv[2];
+	} else {
+		std::cout << std::endl << "Could not understand command line arguments!" << std::endl
+				<< "You can run the program without any flags or provide a configuration file with the -l flag. See REAME.MD" << std::endl;
+		return false;
 	}
+
 	return true;
 }

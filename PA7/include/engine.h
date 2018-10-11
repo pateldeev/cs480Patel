@@ -5,28 +5,27 @@
 #include "window.h"
 #include "graphics.h"
 
+#include "configLoader.hpp"
+
 class Engine {
 public:	
-	Engine(const std::string & winName, int winWidth, int winHeight);
-	Engine(const std::string & name);
+	Engine(const std::string & launchFile);
 	~Engine(void);
-	bool Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu);
+	bool Initialize(void);
 	void Run(void);
 
 	static long long GetCurrentTimeMillis(void);
 	
 private:
-	// Window related variables
 	Window * m_window;
-	std::string m_WINDOW_NAME;
-	int m_WINDOW_WIDTH;
-	int m_WINDOW_HEIGHT;
-	SDL_Event m_event;
-
 	Graphics * m_graphics;
+
+	SDL_Event m_event;
 
 	Menu * m_menu;
 	long long m_menuLastTime; // last time when menu was created or destoryed
+	
+	ConfigFileParser m_configFile; //used to get parameters from
 
 	bool m_running;
 	

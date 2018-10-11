@@ -1,0 +1,17 @@
+# Configuration File for Solar System Project
+# This file must be properly formatted for everything to work correctly.
+# All lines are in the format "aribute=value". Notice there is no space after the = sign and no quotations around the value.
+# One should only change the values of variables. Changing to order or adding new variables may cause the program to fail.
+
+VERTEX_SHADER_FILE=shaders/vertShader.vert
+FRAGMENT_SHADER_FILE=shaders/fragShader.frag
+
+ENABLE_MENU=1
+
+WINDOW_NAME=Solar_System
+WINDOW_SIZE_WIDTH_HEIGHT=1600,1200
+
+CAMERA_EYEPOS=0.0,10.0,-25.0
+CAMERA_FOCUSPOS=0.0,0.0,0.0
+
+OBJ_FILE=objFiles/buddha/buddha.obj

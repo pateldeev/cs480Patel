@@ -14,12 +14,18 @@ class Graphics {
 public:
 	Graphics(void);
 	~Graphics(void);
-	bool Initialize(int width, int height, const glm::vec3 & eyePos, const std::string & objFile);
-	bool UpdateParameters(int width, int height, const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
-			const glm::vec3 rotationAnglesVec);
+
+	bool Initialize(int width, int height, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
+			const glm::vec3 & focusPos);
+
+	void AddObject(const std::string & objFile);
+
 	void Update(void);
+
+	bool UpdateParameters(const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 rotationAnglesVec);
+
 	void Render(void);
-	
+
 	glm::vec3 GetEyePos(void) const;
 
 private:

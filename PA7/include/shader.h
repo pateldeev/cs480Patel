@@ -12,20 +12,15 @@ public:
 	~Shader(void);
 	bool Initialize(void);
 	void Enable(void);
-	bool AddShader(const GLenum ShaderType);
+	bool AddShader(const GLenum ShaderType, const std::string & fileName);
 	bool Finalize(void);
-	GLint GetUniformLocation(const char * pUniformName) const;
-
-	static void SetVertexFile(const std::string & fileName);
-	static void SetFragmentFile(const std::string & fileName);
-	static std::string LoadSourceCode(const GLenum ShaderType);
-	
+	GLint GetUniformLocation(const char * pUniformName) const;	
 private:
-	static std::string vertexFile;
-	static std::string fragmentFile;
-
 	GLuint m_shaderProg;
 	std::vector<GLuint> m_shaderObjList;
+
+	bool LoadSourceCode(const std::string & fileName, std::string & src) const;
+
 };
 
 #endif  /* SHADER_H */

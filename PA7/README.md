@@ -34,13 +34,16 @@ make
 ./Solar_System
 ```
 
+## Configuration File - Extra Credit
+This program makes use of configuration files to specifcy the characteristics of the solar system. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. You should only change the values. Adding new lines/variables cause errors.
+
 ## IMGUI Menu System
 There is a menu system that runs in a separate window. The menu system can be used to update various parameters related to object rendering. <br>
-This can be turned off using the '-m 0' command line flag. See Command Line Arguments section for details.
+This can be turned off via the configuration file. See the example file given.
 
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
-By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the '-f' and '-v' flags. See Command Line Arguments section for details.
+By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the configuration. See the example file given.
 
 ## Keyboard & Mouse Controls
 IMPORTANT: For any of the controls to work, the main window (not menu window) must be selected. <br>
@@ -51,20 +54,14 @@ IMPORTANT: For any of the controls to work, the main window (not menu window) mu
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
-  * -l: specify the name of .obj file to load the object from.
-  * -v: specify file with source code of vertex shader in "shaders/" directory
-  * -f: specify file with source code of fragment shader in "shaders/" directory
-  * -m: specify usage of menu (0 for false, 1 for true - any other argument may cause undefined behavior) - enabled by default.
+  * -l: load configuration file
 
 The default behavior can be achieved with the following arguments
 ```bash
--l objFiles/budda/budda.obj
--v vertShader.vert
--f fragShader.frag
--m 1
+-l launch/DefaultConfig.txt
 ```
 
-Full Usage - object must have Textures
+Full Usage
 ```bash
-./Solar_System -l objFiles/buddha/buddha.obj -v vertShader.vert -f fragShader.frag -m 1
+./Solar_System -l launch/DefaultConfig.txt
 ```

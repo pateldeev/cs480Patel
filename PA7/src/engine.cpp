@@ -3,11 +3,8 @@
 #include <chrono>
 #include <assert.h>
 
-Engine::Engine(const std::string & winName, int winWidth, int winHeight) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0) {
-	m_WINDOW_NAME = winName;
-	m_WINDOW_WIDTH = winWidth;
-	m_WINDOW_HEIGHT = winHeight;
+Engine::Engine(const std::string & launchFile) :
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile) {
 }
 
 Engine::~Engine(void) {
@@ -16,25 +13,57 @@ Engine::~Engine(void) {
 	delete m_menu;
 }
 
-bool Engine::Initialize(const glm::vec3 & eyePos, const std::string & objFile, bool menu) {
+bool Engine::Initialize(void) {
+
+	std::string shaderSrcVert, shaderSrcFrag;
+	if (!m_configFile.getShaderFileNames(shaderSrcVert, shaderSrcFrag)) {
+		printf("Could not get shader file information from configuration file \n");
+		return false;
+	}
+
+	bool menu;
+	if (!m_configFile.getMenuState(menu)) {
+		printf("Could not get menu information from configuration file \n");
+		return false;
+	}
+
+	std::string windowName;
+	int windowWidth, windowHeight;
+	if (!m_configFile.getWindowInfo(windowName, windowWidth, windowHeight)) {
+		printf("Could not get window information from configuration file \n");
+		return false;
+	}
+
+	glm::vec3 eyePos, eyeLoc;
+	if (!m_configFile.getCameraInfo(eyePos, eyeLoc)) {
+		printf("Could not get camera information from configuration file \n");
+		return false;
+	}
+
+	std::string objFile;
+	if (!m_configFile.getObjFile(objFile)) {
+		printf("Could not get object file information from configuration file \n");
+		return false;
+	}
+
 	//Start the window
 	m_window = new Window();
-	if (!m_window->Initialize(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT)) {
+	if (!m_window->Initialize(windowName, windowWidth, windowHeight)) {
 		printf("The window failed to initialize.\n");
 		return false;
 	}
 
 	//Start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, eyePos, objFile)) {
+	if (!m_graphics->Initialize(windowWidth, windowHeight, shaderSrcVert, shaderSrcFrag, eyePos, eyeLoc)) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
+	m_graphics->AddObject(objFile);
 
 	//Start the menu if necessary
-	if (menu) {
+	if (menu)
 		StartMenu(m_graphics->GetEyePos());
-	}
 
 	// No errors
 	return true;
@@ -65,8 +94,8 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext())) {
-				if (!m_graphics->UpdateParameters(m_WINDOW_WIDTH, m_WINDOW_HEIGHT, m_menu->GetEyePosition(), m_menu->GetTranslationVec(),
-						m_menu->GetScaleVec(), m_menu->GetRotationVec())) {
+				if (!m_graphics->UpdateParameters(m_menu->GetEyePosition(), m_menu->GetTranslationVec(), m_menu->GetScaleVec(),
+						m_menu->GetRotationVec())) {
 					printf("Error updating parameters from menu update. Shutting down /n");
 					m_running = false;
 				}
@@ -144,4 +173,3 @@ void Engine::CloseMenu(void) {
 	m_menu = nullptr;
 	m_menuLastTime = Engine::GetCurrentTimeMillis();
 }
-

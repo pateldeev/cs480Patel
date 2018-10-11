@@ -55,6 +55,8 @@ add_custom_target("${PROJECT_NAME}_SUCCESSFUL" ALL
 		  COMMAND ${CMAKE_COMMAND} -E echo "shaders folder copied!"                  
 		  COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/objFiles/ ${CMAKE_CURRENT_BINARY_DIR}/objFiles
 		  COMMAND ${CMAKE_COMMAND} -E echo "objFiles folder copied!"
+		  COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/launch/ ${CMAKE_CURRENT_BINARY_DIR}/launch
+		  COMMAND ${CMAKE_COMMAND} -E echo "launch folder copied!"
                  )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OPENGL_LIBRARY} ${SDL2_LIBRARY} ${ASSIMP_LIBRARIES} ${ImageMagick_LIBRARIES})

@@ -10,7 +10,7 @@ Window::~Window(void) {
 	SDL_Quit();
 }
 
-bool Window::Initialize(const std::string & name, int * width, int * height) {
+bool Window::Initialize(const std::string & name, int width, int height) {
 	// Start SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL failed to initialize: %s\n", SDL_GetError());
@@ -31,12 +31,12 @@ bool Window::Initialize(const std::string & name, int * width, int * height) {
 	SDL_GetCurrentDisplayMode(0, &current);
 
 	//use for fullscreen
-	if (*height == 0 && *width == 0) {
-		*height = current.h;
-		*width = current.w;
+	if (height == 0 && width == 0) {
+		height = current.h;
+		width = current.w;
 	}
 
-	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, *width, *height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!gWindow) {
 		printf("Widow failed to create: %s\n", SDL_GetError());
 		return false;
@@ -54,7 +54,6 @@ bool Window::Initialize(const std::string & name, int * width, int * height) {
 		printf("Unable to use VSync: %s\n", SDL_GetError());
 		return false;
 	}
-
 	return true;
 }
 

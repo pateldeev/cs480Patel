@@ -3,9 +3,6 @@
 #include <fstream>
 #include <sstream>
 
-std::string Shader::vertexFile = "";
-std::string Shader::fragmentFile = "";
-
 Shader::Shader(void) :
 		m_shaderProg(0) {
 }
@@ -25,15 +22,19 @@ bool Shader::Initialize(void) {
 		printf("Error creating shader program \n");
 		return false;
 	}
-
 	return true;
 }
 
 // Use this method to add shaders to the program. When finished - call finalize()
-bool Shader::AddShader(const GLenum ShaderType) {
-	std::string source = Shader::LoadSourceCode(ShaderType);
-	GLuint shaderObj = glCreateShader(ShaderType);
+bool Shader::AddShader(const GLenum ShaderType, const std::string & fileName) {
+	//load source code
+	std::string source;
+	if (!LoadSourceCode(fileName, source)) {
+		printf("Could not open shader file! \n");
+		return false;
+	}
 
+	GLuint shaderObj = glCreateShader(ShaderType);
 	if (shaderObj == 0) {
 		printf("Error creating shader type: %d \n", ShaderType);
 		return false;
@@ -42,14 +43,13 @@ bool Shader::AddShader(const GLenum ShaderType) {
 	// Save the shader object - will be deleted in the destructor
 	m_shaderObjList.push_back(shaderObj);
 
+	//add source and compile
 	const GLchar * src[1] = { source.c_str() };
 	glShaderSource(shaderObj, 1, src, NULL);
-
 	glCompileShader(shaderObj);
 
 	GLint success;
 	glGetShaderiv(shaderObj, GL_COMPILE_STATUS, &success);
-
 	if (!success) {
 		GLchar InfoLog[1024];
 		glGetShaderInfoLog(shaderObj, 1024, NULL, InfoLog);
@@ -106,32 +106,18 @@ GLint Shader::GetUniformLocation(const char * pUniformName) const {
 	return Location;
 }
 
-void Shader::SetVertexFile(const std::string & fileName) {
-	vertexFile = fileName;
-}
-
-void Shader::SetFragmentFile(const std::string & fileName) {
-	fragmentFile = fileName;
-}
-
-std::string Shader::LoadSourceCode(const GLenum ShaderType) {
-	std::stringstream ss;
-	std::string data = "";
-	std::ifstream inputFile;
-
-	if (ShaderType == GL_VERTEX_SHADER)
-		inputFile.open(vertexFile);
-	else if (ShaderType == GL_FRAGMENT_SHADER)
-		inputFile.open(fragmentFile);
+bool Shader::LoadSourceCode(const std::string & fileName, std::string & src) const {
+	std::ifstream inputFile(fileName);
 
 	if (!inputFile.is_open()) {
-		printf("Could not open shader file for type: %d \n", ShaderType);
-		return data;
+		printf("Could not open shader source file: %s \n", fileName.c_str());
+		return false;
 	}
 
+	std::stringstream ss;
 	ss << inputFile.rdbuf();
 	inputFile.close();
 
-	data = ss.str();
-	return data;
+	src = ss.str(); //save source code
+	return true;
 }
