@@ -5,7 +5,7 @@
   * Create sun, planets, moons - possibly more planets with rings for EC
   * Implement accurate orbit and rotation speeds
   * Accurate scaling of distance - planets vs sun
-  * Possibly have configuration file with parameters - file name, orbit/rotation speeds, scaling, position
+  * Improve configuration file parameters -orbit/rotation speeds, scaling, position
   * Instruction Manual
   * Extra: Adjust simulation speeds, drawing orbit, going to scaled view
 

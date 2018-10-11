@@ -5,6 +5,7 @@
 
 #include <sstream>
 
+//class to parse configuration file of paramters
 class ConfigFileParser {
 
 public:
@@ -26,10 +27,11 @@ private:
 
 	//internal function to get variable name and value in a line. Returns false if file is at end and line could not be read 
 	template<typename T, unsigned int NUMVALUES = 1, char SEPERATOR = ','>
-	bool parseLine(std::string & variableName, T * variableValue) {
+	inline bool parseLine(std::string & variableName, T * variableValue) {
 		if (m_fileBuffer.eof())
 			return false;
 
+		//use = sign to differeniate
 		std::getline(m_fileBuffer, variableName, '=');
 
 		char temp;
@@ -48,6 +50,7 @@ private:
 			}
 		}
 
+		//skip to next valid line or go to end of file
 		std::string tempLine;
 		while (!m_fileBuffer.eof() && !std::isalpha(m_fileBuffer.peek()))
 			std::getline(m_fileBuffer, tempLine);

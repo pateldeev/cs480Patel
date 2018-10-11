@@ -3,15 +3,21 @@
 # All lines are in the format "aribute=value". Notice there is no space after the = sign and no quotations around the value.
 # One should only change the values of variables. Changing to order or adding new variables may cause the program to fail.
 
+
+#Source code for shader
 VERTEX_SHADER_FILE=shaders/vertShader.vert
 FRAGMENT_SHADER_FILE=shaders/fragShader.frag
 
+#IMGUI menu system
 ENABLE_MENU=1
 
+#Main window paramters
 WINDOW_NAME=Solar_System
 WINDOW_SIZE_WIDTH_HEIGHT=1600,1200
 
+#Initial camera information
 CAMERA_EYEPOS=0.0,10.0,-25.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
+#Object file to be loaded - must have textures
 OBJ_FILE=objFiles/buddha/buddha.obj
