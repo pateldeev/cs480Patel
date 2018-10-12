@@ -8,8 +8,10 @@
 
 #include <algorithm>
 
-Object::Object(const std::string & objFile) :
-		m_model(1.0), m_translation(0.0, 0.0, 0.0), m_scale(1.0, 1.0, 1.0), m_rotationAngles(0.0, 0.0, 0.0) {
+Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, float rotationSpeed, float orbitSpeed) :
+		m_model(1.0), angleRotation(0.0f), angleOrbit(0.0f), orbitRadiusX(orbitRadiusX), orbitRadiusZ(orbitRadiusZ), orbitCenter(
+				glm::vec3(0.0f, 0.0f, 0.0f)), orbitLoc(glm::vec3(0.0f, 0.0f, 0.0f)), objectScale(glm::vec3(1.0f, 1.0f, 1.0f)), speedRotation(
+				rotationSpeed), speedOrbit(orbitSpeed), pauseRotation(false), pauseOrbit(false) {
 
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	if (!loadObjAssimp(objFile)) {
@@ -32,24 +34,23 @@ Object::Object(const std::string & objFile) :
 
 Object::~Object(void) {
 	Vertices.clear();
-	for(std::vector<unsigned int> & temp : Indices)
+	for (std::vector<unsigned int> & temp : Indices)
 		temp.clear();
 	Indices.clear();
 }
 
-void Object::Update(void) {
-	Update(m_translation, m_scale, m_rotationAngles);
-}
+void Object::Update(unsigned int dt) {
 
-void Object::Update(const glm::vec3 & translation, const glm::vec3 & scale, const glm::vec3 & rotationAngles) {
-	m_translation = translation;
-	m_scale = scale;
-	m_rotationAngles = rotationAngles;
+	if (!pauseRotation)
+		angleRotation += dt * M_PI * speedRotation;
 
-	glm::mat4 rotationMat = glm::rotate((rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
-			* glm::rotate((rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
+	if (!pauseOrbit)
+		angleOrbit += dt * M_PI * speedOrbit;
 
-	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
+	orbitLoc = orbitCenter + glm::vec3(orbitRadiusX * std::cos(angleOrbit), 0.0, orbitRadiusZ * std::sin(angleOrbit));
+
+	//m_model = glm::scale(objectScale); //model = glm::rotate(model, (angleRotation), glm::vec3(0.0, 1.0, 0.0)); //model = glm::translate(model, orbitLoc);
+	m_model = glm::translate(orbitLoc) * glm::rotate((angleRotation), glm::vec3(0.0, 1.0, 0.0)) * glm::scale(objectScale);
 }
 
 void Object::Render(void) {
@@ -65,10 +66,10 @@ void Object::Render(void) {
 
 		glActiveTexture (GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
-		
+
 		glDrawElements(GL_TRIANGLES, Indices[i].size(), GL_UNSIGNED_INT, 0);
 	}
-	
+
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
@@ -77,16 +78,56 @@ glm::mat4 Object::GetModel(void) {
 	return m_model;
 }
 
-glm::vec3 Object::GetTranslation(void) const {
-	return m_translation;
+void Object::SetRotationSpeed(float rotationSpeed) {
+	speedRotation = rotationSpeed;
+}
+
+float Object::GetRotationSpeed(void) const {
+	return speedRotation;
+}
+
+void Object::SetOrbitSpeed(float orbitSpeed) {
+	speedOrbit = orbitSpeed;
+}
+
+float Object::GetOrbitSpeed(void) const {
+	return speedOrbit;
+}
+
+void Object::ToggleRotation(bool rotate) {
+	pauseRotation = !rotate;
+}
+
+bool Object::IsRotating(void) const {
+	return !pauseRotation;
+}
+
+void Object::ToggleOrbit(bool orbit) {
+	pauseOrbit = !orbit;
+}
+
+bool Object::IsOrbiting(void) const {
+	return !pauseOrbit;
+}
+
+void Object::SetOrbitCenter(const glm::vec3 & center) {
+	orbitCenter = center;
+}
+
+glm::vec3 Object::GetOrbitCenter(void) const {
+	return orbitCenter;
+}
+
+glm::vec3 Object::GetOrbitLoc(void) const {
+	return orbitLoc;
+}
+
+void Object::SetScale(const glm::vec3 & scale) {
+	objectScale = scale;
 }
 
 glm::vec3 Object::GetScale(void) const {
-	return m_scale;
-}
-
-glm::vec3 Object::GetRotationAngles(void) const {
-	return m_rotationAngles;
+	return objectScale;
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {
@@ -140,7 +181,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					Indices[textureIndex].push_back(Vertices.size()-1);
 				}
 			}
-			
+
 			IB.resize(m_textureFiles.size());
 		}
 	}

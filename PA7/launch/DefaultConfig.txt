@@ -20,4 +20,4 @@ CAMERA_EYEPOS=0.0,10.0,-25.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
 #Object file to be loaded - must have textures
-OBJ_FILE=objFiles/buddha/buddha.obj
+OBJ_FILE=objFiles/saturn/saturn.obj

@@ -4,7 +4,8 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & launchFile) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile) {
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
+				Engine::GetCurrentTimeMillis()) {
 }
 
 Engine::~Engine(void) {
@@ -63,7 +64,7 @@ bool Engine::Initialize(void) {
 
 	//Start the menu if necessary
 	if (menu)
-		StartMenu(m_graphics->GetEyePos());
+		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 
 	// No errors
 	return true;
@@ -84,8 +85,9 @@ void Engine::Run(void) {
 
 		EventChecker(); // Check for events input
 
+		m_DT = getDT();
 		// Update and render the graphics
-		m_graphics->Update();
+		m_graphics->Update(m_DT);
 		m_graphics->Render();
 
 		// Swap to the Window
@@ -94,8 +96,7 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext())) {
-				if (!m_graphics->UpdateParameters(m_menu->GetEyePosition(), m_menu->GetTranslationVec(), m_menu->GetScaleVec(),
-						m_menu->GetRotationVec())) {
+				if (!m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus())) {
 					printf("Error updating parameters from menu update. Shutting down /n");
 					m_running = false;
 				}
@@ -110,6 +111,14 @@ void Engine::Run(void) {
 	}
 }
 
+unsigned int Engine::getDT(void) {
+	long long TimeNowMillis = Engine::GetCurrentTimeMillis();
+	assert(TimeNowMillis >= m_currentTimeMillis);
+	unsigned int DeltaTimeMillis = (unsigned int) (TimeNowMillis - m_currentTimeMillis);
+	m_currentTimeMillis = TimeNowMillis;
+	return DeltaTimeMillis;
+}
+
 long long Engine::GetCurrentTimeMillis() {
 	return std::chrono::duration_cast < std::chrono::milliseconds > (std::chrono::system_clock::now().time_since_epoch()).count();
 }
@@ -122,7 +131,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			if (m_menu)
 				CloseMenu();
 			else
-				StartMenu(m_graphics->GetEyePos());
+				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 		}
 	}
 }
@@ -138,7 +147,7 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-		//handle event based on correct window location
+//handle event based on correct window location
 		if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
 				m_running = false;
@@ -156,8 +165,8 @@ void Engine::EventChecker(void) {
 	}
 }
 
-bool Engine::StartMenu(const glm::vec3 & eyePos) {
-	m_menu = new Menu(eyePos);
+bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
+	m_menu = new Menu(eyePos, eyeLoc);
 	if (!m_menu->Initialize(m_window->GetContext())) {
 		printf("The imgui menu failed to initialize. Running without it. \n");
 		delete m_menu;

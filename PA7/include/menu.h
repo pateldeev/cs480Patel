@@ -14,8 +14,7 @@
 class Menu {
 
 public:
-	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & translationVec = { 0.0, 0.0, 0.0 }, const glm::vec3 & scaleVec = { 1.0, 1.0, 1.0 },
-			const glm::vec3 & rotationAnglesVec = { 0.0, 0.0, 0.0 });
+	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
 	~Menu(void);
 
 	bool Initialize(const SDL_GLContext & gl_context);
@@ -25,26 +24,22 @@ public:
 
 	SDL_Window * GetWindow(void);
 
-	glm::vec3 GetEyePosition(void) const;
-	glm::vec3 GetTranslationVec(void) const;
-	glm::vec3 GetScaleVec(void) const;
-	glm::vec3 GetRotationVec(void) const;
+	glm::vec3 GetEyeLocation(void) const;
+	glm::vec3 GetEyeFocus(void) const;
 
+	void UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
+	
 private:
 	SDL_Window * m_window;
 
 	glm::vec3 m_eyeLoc;
-	glm::vec3 m_translation;
-	glm::vec3 m_scale;
-	glm::vec3 m_rotation;
+	glm::vec3 m_eyeFocus;
 
 	//variables bound to menu system
 	float mn_eyeLoc[3];
-	float mn_translation[3];
-	float mn_scale[3];
-	float mn_rotation[3];
-
-	void UpdateVariables(void);
+	float mn_eyeFocus[3];
+	
+	void UpdateMenuParams(void);
 };
 
 #endif /* MENU_H */

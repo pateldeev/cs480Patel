@@ -14,6 +14,8 @@ public:
 	bool Initialize(void);
 	void Run(void);
 
+	unsigned int getDT(void);
+	
 	static long long GetCurrentTimeMillis(void);
 	
 private:
@@ -27,12 +29,14 @@ private:
 	
 	ConfigFileParser m_configFile; //used to get parameters from
 
+	unsigned int m_DT;
+	long long m_currentTimeMillis;
 	bool m_running;
 	
 	void HandleEvent(const SDL_Event & event);
 	void EventChecker(void);
 
-	bool StartMenu(const glm::vec3 & eyePos);
+	bool StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc);
 	void CloseMenu(void);
 	
 };

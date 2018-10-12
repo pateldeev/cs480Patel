@@ -20,13 +20,14 @@ public:
 
 	void AddObject(const std::string & objFile);
 
-	void Update(void);
+	void Update(unsigned int dt);
 
-	bool UpdateParameters(const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 rotationAnglesVec);
+	bool UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 
 	void Render(void);
 
 	glm::vec3 GetEyePos(void) const;
+	glm::vec3 GetEyeLoc(void) const;
 
 private:
 	std::string ErrorString(const GLenum error) const;

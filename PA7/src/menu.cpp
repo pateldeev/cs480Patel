@@ -1,23 +1,8 @@
 #include "menu.h"
 
-Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & translationVec, const glm::vec3 & scaleVec, const glm::vec3 & rotationAnglesVec) :
-		m_window(nullptr), m_eyeLoc(eyeLoc), m_translation(translationVec), m_scale(scaleVec), m_rotation(rotationAnglesVec) {
-
-	mn_eyeLoc[0] = m_eyeLoc.x;
-	mn_eyeLoc[1] = m_eyeLoc.y;
-	mn_eyeLoc[2] = m_eyeLoc.z;
-
-	mn_translation[0] = m_translation.x;
-	mn_translation[1] = m_translation.y;
-	mn_translation[2] = m_translation.z;
-
-	mn_scale[0] = m_scale.x;
-	mn_scale[1] = m_scale.y;
-	mn_scale[2] = m_scale.z;
-
-	mn_rotation[0] = m_rotation.x;
-	mn_rotation[1] = m_rotation.y;
-	mn_rotation[2] = m_rotation.z;
+Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus) :
+		m_window(nullptr), m_eyeLoc(eyeLoc), m_eyeFocus(eyeFocus) {
+	UpdateMenuParams();
 }
 
 Menu::~Menu(void) {
@@ -67,22 +52,15 @@ bool Menu::Update(const SDL_GLContext & gl_context) {
 	ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", m_eyeLoc.x, m_eyeLoc.y, m_eyeLoc.z);
 	ImGui::Text("\n");
 
-	ImGui::InputFloat3("Object Traslation", mn_translation);
-	ImGui::Text("Current Translation Vector: (%.2f, %.2f, %.2f)", m_translation.x, m_translation.y, m_translation.z);
-	ImGui::Text("\n");
-
-	ImGui::InputFloat3("Object Scale", mn_scale);
-	ImGui::Text("Current Scale Vector: (%.2f, %.2f, %.2f)", m_scale.x, m_scale.y, m_scale.z);
-	ImGui::Text("\n");
-
-	ImGui::InputFloat3("Object Rotion", mn_rotation);
-	ImGui::Text("Current Rotation Angles (in Radians): (%.2f, %.2f, %.2f)", m_rotation.x, m_rotation.y, m_rotation.z);
+	ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
+	ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
 	ImGui::Text("\n");
 
 	ImGui::Text("\n");
 	if (ImGui::Button("Update")) {
 		updated = true;
-		UpdateVariables();
+		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
+		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -107,36 +85,25 @@ SDL_Window * Menu::GetWindow(void) {
 	return m_window;
 }
 
-glm::vec3 Menu::GetEyePosition(void) const {
+glm::vec3 Menu::GetEyeLocation(void) const {
 	return m_eyeLoc;
 }
 
-glm::vec3 Menu::GetTranslationVec(void) const {
-	return m_translation;
+glm::vec3 Menu::GetEyeFocus(void) const {
+	return m_eyeFocus;
 }
 
-glm::vec3 Menu::GetScaleVec(void) const {
-	return m_scale;
+void Menu::UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus) {
+	m_eyeLoc = eyeLoc;
+	m_eyeFocus = eyeFocus;
 }
 
-glm::vec3 Menu::GetRotationVec(void) const {
-	return m_rotation;
-}
+void Menu::UpdateMenuParams(void) {
+	mn_eyeLoc[0] = m_eyeLoc.x;
+	mn_eyeLoc[1] = m_eyeLoc.y;
+	mn_eyeLoc[2] = m_eyeLoc.z;
 
-void Menu::UpdateVariables(void) {
-	m_eyeLoc.x = mn_eyeLoc[0];
-	m_eyeLoc.y = mn_eyeLoc[1];
-	m_eyeLoc.z = mn_eyeLoc[2];
-
-	m_translation.x = mn_translation[0];
-	m_translation.y = mn_translation[1];
-	m_translation.z = mn_translation[2];
-
-	m_scale.x = mn_scale[0];
-	m_scale.y = mn_scale[1];
-	m_scale.z = mn_scale[2];
-
-	m_rotation.x = mn_rotation[0];
-	m_rotation.y = mn_rotation[1];
-	m_rotation.z = mn_rotation[2];
+	mn_eyeFocus[0] = m_eyeFocus.x;
+	mn_eyeFocus[1] = m_eyeFocus.y;
+	mn_eyeFocus[2] = m_eyeFocus.z;
 }

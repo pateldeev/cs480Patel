@@ -103,21 +103,16 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 }
 
 void Graphics::AddObject(const std::string & objFile) {
-	m_objects.push_back(new Object(objFile));
+	m_objects.push_back(new Object(objFile, 5, 5, 0.002, 0.001));
 }
 
-void Graphics::Update(void) {
+void Graphics::Update(unsigned int dt) {
 	for (Object * obj : m_objects)
-		obj->Update();
+		obj->Update(dt);
 }
 
-bool Graphics::UpdateParameters(const glm::vec3 & eyePos, const glm::vec3 & translationVec, const glm::vec3 & scaleVec,
-		const glm::vec3 rotationAnglesVec) {
-
-	m_camera->UpdatePosition(eyePos, m_camera->GetFocusPos());
-
-	m_objects[0]->Update(translationVec, scaleVec, rotationAnglesVec);
-
+bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
+	m_camera->UpdatePosition(eyePos, eyeFocus);
 	return true;
 }
 
@@ -164,4 +159,8 @@ std::string Graphics::ErrorString(const GLenum error) const {
 
 glm::vec3 Graphics::GetEyePos(void) const {
 	return m_camera->GetEyePos();
+}
+
+glm::vec3 Graphics::GetEyeLoc(void) const {
+	return m_camera->GetFocusPos();
 }
