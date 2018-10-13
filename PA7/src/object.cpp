@@ -8,10 +8,10 @@
 
 #include <algorithm>
 
-Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, float rotationSpeed, float orbitSpeed) :
-		m_model(1.0), angleRotation(0.0f), angleOrbit(0.0f), orbitRadiusX(orbitRadiusX), orbitRadiusZ(orbitRadiusZ), orbitCenter(
-				glm::vec3(0.0f, 0.0f, 0.0f)), orbitLoc(glm::vec3(0.0f, 0.0f, 0.0f)), objectScale(glm::vec3(1.0f, 1.0f, 1.0f)), speedRotation(
-				rotationSpeed), speedOrbit(orbitSpeed), pauseRotation(false), pauseOrbit(false) {
+Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, float orbitSpeed, float rotationSpeed) :
+		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(glm::vec3(0.0, 0.0, 0.0)), VB(0), m_orbitRadiusX(
+				orbitRadiusX), m_orbitRadiusZ(orbitRadiusZ), m_orbitSpeed(orbitSpeed), m_angleOfOrbit(0), m_orbitCenter(glm::vec3(0.0, 0.0, 0.0)), m_rotationSpeed(
+				rotationSpeed) {
 
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	if (!loadObjAssimp(objFile)) {
@@ -23,34 +23,37 @@ Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiu
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertices.size(), &m_vertices[0], GL_STATIC_DRAW);
 
 	for (int i = 0; i < IB.size(); ++i) {
 		glGenBuffers(1, &IB[i]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices[i].size(), &Indices[i][0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
 }
 
 Object::~Object(void) {
-	Vertices.clear();
-	for (std::vector<unsigned int> & temp : Indices)
+	m_vertices.clear();
+	
+	for (std::vector<unsigned int> & temp : m_indices)
 		temp.clear();
-	Indices.clear();
+	m_indices.clear();
+	
+	m_textures.clear();
+	m_textureFiles.clear();
 }
 
 void Object::Update(unsigned int dt) {
 
-	if (!pauseRotation)
-		angleRotation += dt * M_PI * speedRotation;
+	m_rotationAngles.y += dt * M_PI * m_rotationSpeed;
+	m_angleOfOrbit += dt * M_PI * m_orbitSpeed;
 
-	if (!pauseOrbit)
-		angleOrbit += dt * M_PI * speedOrbit;
+	m_translation = m_orbitCenter + glm::vec3(m_orbitRadiusX * std::cos(m_angleOfOrbit), 0.0, m_orbitRadiusZ * std::sin(m_angleOfOrbit));
 
-	orbitLoc = orbitCenter + glm::vec3(orbitRadiusX * std::cos(angleOrbit), 0.0, orbitRadiusZ * std::sin(angleOrbit));
+	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
+			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
 
-	//m_model = glm::scale(objectScale); //model = glm::rotate(model, (angleRotation), glm::vec3(0.0, 1.0, 0.0)); //model = glm::translate(model, orbitLoc);
-	m_model = glm::translate(orbitLoc) * glm::rotate((angleRotation), glm::vec3(0.0, 1.0, 0.0)) * glm::scale(objectScale);
+	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
 }
 
 void Object::Render(void) {
@@ -67,7 +70,7 @@ void Object::Render(void) {
 		glActiveTexture (GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
-		glDrawElements(GL_TRIANGLES, Indices[i].size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
 	}
 
 	glDisableVertexAttribArray(0);
@@ -78,56 +81,48 @@ glm::mat4 Object::GetModel(void) {
 	return m_model;
 }
 
-void Object::SetRotationSpeed(float rotationSpeed) {
-	speedRotation = rotationSpeed;
-}
-
-float Object::GetRotationSpeed(void) const {
-	return speedRotation;
-}
-
-void Object::SetOrbitSpeed(float orbitSpeed) {
-	speedOrbit = orbitSpeed;
-}
-
-float Object::GetOrbitSpeed(void) const {
-	return speedOrbit;
-}
-
-void Object::ToggleRotation(bool rotate) {
-	pauseRotation = !rotate;
-}
-
-bool Object::IsRotating(void) const {
-	return !pauseRotation;
-}
-
-void Object::ToggleOrbit(bool orbit) {
-	pauseOrbit = !orbit;
-}
-
-bool Object::IsOrbiting(void) const {
-	return !pauseOrbit;
-}
-
-void Object::SetOrbitCenter(const glm::vec3 & center) {
-	orbitCenter = center;
-}
-
-glm::vec3 Object::GetOrbitCenter(void) const {
-	return orbitCenter;
-}
-
-glm::vec3 Object::GetOrbitLoc(void) const {
-	return orbitLoc;
-}
-
 void Object::SetScale(const glm::vec3 & scale) {
-	objectScale = scale;
+	m_scale = scale;
 }
 
 glm::vec3 Object::GetScale(void) const {
-	return objectScale;
+	return m_scale;
+}
+
+void Object::SetRotationAngles(const glm::vec3 & rotationAngles) {
+	m_rotationAngles = rotationAngles;
+}
+
+glm::vec3 Object::GetRotationAngles(void) const {
+	return m_rotationAngles;
+}
+
+void Object::SetOrbitSpeed(float orbitSpeed) {
+	m_orbitSpeed = orbitSpeed;
+}
+
+float Object::GetOrbitSpeed(void) const {
+	return m_orbitSpeed;
+}
+
+void Object::SetOrbitCenter(const glm::vec3 & center) {
+	m_orbitCenter = center;
+}
+
+glm::vec3 Object::GetOrbitCenter(void) const {
+	return m_orbitCenter;
+}
+
+glm::vec3 Object::GetCurrentLocation(void) const {
+	return m_translation;
+}
+
+void Object::SetRotationSpeed(float rotationSpeed) {
+	m_rotationSpeed = rotationSpeed;
+}
+
+float Object::GetRotationSpeed(void) const {
+	return m_rotationSpeed;
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {
@@ -173,12 +168,12 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					if(textureIndex == m_textureFiles.size()) {
 						m_textureFiles.push_back(path);
 						std::vector<unsigned int> newIndicyArr;
-						Indices.push_back(newIndicyArr);
+						m_indices.push_back(newIndicyArr);
 					}
 
 					//add vertex and index to correct texture and vertex
-					Vertices.push_back(Vertex(tempVertex, tempUV));
-					Indices[textureIndex].push_back(Vertices.size()-1);
+					m_vertices.push_back(Vertex(tempVertex, tempUV));
+					m_indices[textureIndex].push_back(m_vertices.size()-1);
 				}
 			}
 
@@ -214,4 +209,5 @@ void Object::loadTextures(const std::string & objFile) {
 
 		m_textures.push_back(tempTexture);
 	}
+	m_textureFiles.clear();
 }

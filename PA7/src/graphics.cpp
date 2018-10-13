@@ -103,7 +103,10 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 }
 
 void Graphics::AddObject(const std::string & objFile) {
-	m_objects.push_back(new Object(objFile, 5, 5, 0.002, 0.001));
+	m_objects.push_back(new Object(objFile, 5, 5, 0, 0.0001));
+	m_objects[0]->SetRotationAngles(glm::vec3(0,0,0));
+	m_objects[0]->SetScale(glm::vec3(5,5,5));
+	//m_objects.push_back(new Object(objFile, 5, 5, 0.001, 0.002));
 }
 
 void Graphics::Update(unsigned int dt) {

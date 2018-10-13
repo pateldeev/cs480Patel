@@ -9,29 +9,29 @@
 
 class Object {
 public:
-	Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, float rotationSpeed, float orbitSpeed);
+	Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, float orbitSpeed, float rotationSpeed);
 	~Object(void);
 	void Update(unsigned int dt);
 	void Render(void);
 
 	glm::mat4 GetModel(void);
 
-	void SetRotationSpeed(float rotationSpeed);
-	float GetRotationSpeed(void) const;
-	void SetOrbitSpeed(float orbitSpeed);
-	float GetOrbitSpeed(void) const;
-	
-	void ToggleRotation(bool rotate);
-	bool IsRotating(void) const;
-	void ToggleOrbit(bool orbit);
-	bool IsOrbiting(void) const;
-	
-	void SetOrbitCenter(const glm::vec3 & center);
-	glm::vec3 GetOrbitCenter(void) const;
-	glm::vec3 GetOrbitLoc(void) const;
-	
 	void SetScale(const glm::vec3 & scale);
 	glm::vec3 GetScale(void) const;
+	
+	void SetRotationAngles(const glm::vec3 & rotationAngles);
+	glm::vec3 GetRotationAngles(void) const;
+	
+	void SetOrbitSpeed(float orbitSpeed);
+	float GetOrbitSpeed(void) const;
+	void SetOrbitCenter(const glm::vec3 & center);
+	glm::vec3 GetOrbitCenter(void) const;
+	
+	glm::vec3 GetCurrentLocation(void) const;
+
+	void SetRotationSpeed(float rotationSpeed);
+	float GetRotationSpeed(void) const;
+
 
 private:
 	glm::mat4 m_model;
@@ -40,25 +40,20 @@ private:
 	glm::vec3 m_scale;
 	glm::vec3 m_rotationAngles;
 
-	std::vector<Vertex> Vertices;
-	std::vector<std::vector<unsigned int>> Indices; //holds indicy set for each texture
+	std::vector<Vertex> m_vertices;
+	std::vector<std::vector<unsigned int>> m_indices; //holds indicy set for each texture
 
 	GLuint VB;
 	std::vector<GLuint> IB; //vector of index set buffers
 
-	float angleRotation;
-	float angleOrbit;
-	float orbitRadiusX;
-	float orbitRadiusZ;
+	//orbital variables
+	float m_orbitRadiusX;
+	float m_orbitRadiusZ;
+	float m_orbitSpeed;
+	float m_angleOfOrbit;
+	glm::vec3 m_orbitCenter;
 
-	glm::vec3 orbitCenter; //center of object's orbital
-	glm::vec3 orbitLoc; //position of object on the orbit 
-	glm::vec3 objectScale; //scaling vector applied to object
-
-	float speedRotation;
-	float speedOrbit;
-	bool pauseRotation;
-	bool pauseOrbit;
+	float m_rotationSpeed;
 
 	std::vector<GLuint> m_textures; //vector of texture locations on GPU
 	std::vector<aiString> m_textureFiles; //vector of text file names

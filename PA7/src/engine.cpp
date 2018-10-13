@@ -5,7 +5,7 @@
 
 Engine::Engine(const std::string & launchFile) :
 		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
-				Engine::GetCurrentTimeMillis()) {
+				Engine::GetCurrentTimeMillis()), m_running(false) {
 }
 
 Engine::~Engine(void) {
