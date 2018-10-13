@@ -1,13 +1,17 @@
 #include "graphics.h"
 
 Graphics::Graphics(void) :
-		m_camera(nullptr), m_shader(nullptr) {
+		m_camera(nullptr), m_shader(nullptr), m_followingPlanet(-1) {
 
 }
 
 Graphics::~Graphics(void) {
-	for (Object * obj : m_objects)
+	for (Object * obj : m_planets)
 		delete obj;
+
+	for (std::vector<Object *> & temp : m_moons)
+		for (Object * moon : temp)
+			delete moon;
 
 	delete m_camera;
 	delete m_shader;
@@ -102,16 +106,45 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 	return true;
 }
 
-void Graphics::AddObject(const std::string & objFile) {
-	m_objects.push_back(new Object(objFile, 5, 5, 0, 0.0001));
-	m_objects[0]->SetRotationAngles(glm::vec3(0,0,0));
-	m_objects[0]->SetScale(glm::vec3(5,5,5));
-	//m_objects.push_back(new Object(objFile, 5, 5, 0.001, 0.002));
+void Graphics::AddPlanet(const Planet & planet, const std::string & moonObjFile) {
+
+	m_planets.push_back(new Object(planet.objFile, planet.radius.x, planet.radius.y, planet.orbitSpeed, planet.rotationSpeed));
+	m_planetNames.push_back(planet.name);
+	m_planets.back()->SetScale(planet.modelScale);
+
+	std::vector<Object *> moons;
+	m_moons.push_back(moons);
+
+	const int offsetPerMoon = 1;
+	const int baseDistance = 3 + m_planets.back()->GetScale().y;
+	float orbitSpeed, rotationSpeed, scale;
+	for (unsigned int i = 0; i < planet.numMoons; ++i) {
+		orbitSpeed = (float) (rand() / INT_MAX / 10000) + 0.00025;
+		rotationSpeed = (float) (rand() / INT_MAX / 100000) + 0.000005;
+		m_moons.back().push_back(
+				new Object(moonObjFile, baseDistance + offsetPerMoon * i, baseDistance + offsetPerMoon * i, orbitSpeed, rotationSpeed));
+		scale = (((float) (rand() / INT_MAX) / 4) + .25);
+		m_moons.back().back()->SetScale(glm::vec3(scale, scale, scale));
+	}
 }
 
 void Graphics::Update(unsigned int dt) {
-	for (Object * obj : m_objects)
-		obj->Update(dt);
+	for (int i = 0; i < m_planets.size(); ++i) {
+		m_planets[i]->Update(dt);
+
+		for (int m = 0; m < m_moons[i].size(); ++m) {
+			m_moons[i][m]->SetOrbitCenter(m_planets[i]->GetCurrentLocation());
+			m_moons[i][m]->Update(dt);
+		}
+	}
+}
+
+void Graphics::FollowPlanet(const std::string & planetName) {
+	m_followingPlanet = -1;
+	for (int i = 0; i < m_planetNames.size(); ++i) {
+		if (m_planetNames[i] == planetName)
+			m_followingPlanet = i;
+	}
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -120,6 +153,16 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
+
+	if (m_followingPlanet > -1) {
+		glm::vec3 eyeFocus = { 0, 0, 0 };
+		float distSun = glm::length(m_planets[m_followingPlanet]->GetCurrentLocation());
+		glm::vec3 eyePos = (distSun + 10 * m_planets[m_followingPlanet]->GetScale().y)
+				* glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());
+		eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
+		UpdateCamera(eyePos, eyeFocus);
+	}
+
 	//Clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -131,14 +174,18 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-	//Render each object
-	for (Object * obj : m_objects) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj->GetModel()));
-		obj->Render();
+	//Render each planet and its moons
+	for (int i = 0; i < m_planets.size(); ++i) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
+		m_planets[i]->Render();
+		for (int m = 0; m < m_moons[i].size(); ++m) {
+			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moons[i][m]->GetModel()));
+			m_moons[i][m]->Render();
+		}
 	}
 
 	//Get any errors from OpenGL
-	GLenum error = glGetError();
+	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		std::string val = ErrorString(error);
 		printf("Error initializing OpenGL! %d: %s \n", error, val.c_str());

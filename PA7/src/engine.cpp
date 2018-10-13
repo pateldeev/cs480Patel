@@ -6,6 +6,7 @@
 Engine::Engine(const std::string & launchFile) :
 		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
 				Engine::GetCurrentTimeMillis()), m_running(false) {
+	std::srand(time(nullptr));
 }
 
 Engine::~Engine(void) {
@@ -41,12 +42,6 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 
-	std::string objFile;
-	if (!m_configFile.getObjFile(objFile)) {
-		printf("Could not get object file information from configuration file \n");
-		return false;
-	}
-
 	//Start the window
 	m_window = new Window();
 	if (!m_window->Initialize(windowName, windowWidth, windowHeight)) {
@@ -60,7 +55,18 @@ bool Engine::Initialize(void) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
-	m_graphics->AddObject(objFile);
+
+	std::string moonObjFile;
+	if (!m_configFile.getMoonObjFile(moonObjFile)) {
+		printf("Could not get moon information from configuration file \n");
+		return false;
+	}
+
+	Planet planet;
+	while (m_configFile.getPlanetInfo(planet)) {
+		m_graphics->AddPlanet(planet, moonObjFile);
+	}
+	//m_graphics->FollowPlanet("Pluto");
 
 	//Start the menu if necessary
 	if (menu)

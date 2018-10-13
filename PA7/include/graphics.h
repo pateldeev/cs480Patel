@@ -20,6 +20,7 @@ public:
 			const glm::vec3 & focusPos);
 
 	void AddPlanet(const Planet & planet, const std::string & moonObjFile);
+	void FollowPlanet(const std::string & planetName);
 
 	void Update(unsigned int dt);
 
@@ -43,6 +44,8 @@ private:
 	std::vector<std::string> m_planetNames;
 	std::vector<Object *> m_planets;
 	std::vector<std::vector<Object *>> m_moons;
+	
+	int m_followingPlanet; //planet being followed
 };
 
 #endif /* GRAPHICS_H */

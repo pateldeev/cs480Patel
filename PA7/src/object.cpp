@@ -30,21 +30,24 @@ Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiu
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
+
+	//randomize start angle
+	m_angleOfOrbit = ((float) rand() / INT_MAX) * M_PI * 2;
 }
 
 Object::~Object(void) {
 	m_vertices.clear();
-	
+
 	for (std::vector<unsigned int> & temp : m_indices)
 		temp.clear();
 	m_indices.clear();
-	
+
 	m_textures.clear();
 	m_textureFiles.clear();
 }
 
+#if 1
 void Object::Update(unsigned int dt) {
-
 	m_rotationAngles.y += dt * M_PI * m_rotationSpeed;
 	m_angleOfOrbit += dt * M_PI * m_orbitSpeed;
 
@@ -55,6 +58,22 @@ void Object::Update(unsigned int dt) {
 
 	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
 }
+#else
+void Object::Update(unsigned int dt) {
+	m_rotationAngles.y += dt * M_PI * m_rotationSpeed;
+	m_angleOfOrbit += dt * M_PI * m_orbitSpeed;
+
+	m_model = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0,1.0,0.0));
+
+	m_translation = m_orbitCenter + glm::vec3(m_orbitRadiusX * std::cos(m_angleOfOrbit), 0.0, m_orbitRadiusZ * std::sin(m_angleOfOrbit));
+
+	m_model = glm::translate(m_model, m_translation);
+	m_model = glm::rotate(m_model, (m_rotationAngles.x), glm::vec3(1.0, 0.0, 1.0));
+	m_model = glm::rotate(m_model, (m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
+
+	m_model = glm::scale(m_model, m_scale);
+}
+#endif
 
 void Object::Render(void) {
 	glEnableVertexAttribArray(0);
