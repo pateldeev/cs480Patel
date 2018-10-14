@@ -143,6 +143,13 @@ bool ConfigFileParser::getPlanetInfo(Planet & planet) {
 		printf("Could not get planet information config file \n");
 		return false;
 	}
+        
+        //get planet axial tilt
+        if (!parseLine<float, 2>(varName, values) || varName.compare("AXIAL_TILT")) {
+            printf("Could not get planet information config file \n");
+            return false;
+        }
+        planet.axialTilt = glm::vec3(values[0], 0, values[1]);
 
 	return true;
 }

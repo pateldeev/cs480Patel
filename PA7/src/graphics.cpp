@@ -108,7 +108,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 
 void Graphics::AddPlanet(const Planet & planet, const std::string & moonObjFile) {
 
-	m_planets.push_back(new Object(planet.objFile, planet.radius.x, planet.radius.y, planet.orbitSpeed, planet.rotationSpeed));
+	m_planets.push_back(new Object(planet.objFile, planet.radius.x, planet.radius.y, planet.axialTilt, planet.orbitSpeed, planet.rotationSpeed));
 	m_planetNames.push_back(planet.name);
 	m_planets.back()->SetScale(planet.modelScale);
 
@@ -118,11 +118,13 @@ void Graphics::AddPlanet(const Planet & planet, const std::string & moonObjFile)
 	const int offsetPerMoon = 1;
 	const int baseDistance = 3 + m_planets.back()->GetScale().y;
 	float orbitSpeed, rotationSpeed, scale;
+        glm::vec3 tilt;
 	for (unsigned int i = 0; i < planet.numMoons; ++i) {
 		orbitSpeed = (float) (rand() / INT_MAX / 10000) + 0.00025;
 		rotationSpeed = (float) (rand() / INT_MAX / 100000) + 0.000005;
+                tilt = glm::vec3(((float) rand() / INT_MAX * 1.751 / 2), 0, ((float) rand() / INT_MAX * 1.751 / 2));
 		m_moons.back().push_back(
-				new Object(moonObjFile, baseDistance + offsetPerMoon * i, baseDistance + offsetPerMoon * i, orbitSpeed, rotationSpeed));
+				new Object(moonObjFile, baseDistance + offsetPerMoon * i, baseDistance + offsetPerMoon * i, tilt, orbitSpeed, rotationSpeed));
 		scale = (((float) (rand() / INT_MAX) / 4) + .25);
 		m_moons.back().back()->SetScale(glm::vec3(scale, scale, scale));
 	}

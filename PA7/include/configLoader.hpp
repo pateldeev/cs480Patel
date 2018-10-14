@@ -13,6 +13,7 @@ struct Planet{
 	glm::vec2 radius;
 	float orbitSpeed;
 	float rotationSpeed;
+        glm::vec3 axialTilt;
 };
 
 //class to parse configuration file of paramters
