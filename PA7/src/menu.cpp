@@ -34,47 +34,90 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 bool Menu::Update(const SDL_GLContext & gl_context) {
 
-	bool updated = false;
+    bool updated = false;
 
-	// Start the Dear ImGui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame (m_window);
-	ImGui::NewFrame();
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(m_window);
+    ImGui::NewFrame();
 
-	ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
-	ImGui::SetNextWindowSize(ImVec2(630, 680));
-	ImGui::Begin("Menu");
+    ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+    ImGui::SetNextWindowSize(ImVec2(630, 680));
+    ImGui::Begin("Menu");
 
-	ImGui::Text("Use this menu to change the parameters of the OPENGL rendering.");
-	ImGui::Text("\n");
+    ImGui::Text("Use this menu to change the parameters of the OPENGL rendering.");
+    ImGui::Text("\n");
 
-	ImGui::InputFloat3("Camera Position", mn_eyeLoc);
-	ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", m_eyeLoc.x, m_eyeLoc.y, m_eyeLoc.z);
-	ImGui::Text("\n");
+    ImGui::InputFloat3("Camera Position", mn_eyeLoc);
+    ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", m_eyeLoc.x, m_eyeLoc.y, m_eyeLoc.z);
+    ImGui::Text("\n");
 
-	ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
-	ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
-	ImGui::Text("\n");
+    ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
+    ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
+    ImGui::Text("\n");
 
-	ImGui::Text("\n");
-	if (ImGui::Button("Update")) {
-		updated = true;
-		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
-		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
-	}
+    ImGui::Text("Chosen focus for camera: ");
+    ImGui::SameLine();
+    if (ImGui::CollapsingHeader(focus_planet.empty() ? "No focus selected" : focus_planet.c_str())) {
+        if (ImGui::Button("Whole System")) {
+            focus_planet = "System";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Mercury")) {
+            focus_planet = "Mercury";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Venus")) {
+            focus_planet = "Venus";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Earth")) {
+            focus_planet = "Earth";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Mars")) {
+            focus_planet = "Mars";
+        }
+        if (ImGui::Button("Jupiter")) {
+            focus_planet = "Jupiter";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Saturn")) {
+            focus_planet = "Saturn";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Uranus")) {
+            focus_planet = "Uranus";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Neptune")) {
+            focus_planet = "Neptune";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Pluto")) {
+            focus_planet = "Pluto";
+        }
+    }
 
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::End();
+    ImGui::Text("\n");
+    if (ImGui::Button("Update")) {
+        updated = true;
+        m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
+        m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
+    }
 
-	// Rendering
-	ImGui::Render();
-	SDL_GL_MakeCurrent(m_window, gl_context);
-	glClearColor(0.0, 0.0, 0.2, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	SDL_GL_SwapWindow(m_window);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
 
-	return updated;
+    // Rendering
+    ImGui::Render();
+    SDL_GL_MakeCurrent(m_window, gl_context);
+    glClearColor(0.0, 0.0, 0.2, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    SDL_GL_SwapWindow(m_window);
+
+    return updated;
 }
 
 void Menu::HandleEvent(SDL_Event event) {
@@ -106,4 +149,8 @@ void Menu::UpdateMenuParams(void) {
 	mn_eyeFocus[0] = m_eyeFocus.x;
 	mn_eyeFocus[1] = m_eyeFocus.y;
 	mn_eyeFocus[2] = m_eyeFocus.z;
+}
+
+std::string Menu::GetFocusPlanet() {
+    return focus_planet;
 }

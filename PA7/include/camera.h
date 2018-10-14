@@ -10,6 +10,7 @@ public:
 	bool Initialize(int width, int height);
 	
 	void UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos);
+        void ReturnToDefault();
 
 	glm::mat4 GetProjection(void) const;
 	glm::mat4 GetView(void) const;
@@ -19,6 +20,9 @@ public:
 
 private:
 
+        glm::vec3 default_eyePos;
+        glm::vec3 default_focusPos;
+    
 	glm::vec3 m_eyePos;
 	glm::vec3 m_focusPos;
 

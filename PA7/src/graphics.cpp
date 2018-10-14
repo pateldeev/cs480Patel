@@ -147,6 +147,10 @@ void Graphics::FollowPlanet(const std::string & planetName) {
 	}
 }
 
+void Graphics::SystemView() {
+    m_followingPlanet = -2;
+}
+
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
 	m_camera->UpdatePosition(eyePos, eyeFocus);
 	return true;
@@ -161,7 +165,9 @@ void Graphics::Render(void) {
 				* glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());
 		eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
 		UpdateCamera(eyePos, eyeFocus);
-	}
+	} else if (m_followingPlanet == -2) {
+            m_camera->ReturnToDefault();
+        }
 
 	//Clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);

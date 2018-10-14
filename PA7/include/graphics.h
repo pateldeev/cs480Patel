@@ -21,7 +21,8 @@ public:
 
 	void AddPlanet(const Planet & planet, const std::string & moonObjFile);
 	void FollowPlanet(const std::string & planetName);
-
+        void SystemView();
+        
 	void Update(unsigned int dt);
 
 	bool UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);

@@ -28,6 +28,9 @@ public:
 	glm::vec3 GetEyeFocus(void) const;
 
 	void UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
+        
+        std::string GetFocusPlanet();
+        void SetFocusPlanet(std::string planet);
 	
 private:
 	SDL_Window * m_window;
@@ -40,6 +43,8 @@ private:
 	float mn_eyeFocus[3];
 	
 	void UpdateMenuParams(void);
+        
+        std::string focus_planet;
 };
 
 #endif /* MENU_H */

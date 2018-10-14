@@ -66,7 +66,7 @@ bool Engine::Initialize(void) {
 	while (m_configFile.getPlanetInfo(planet)) {
 		m_graphics->AddPlanet(planet, moonObjFile);
 	}
-	m_graphics->FollowPlanet("Earth");
+	//m_graphics->FollowPlanet("Earth");
 
 	//Start the menu if necessary
 	if (menu)
@@ -83,14 +83,24 @@ void Engine::Run(void) {
 	const float FPS = 120; //FPS cap, should obviously add a way to change this later
 	const float minFrameTime = 1.0f / FPS * 1000;
 	float duration;
-
+        std::string focus_planet;
+        
 	while (m_running) {
 
 		t1 = std::chrono::high_resolution_clock::now();
 		SDL_GL_MakeCurrent(m_window->GetWindow(), m_window->GetContext());
 
 		EventChecker(); // Check for events input
-
+                
+                focus_planet = m_menu->GetFocusPlanet();
+                if (!focus_planet.empty()) {
+                    if (focus_planet == "System") {
+                        m_graphics->SystemView();
+                    } else {
+                        m_graphics->FollowPlanet(focus_planet);
+                    }
+                }
+                
 		m_DT = getDT();
 		// Update and render the graphics
 		m_graphics->Update(m_DT * m_simulationSpeed);
