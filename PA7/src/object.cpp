@@ -215,6 +215,7 @@ void Object::loadTextures(const std::string & objFile) {
 	for (const aiString & path : m_textureFiles) {
 		Magick::Blob blob;
 		img = new Magick::Image(std::string(fileNameStart + path.C_Str()));
+                img->flip();
 		img->write(&blob, "RGBA");
 
 		//store textures on GPU

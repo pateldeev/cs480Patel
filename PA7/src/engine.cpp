@@ -66,7 +66,7 @@ bool Engine::Initialize(void) {
 	while (m_configFile.getPlanetInfo(planet)) {
 		m_graphics->AddPlanet(planet, moonObjFile);
 	}
-	//m_graphics->FollowPlanet("Pluto");
+	m_graphics->FollowPlanet("Earth");
 
 	//Start the menu if necessary
 	if (menu)

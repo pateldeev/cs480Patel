@@ -42,6 +42,9 @@ bool Window::Initialize(const std::string & name, int width, int height) {
 		return false;
 	}
 
+        
+        SDL_SetWindowFullscreen(gWindow, 0);
+        
 	// Create context
 	gContext = SDL_GL_CreateContext(gWindow);
 	if (!gContext) {
