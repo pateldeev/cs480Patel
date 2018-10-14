@@ -4,7 +4,7 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & launchFile) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_simulationSpeed(1), m_currentTimeMillis(
 				Engine::GetCurrentTimeMillis()), m_running(false) {
 	std::srand(time(nullptr));
 }
@@ -93,7 +93,7 @@ void Engine::Run(void) {
 
 		m_DT = getDT();
 		// Update and render the graphics
-		m_graphics->Update(m_DT);
+		m_graphics->Update(m_DT * m_simulationSpeed);
 		m_graphics->Render();
 
 		// Swap to the Window
@@ -138,6 +138,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 				CloseMenu();
 			else
 				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+		} else if (event.key.keysym.sym == SDLK_f) {
+			m_simulationSpeed += 0.1;
+		} else if (event.key.keysym.sym == SDLK_s && m_simulationSpeed >= 0.05) {
+			m_simulationSpeed -= 0.1;
 		}
 	}
 }
@@ -153,7 +157,7 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-//handle event based on correct window location
+		//handle event based on correct window location
 		if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
 				m_running = false;

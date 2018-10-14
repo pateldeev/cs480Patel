@@ -25,5 +25,5 @@ This uses the assimp library to load and render an object exported from blendar 
 This uses the assimp library in conjunction with the magick++ image library to render an object exported from blendar. This program will only render objects with texture coordinates. To run this project ```cd PA6``` then follow the instructions in the README.md.
 
 ## PA7: Solar System - UNDER DEVELOPMENT
-This program is still being created. To run this project ```cd PA7``` then follow the instructions in the README.md.
+This program is still being created. This renders a solar system simulation with all the planets and moons. To run this project ```cd PA7``` then follow the instructions in the README.md.
 

@@ -30,6 +30,7 @@ private:
 	ConfigFileParser m_configFile; //used to get parameters from
 
 	unsigned int m_DT;
+	float m_simulationSpeed;
 	long long m_currentTimeMillis;
 	bool m_running;
 	
