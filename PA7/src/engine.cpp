@@ -92,12 +92,14 @@ void Engine::Run(void) {
 
 		EventChecker(); // Check for events input
                 
-                focus_planet = m_menu->GetFocusPlanet();
-                if (!focus_planet.empty()) {
-                    if (focus_planet == "System") {
-                        m_graphics->SystemView();
-                    } else {
-                        m_graphics->FollowPlanet(focus_planet);
+                if (m_menu) {
+                    focus_planet = m_menu->GetFocusPlanet();
+                    if (!focus_planet.empty()) {
+                        if (focus_planet == "System") {
+                            m_graphics->SystemView();
+                        } else {
+                            m_graphics->FollowPlanet(focus_planet);
+                        }
                     }
                 }
                 
