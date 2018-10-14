@@ -1,7 +1,7 @@
 # PA7: Solar System - UNDER DEVELOPMENT
 
 ## TODO
-  * Camera movement/reset view
+  * Camera movement
   * Instruction Manual
 
 ## Group
