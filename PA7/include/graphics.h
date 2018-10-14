@@ -21,8 +21,9 @@ public:
 
 	void AddPlanet(const Planet & planet, const std::string & moonObjFile);
 	void FollowPlanet(const std::string & planetName);
-        void SystemView();
-        
+	void SystemView(void);
+	void UserControlledView(void);
+
 	void Update(unsigned int dt);
 
 	bool UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
@@ -45,7 +46,7 @@ private:
 	std::vector<std::string> m_planetNames;
 	std::vector<Object *> m_planets;
 	std::vector<std::vector<Object *>> m_moons;
-	
+
 	int m_followingPlanet; //planet being followed
 };
 

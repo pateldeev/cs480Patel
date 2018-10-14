@@ -9,7 +9,7 @@
 
 class Object {
 public:
-	Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, glm::vec3 rotationAngles, float orbitSpeed, float rotationSpeed);
+	Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, const glm::vec3 & rotationAngles, float orbitSpeed, float rotationSpeed);
 	~Object(void);
 	void Update(unsigned int dt);
 	void Render(void);

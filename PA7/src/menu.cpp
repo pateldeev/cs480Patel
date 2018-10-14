@@ -32,7 +32,7 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 }
 
-bool Menu::Update(const SDL_GLContext & gl_context) {
+bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc) {
 
     bool updated = false;
 
@@ -49,7 +49,7 @@ bool Menu::Update(const SDL_GLContext & gl_context) {
     ImGui::Text("\n");
 
     ImGui::InputFloat3("Camera Position", mn_eyeLoc);
-    ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", m_eyeLoc.x, m_eyeLoc.y, m_eyeLoc.z);
+    ImGui::Text("Current Camera Position: (%.2f, %.2f, %.2f)", currrentEyeLoc.x, currrentEyeLoc.y, currrentEyeLoc.z);
     ImGui::Text("\n");
 
     ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
@@ -61,47 +61,58 @@ bool Menu::Update(const SDL_GLContext & gl_context) {
     if (ImGui::CollapsingHeader(focus_planet.empty() ? "No focus selected" : focus_planet.c_str())) {
         if (ImGui::Button("Whole System")) {
             focus_planet = "System";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Mercury")) {
             focus_planet = "Mercury";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Venus")) {
             focus_planet = "Venus";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Earth")) {
             focus_planet = "Earth";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Mars")) {
             focus_planet = "Mars";
+            updated = true;
         }
         if (ImGui::Button("Jupiter")) {
             focus_planet = "Jupiter";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Saturn")) {
             focus_planet = "Saturn";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Uranus")) {
             focus_planet = "Uranus";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Neptune")) {
             focus_planet = "Neptune";
+            updated = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Pluto")) {
             focus_planet = "Pluto";
+            updated = true;
         }
     }
 
     ImGui::Text("\n");
     if (ImGui::Button("Update")) {
         updated = true;
+        focus_planet = "UserDefined";
         m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
         m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
     }
@@ -151,6 +162,10 @@ void Menu::UpdateMenuParams(void) {
 	mn_eyeFocus[2] = m_eyeFocus.z;
 }
 
-std::string Menu::GetFocusPlanet() {
+std::string Menu::GetFocusPlanet(void) const{
     return focus_planet;
+}
+
+void Menu::SetFocusPlanet(const std::string & planet){
+    focus_planet = planet;
 }

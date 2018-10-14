@@ -34,7 +34,7 @@ void Camera::UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos
 			glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
 }
 
-void Camera::ReturnToDefault() {
+void Camera::ReturnToDefault(void) {
     m_eyePos = default_eyePos;
 	m_focusPos = default_focusPos;
 

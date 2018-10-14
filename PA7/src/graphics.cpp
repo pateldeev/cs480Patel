@@ -116,15 +116,15 @@ void Graphics::AddPlanet(const Planet & planet, const std::string & moonObjFile)
 	m_moons.push_back(moons);
 
 	const int offsetPerMoon = 1;
-	const int baseDistance = 3 + m_planets.back()->GetScale().y;
 	float orbitSpeed, rotationSpeed, scale;
-        glm::vec3 tilt;
+	glm::vec3 tilt;
 	for (unsigned int i = 0; i < planet.numMoons; ++i) {
 		orbitSpeed = (float) (rand() / INT_MAX / 10000) + 0.00025;
 		rotationSpeed = (float) (rand() / INT_MAX / 100000) + 0.000005;
-                tilt = glm::vec3(((float) rand() / INT_MAX * 1.751 / 2), 0, ((float) rand() / INT_MAX * 1.751 / 2));
+		tilt = glm::vec3(((float) rand() / INT_MAX * 1.751 / 2), 0, ((float) rand() / INT_MAX * 1.751 / 2));
 		m_moons.back().push_back(
-				new Object(moonObjFile, baseDistance + offsetPerMoon * i, baseDistance + offsetPerMoon * i, tilt, orbitSpeed, rotationSpeed));
+				new Object(moonObjFile, planet.moonMinDistance + offsetPerMoon * i, planet.moonMinDistance + offsetPerMoon * i, tilt, orbitSpeed,
+						rotationSpeed));
 		scale = (((float) (rand() / INT_MAX) / 4) + .25);
 		m_moons.back().back()->SetScale(glm::vec3(scale, scale, scale));
 	}
@@ -149,8 +149,12 @@ void Graphics::FollowPlanet(const std::string & planetName) {
 	}
 }
 
-void Graphics::SystemView() {
-    m_followingPlanet = -2;
+void Graphics::SystemView(void) {
+	m_followingPlanet = -2;
+}
+
+void Graphics::UserControlledView(void) {
+	m_followingPlanet = -1;
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -168,8 +172,9 @@ void Graphics::Render(void) {
 		eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
 		UpdateCamera(eyePos, eyeFocus);
 	} else if (m_followingPlanet == -2) {
-            m_camera->ReturnToDefault();
-        }
+		m_camera->ReturnToDefault();
+		m_followingPlanet = -1;
+	}
 
 	//Clear the screen
 	glClearColor(0.0, 0.0, 0.2, 1.0);

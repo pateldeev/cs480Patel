@@ -5,15 +5,16 @@
 
 #include <sstream>
 
-struct Planet{
+struct Planet {
 	std::string name;
 	std::string objFile;
 	glm::vec3 modelScale;
 	unsigned int numMoons;
+	float moonMinDistance;
 	glm::vec2 radius;
 	float orbitSpeed;
 	float rotationSpeed;
-        glm::vec3 axialTilt;
+	glm::vec3 axialTilt;
 };
 
 //class to parse configuration file of paramters
@@ -30,9 +31,9 @@ public:
 	bool getWindowInfo(std::string & windowName, int & windowWidth, int & windowHeight);
 
 	bool getCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
-	
+
 	bool getMoonObjFile(std::string & objFile);
-	
+
 	bool getPlanetInfo(Planet & planet);
 
 private:

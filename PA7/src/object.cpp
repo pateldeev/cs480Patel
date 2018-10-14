@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, glm::vec3 rotationAngles, float orbitSpeed, float rotationSpeed) :
+Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, const glm::vec3 & rotationAngles, float orbitSpeed, float rotationSpeed) :
 		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(rotationAngles), VB(0), m_orbitRadiusX(
 				orbitRadiusX), m_orbitRadiusZ(orbitRadiusZ), m_orbitSpeed(orbitSpeed), m_angleOfOrbit(0), m_orbitCenter(glm::vec3(0.0, 0.0, 0.0)), m_rotationSpeed(
 				rotationSpeed) {

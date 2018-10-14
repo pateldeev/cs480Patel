@@ -18,7 +18,7 @@ public:
 	~Menu(void);
 
 	bool Initialize(const SDL_GLContext & gl_context);
-	bool Update(const SDL_GLContext & gl_context); //returns if menu has been undated
+	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc); //returns if menu has been undated
 
 	void HandleEvent(SDL_Event event);
 
@@ -29,8 +29,8 @@ public:
 
 	void UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
         
-        std::string GetFocusPlanet();
-        void SetFocusPlanet(std::string planet);
+        std::string GetFocusPlanet(void) const;
+        void SetFocusPlanet(const std::string & planet);
 	
 private:
 	SDL_Window * m_window;

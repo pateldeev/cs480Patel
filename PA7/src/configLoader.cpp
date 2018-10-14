@@ -125,6 +125,14 @@ bool ConfigFileParser::getPlanetInfo(Planet & planet) {
 		return false;
 	}
 
+	//get minimum distance of moon if needed
+	if (planet.numMoons) {
+		if (!parseLine<float>(varName, &planet.moonMinDistance) || varName.compare("MOON_MIN_DISTANCE")) {
+			printf("Could not get planet information config file \n");
+			return false;
+		}
+	}
+
 	//get planet orbit information
 	if (!parseLine<float, 2>(varName, values) || varName.compare("ORBIT_RADIUS_X_Z")) {
 		printf("Could not get planet information config file \n");
@@ -143,13 +151,13 @@ bool ConfigFileParser::getPlanetInfo(Planet & planet) {
 		printf("Could not get planet information config file \n");
 		return false;
 	}
-        
-        //get planet axial tilt
-        if (!parseLine<float, 2>(varName, values) || varName.compare("AXIAL_TILT")) {
-            printf("Could not get planet information config file \n");
-            return false;
-        }
-        planet.axialTilt = glm::vec3(values[0], 0, values[1]);
+
+	//get planet axial tilt
+	if (!parseLine<float, 2>(varName, values) || varName.compare("AXIAL_TILT")) {
+		printf("Could not get planet information config file \n");
+		return false;
+	}
+	planet.axialTilt = glm::vec3(values[0], 0, values[1]);
 
 	return true;
 }

@@ -10,7 +10,7 @@ public:
 	bool Initialize(int width, int height);
 	
 	void UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos);
-        void ReturnToDefault();
+        void ReturnToDefault(void);
 
 	glm::mat4 GetProjection(void) const;
 	glm::mat4 GetView(void) const;
