@@ -31,6 +31,10 @@ bool Window::Initialize(const std::string & name, int width, int height) {
 	SDL_GetCurrentDisplayMode(0, &current);
 
 	//use for fullscreen
+	SDL_DisplayMode display;
+	SDL_GetDesktopDisplayMode(0, &display);
+	height = display.h;
+	width = display.w;
 	if (height == 0 && width == 0) {
 		height = current.h;
 		width = current.w;
@@ -43,7 +47,7 @@ bool Window::Initialize(const std::string & name, int width, int height) {
 	}
 
         
-        SDL_SetWindowFullscreen(gWindow, 0);
+        //SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
         
 	// Create context
 	gContext = SDL_GL_CreateContext(gWindow);

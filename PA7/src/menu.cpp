@@ -55,7 +55,15 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
     ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
     ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
     ImGui::Text("\n");
-
+    if (ImGui::Button("Update")) {
+        updated = true;
+        focus_planet = "UserDefined";
+        m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
+        m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
+    }
+    
+    ImGui::Text("\n");    
+    ImGui::Text("\n");
     ImGui::Text("Chosen focus for camera: ");
     ImGui::SameLine();
     if (ImGui::CollapsingHeader(focus_planet.empty() ? "No focus selected" : focus_planet.c_str())) {
@@ -108,15 +116,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
             updated = true;
         }
     }
-
-    ImGui::Text("\n");
-    if (ImGui::Button("Update")) {
-        updated = true;
-        focus_planet = "UserDefined";
-        m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
-        m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
-    }
-
+    
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::End();
 
