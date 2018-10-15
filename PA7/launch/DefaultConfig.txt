@@ -1,7 +1,7 @@
 # Configuration File for Solar System Project
 # This file must be properly formatted for everything to work correctly.
 # All lines are in the format "aribute=value". Notice there is no space after the = sign and no quotations around the value.
-# One should only change the values of variables. Changing to order or adding new variables may cause the program to fail.
+# One should only change the values of variables. Changing the order or adding new variables may cause the program to fail.
 
 
 #Source code for shader
@@ -50,7 +50,7 @@ NUM_MOONS=0
 ORBIT_RADIUS_X_Z=30,30
 ORBIT_SPEED=0.00017
 ROTATION_SPEED=0.00004
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=3.096,0.0
 
 #Earth
 PLANET_NAME=Earth
@@ -58,10 +58,10 @@ OBJ_FILE=objFiles/earth/earth.obj
 MODEL_SCALE=1.5,1.5,1.5
 NUM_MOONS=1
 MOON_MIN_DISTANCE=4.5
-ORBIT_RADIUS_X_Z=42,42
+ORBIT_RADIUS_X_Z=42,46
 ORBIT_SPEED=0.00015
 ROTATION_SPEED=0.00006
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=0.41,0.0
 
 #Mars
 PLANET_NAME=Mars
@@ -69,10 +69,10 @@ OBJ_FILE=objFiles/mars/mars.obj
 MODEL_SCALE=1,1,1
 NUM_MOONS=2
 MOON_MIN_DISTANCE=4
-ORBIT_RADIUS_X_Z=57,57
+ORBIT_RADIUS_X_Z=57,62
 ORBIT_SPEED=0.00013
 ROTATION_SPEED=0.00005
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=0.4396,0.0
 
 #Jupiter
 PLANET_NAME=Jupiter
@@ -80,10 +80,10 @@ OBJ_FILE=objFiles/jupiter/jupiter.obj
 MODEL_SCALE=5,5,5
 NUM_MOONS=7
 MOON_MIN_DISTANCE=8
-ORBIT_RADIUS_X_Z=85,85
-ORBIT_SPEED=0.00015
+ORBIT_RADIUS_X_Z=90,100
+ORBIT_SPEED=0.0001
 ROTATION_SPEED=0.00005
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=0.0546,0.0
 
 #Saturn
 PLANET_NAME=Saturn
@@ -91,10 +91,10 @@ OBJ_FILE=objFiles/saturn/saturn.obj
 MODEL_SCALE=3.5,3.5,3.5
 NUM_MOONS=5
 MOON_MIN_DISTANCE=8.75
-ORBIT_RADIUS_X_Z=115,120
-ORBIT_SPEED=0.00010
+ORBIT_RADIUS_X_Z=125,130
+ORBIT_SPEED=0.00008
 ROTATION_SPEED=0.00006
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=0.4665,0.0
 
 #Uranus
 PLANET_NAME=Uranus
@@ -102,10 +102,10 @@ OBJ_FILE=objFiles/uranus/uranus.obj
 MODEL_SCALE=3.2,3.2,3.2
 NUM_MOONS=3
 MOON_MIN_DISTANCE=7
-ORBIT_RADIUS_X_Z=130,150
-ORBIT_SPEED=0.00012
+ORBIT_RADIUS_X_Z=140,160
+ORBIT_SPEED=0.000075
 ROTATION_SPEED=0.00005
-AXIAL_TILT=1.751,0.0
+AXIAL_TILT=1.7064,0.0
 
 #Neptune
 PLANET_NAME=Neptune
@@ -113,10 +113,10 @@ OBJ_FILE=objFiles/neptune/neptune.obj
 MODEL_SCALE=3.3,3.3,3.3
 NUM_MOONS=3
 MOON_MIN_DISTANCE=6.6
-ORBIT_RADIUS_X_Z=160,190
-ORBIT_SPEED=0.00009
+ORBIT_RADIUS_X_Z=175,200
+ORBIT_SPEED=0.00006
 ROTATION_SPEED=0.000055
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=0.4943,0.0
 
 #Pluto
 PLANET_NAME=Pluto
@@ -124,7 +124,7 @@ OBJ_FILE=objFiles/pluto/pluto.obj
 MODEL_SCALE=0.8,0.8,0.8
 NUM_MOONS=1
 MOON_MIN_DISTANCE=3.8
-ORBIT_RADIUS_X_Z=185,220
+ORBIT_RADIUS_X_Z=185,225
 ORBIT_SPEED=0.000038
 ROTATION_SPEED=0.000058
-AXIAL_TILT=0.0,0.0
+AXIAL_TILT=2.0876,0.0
