@@ -59,7 +59,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
     ImGui::Text("Chosen focus for camera: ");
     ImGui::SameLine();
     if (ImGui::CollapsingHeader(focus_planet.empty() ? "No focus selected" : focus_planet.c_str())) {
-        if (ImGui::Button("Whole System")) {
+        if (ImGui::Button("System")) {
             focus_planet = "System";
             updated = true;
         }

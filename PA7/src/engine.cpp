@@ -71,6 +71,10 @@ bool Engine::Initialize(void) {
 	if (menu)
 		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 
+	//Start in Whole System View
+	m_graphics->SystemView();
+	m_menu->SetFocusPlanet("System");
+
 	// No errors
 	return true;
 }
