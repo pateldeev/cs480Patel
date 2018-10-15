@@ -102,7 +102,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+        
 	return true;
 }
 
@@ -189,12 +189,12 @@ void Graphics::Render(void) {
 
 	//Render each planet and its moons
 	for (int i = 0; i < m_planets.size(); ++i) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
-		m_planets[i]->Render();
 		for (int m = 0; m < m_moons[i].size(); ++m) {
 			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moons[i][m]->GetModel()));
 			m_moons[i][m]->Render();
 		}
+                glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
+                m_planets[i]->Render();
 	}
 
 	//Get any errors from OpenGL
