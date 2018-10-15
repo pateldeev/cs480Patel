@@ -1,8 +1,4 @@
-# PA7: Solar System - UNDER DEVELOPMENT
-
-## TODO
-  * Camera movement
-  * Instruction Manual
+# PA7: Solar System
 
 ## Group
 This is the main repository for the code. The group members include
