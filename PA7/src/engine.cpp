@@ -105,6 +105,8 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos())) {
+        m_graphics->SetZoomFlag(false);
+        m_graphics->SetViewDistance(10);
 
 				std::string focus_planet = m_menu->GetFocusPlanet();
 
@@ -156,6 +158,27 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_simulationSpeed += 0.1;
 		} else if (event.key.keysym.sym == SDLK_s && m_simulationSpeed >= 0.05) {
 			m_simulationSpeed -= 0.1;
+		} else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS) {
+      if (m_menu->GetFocusPlanet() == "UserDefined") {
+        glm::vec3 eyeFocus = m_graphics->GetEyeLoc();
+        glm::vec3 eyePosition = m_graphics->GetEyePos();
+        float x = eyeFocus.x - eyePosition.x;
+        float y = eyeFocus.y - eyePosition.y;
+        float z = eyeFocus.z - eyePosition.z;
+
+        glm::vec3 newEyePosition = glm::normalize(glm::vec3(x, y, z));
+        if (event.key.keysym.sym == SDLK_EQUALS)
+          m_graphics->UpdateCamera(eyePosition + newEyePosition, eyeFocus);
+        else
+          m_graphics->UpdateCamera(eyePosition - newEyePosition, eyeFocus);
+      }
+      else {
+        m_graphics->SetZoomFlag(true);
+        if(event.key.keysym.sym == SDLK_EQUALS)
+          m_graphics->ZoomCloser();
+        else
+          m_graphics->ZoomAway();
+      }
 		}
 	}
 }

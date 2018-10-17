@@ -61,8 +61,8 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
         m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
         m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
     }
-    
-    ImGui::Text("\n");    
+
+    ImGui::Text("\n");
     ImGui::Text("\n");
     ImGui::Text("Chosen focus for camera: ");
     ImGui::SameLine();
@@ -116,7 +116,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
             updated = true;
         }
     }
-    
+
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::End();
 

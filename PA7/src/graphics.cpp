@@ -2,6 +2,8 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_shader(nullptr), m_followingPlanet(-1) {
+    m_zoomFlag = false;
+    m_viewDistance = 10;
 
 }
 
@@ -102,7 +104,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
 	return true;
 }
 
@@ -163,14 +165,21 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
-
 	if (m_followingPlanet > -1) {
-		glm::vec3 eyeFocus = { 0, 0, 0 };
-		float distSun = glm::length(m_planets[m_followingPlanet]->GetCurrentLocation());
-		glm::vec3 eyePos = (distSun + 10 * m_planets[m_followingPlanet]->GetScale().y)
-				* glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());
-		eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
-		UpdateCamera(eyePos, eyeFocus);
+      glm::vec3 eyeFocus;
+      float distSun = glm::length(m_planets[m_followingPlanet]->GetCurrentLocation());
+      glm::vec3 eyePos = (distSun + m_viewDistance * m_planets[m_followingPlanet]->GetScale().y)
+        * glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());;
+
+      if (!m_zoomFlag) {
+        eyeFocus = { 0, 0, 0 };
+        eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
+      }
+      else {
+        eyeFocus = m_planets[m_followingPlanet]->GetCurrentLocation();
+        eyePos.y += m_planets[m_followingPlanet]->GetScale().y;
+      }
+      UpdateCamera(eyePos, eyeFocus);
 	} else if (m_followingPlanet == -2) {
 		m_camera->ReturnToDefault();
 		m_followingPlanet = -1;
@@ -226,4 +235,34 @@ glm::vec3 Graphics::GetEyePos(void) const {
 
 glm::vec3 Graphics::GetEyeLoc(void) const {
 	return m_camera->GetFocusPos();
+}
+
+void Graphics::ZoomCloser(void)
+{
+  if(m_viewDistance > 1 || m_viewDistance < -1)
+    m_viewDistance -= 1;
+  else
+    m_viewDistance -= 2;
+  return;
+}
+
+void Graphics::ZoomAway(void)
+{
+  if(m_viewDistance > 1 || m_viewDistance < -1)
+    m_viewDistance += 1;
+  else
+    m_viewDistance += 2;
+  return;
+}
+
+void Graphics::SetZoomFlag(bool setFlag)
+{
+  m_zoomFlag = setFlag;
+  return;
+}
+
+void Graphics::SetViewDistance(int distance)
+{
+  m_viewDistance = 10;
+  return;
 }
