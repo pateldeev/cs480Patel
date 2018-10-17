@@ -1,7 +1,7 @@
 #include <window.h>
 
 Window::Window(void) :
-		gWindow(nullptr) {
+		gWindow(nullptr), m_height(0), m_width(0) {
 }
 
 Window::~Window(void) {
@@ -10,7 +10,7 @@ Window::~Window(void) {
 	SDL_Quit();
 }
 
-bool Window::Initialize(const std::string & name, int width, int height) {
+bool Window::Initialize(const std::string & name) {
 	// Start SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL failed to initialize: %s\n", SDL_GetError());
@@ -33,22 +33,18 @@ bool Window::Initialize(const std::string & name, int width, int height) {
 	//use for fullscreen
 	SDL_DisplayMode display;
 	SDL_GetDesktopDisplayMode(0, &display);
-	height = display.h;
-	width = display.w;
-	if (height == 0 && width == 0) {
-		height = current.h;
-		width = current.w;
-	}
+	m_height = display.h;
+	m_width = display.w;
 
-	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_width, m_height,
+			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!gWindow) {
 		printf("Widow failed to create: %s\n", SDL_GetError());
 		return false;
 	}
 
-        
-        //SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        
+	//SDL_SetWindowFullscreen(gWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+
 	// Create context
 	gContext = SDL_GL_CreateContext(gWindow);
 	if (!gContext) {
@@ -74,4 +70,12 @@ SDL_Window * Window::GetWindow(void) {
 
 SDL_GLContext & Window::GetContext(void) {
 	return gContext;
+}
+
+int Window::GetWindowHeight(void) const{
+	return m_height;
+}
+
+int Window::GetWindowWidth(void) const{
+	return m_width;
 }

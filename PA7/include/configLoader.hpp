@@ -28,7 +28,7 @@ public:
 
 	bool getMenuState(bool & menu);
 
-	bool getWindowInfo(std::string & windowName, int & windowWidth, int & windowHeight);
+	bool getWindowInfo(std::string & windowName);
 
 	bool getCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
 

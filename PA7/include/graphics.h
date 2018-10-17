@@ -16,13 +16,17 @@ public:
 	Graphics(void);
 	~Graphics(void);
 
-	bool Initialize(int width, int height, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
+	bool Initialize(int windowWidth, int windowHeight, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
 			const glm::vec3 & focusPos);
 
 	void AddPlanet(const Planet & planet, const std::string & moonObjFile);
 	void FollowPlanet(const std::string & planetName);
 	void SystemView(void);
 	void UserControlledView(void);
+	void ZoomCloser(void);
+	void ZoomAway(void);
+	void SetViewDistance(int distance);
+	void SetZoomFlag(bool setFlag);
 
 	void Update(unsigned int dt);
 
@@ -48,6 +52,9 @@ private:
 	std::vector<std::vector<Object *>> m_moons;
 
 	int m_followingPlanet; //planet being followed
+	int m_viewDistance; //used when zooming in and out with a planet
+
+	bool m_zoomFlag;  //whether the camera has zoomed closer or farther from the planet
 };
 
 #endif /* GRAPHICS_H */

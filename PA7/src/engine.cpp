@@ -30,9 +30,14 @@ bool Engine::Initialize(void) {
 	}
 
 	std::string windowName;
-	int windowWidth, windowHeight;
-	if (!m_configFile.getWindowInfo(windowName, windowWidth, windowHeight)) {
+	if (!m_configFile.getWindowInfo(windowName)) {
 		printf("Could not get window information from configuration file \n");
+		return false;
+	}
+	//Start the window
+	m_window = new Window();
+	if (!m_window->Initialize(windowName)) {
+		printf("The window failed to initialize.\n");
 		return false;
 	}
 
@@ -41,17 +46,9 @@ bool Engine::Initialize(void) {
 		printf("Could not get camera information from configuration file \n");
 		return false;
 	}
-
-	//Start the window
-	m_window = new Window();
-	if (!m_window->Initialize(windowName, windowWidth, windowHeight)) {
-		printf("The window failed to initialize.\n");
-		return false;
-	}
-
 	//Start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(windowWidth, windowHeight, shaderSrcVert, shaderSrcFrag, eyePos, eyeLoc)) {
+	if (!m_graphics->Initialize(m_window->GetWindowWidth(), m_window->GetWindowHeight(), shaderSrcVert, shaderSrcFrag, eyePos, eyeLoc)) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
@@ -105,6 +102,8 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos())) {
+				m_graphics->SetZoomFlag(false);
+				m_graphics->SetViewDistance(10);
 
 				std::string focus_planet = m_menu->GetFocusPlanet();
 
@@ -156,6 +155,26 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_simulationSpeed += 0.1;
 		} else if (event.key.keysym.sym == SDLK_s && m_simulationSpeed >= 0.05) {
 			m_simulationSpeed -= 0.1;
+		} else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS) {
+
+			std::string focusPlanet = (m_menu) ? m_menu->GetFocusPlanet() : "UserDefined";
+
+			if (focusPlanet == "UserDefined" || focusPlanet == "System") {
+				glm::vec3 eyeFocus = m_graphics->GetEyeLoc();
+				glm::vec3 eyePosition = m_graphics->GetEyePos();
+				glm::vec3 newEyePosition = glm::normalize(eyeFocus - eyePosition);
+				m_graphics->UserControlledView();
+
+				(event.key.keysym.sym == SDLK_EQUALS) ?
+						m_graphics->UpdateCamera(eyePosition + newEyePosition, eyeFocus) :
+						m_graphics->UpdateCamera(eyePosition - newEyePosition, eyeFocus);
+			} else {
+				m_graphics->SetZoomFlag(true);
+				if (event.key.keysym.sym == SDLK_EQUALS)
+					m_graphics->ZoomCloser();
+				else
+					m_graphics->ZoomAway();
+			}
 		}
 	}
 }
@@ -180,11 +199,13 @@ void Engine::EventChecker(void) {
 			}
 		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
-					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis())) {
+					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
-			} else {
+			else if(m_event.type == SDL_KEYDOWN && (m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_EQUALS ||  m_event.key.keysym.sym == SDLK_MINUS))
+				HandleEvent(m_event); //send certain key controls to main window anyways
+			else
 				m_menu->HandleEvent(m_event);
-			}
+
 		}
 	}
 }

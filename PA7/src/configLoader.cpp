@@ -52,20 +52,12 @@ bool ConfigFileParser::getMenuState(bool & menu) {
 	return true;
 }
 
-bool ConfigFileParser::getWindowInfo(std::string & windowName, int & windowWidth, int & windowHeight) {
+bool ConfigFileParser::getWindowInfo(std::string & windowName) {
 	std::string varName;
 	if (!parseLine < std::string > (varName, &windowName) || varName.compare("WINDOW_NAME")) {
 		printf("Could not get window name from config file \n");
 		return false;
 	}
-
-	int windowSize[2];
-	if (!parseLine<int, 2>(varName, windowSize) || varName.compare("WINDOW_SIZE_WIDTH_HEIGHT")) {
-		printf("Could not get window size from config file \n");
-		return false;
-	}
-	windowWidth = windowSize[0];
-	windowHeight = windowSize[1];
 	return true;
 }
 

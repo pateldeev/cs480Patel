@@ -1,8 +1,7 @@
 #include "graphics.h"
 
 Graphics::Graphics(void) :
-		m_camera(nullptr), m_shader(nullptr), m_followingPlanet(-1) {
-
+		m_camera(nullptr), m_shader(nullptr), m_followingPlanet(-1), m_zoomFlag(false), m_viewDistance(10) {
 }
 
 Graphics::~Graphics(void) {
@@ -17,8 +16,8 @@ Graphics::~Graphics(void) {
 	delete m_shader;
 }
 
-bool Graphics::Initialize(int width, int height, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
-		const ::glm::vec3 & focusPos) {
+bool Graphics::Initialize(int windowWidth, int windowHeight, const std::string & vertShaderSrc, const std::string & fragShaderSrc,
+		const glm::vec3 & eyePos, const ::glm::vec3 & focusPos) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -45,7 +44,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 
 	// Init Camera
 	m_camera = new Camera(eyePos, focusPos);
-	if (!m_camera->Initialize(width, height)) {
+	if (!m_camera->Initialize(windowWidth, windowHeight)) {
 		printf("Camera Failed to Initialize\n");
 		return false;
 	}
@@ -102,7 +101,7 @@ bool Graphics::Initialize(int width, int height, const std::string & vertShaderS
 
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
 	return true;
 }
 
@@ -163,13 +162,21 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
-
 	if (m_followingPlanet > -1) {
-		glm::vec3 eyeFocus = { 0, 0, 0 };
+		glm::vec3 eyeFocus;
 		float distSun = glm::length(m_planets[m_followingPlanet]->GetCurrentLocation());
-		glm::vec3 eyePos = (distSun + 10 * m_planets[m_followingPlanet]->GetScale().y)
+		glm::vec3 eyePos = (distSun + m_viewDistance * m_planets[m_followingPlanet]->GetScale().y)
 				* glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());
-		eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
+		;
+
+		if (!m_zoomFlag) {
+			eyeFocus = {0, 0, 0};
+			eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
+		}
+		else {
+			eyeFocus = m_planets[m_followingPlanet]->GetCurrentLocation();
+			eyePos.y += m_planets[m_followingPlanet]->GetScale().y;
+		}
 		UpdateCamera(eyePos, eyeFocus);
 	} else if (m_followingPlanet == -2) {
 		m_camera->ReturnToDefault();
@@ -193,8 +200,8 @@ void Graphics::Render(void) {
 			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moons[i][m]->GetModel()));
 			m_moons[i][m]->Render();
 		}
-                glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
-                m_planets[i]->Render();
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
+		m_planets[i]->Render();
 	}
 
 	//Get any errors from OpenGL
@@ -226,4 +233,26 @@ glm::vec3 Graphics::GetEyePos(void) const {
 
 glm::vec3 Graphics::GetEyeLoc(void) const {
 	return m_camera->GetFocusPos();
+}
+
+void Graphics::ZoomCloser(void) {
+	if (m_viewDistance > 1 || m_viewDistance < -1)
+		--m_viewDistance;
+	else
+		m_viewDistance -= 2;
+}
+
+void Graphics::ZoomAway(void) {
+	if (m_viewDistance > 1 || m_viewDistance < -1)
+		++m_viewDistance;
+	else
+		m_viewDistance += 2;
+}
+
+void Graphics::SetZoomFlag(bool setFlag) {
+	m_zoomFlag = setFlag;
+}
+
+void Graphics::SetViewDistance(int distance) {
+	m_viewDistance = 10;
 }
