@@ -32,7 +32,18 @@ This program makes use of configuration files to specify the characteristics of 
 The program offers the ability to change the simulation speed of the solar system. Pressing and holding down 'f' make the speed faster while pressing and holding down 's' will make the speed slower. The solar system can be stopped entirely by holding down 's' for long enough.
 
 ## Planets & Rings - Extra Credit
-The solar system includes all planets, including Pluto. Each planet can be focused on directly from the IMGUI menu. The orbits of other planets can seem strange from the perspective of a specific planet because the orbits are elliptical. Notably, Saturn and Uranus have rings. Some of the larger planets have many moons. Since planets such as Jupiter have a large number of moons, we only showed the major ones.
+The solar system includes all planets, including Pluto. Each planet can be focused on directly from the IMGUI menu. The orbits of other planets can seem strange from the perspective of a specific planet because the orbits are elliptical. Jupiter, Saturn, Neptune, & Uranus have rings. Some of the larger planets have many moons. Since planets such as Jupiter have a large number of moons, we only showed the major ones.
+
+## Keyboard Controls
+IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
+* Keyboard controls
+  * +: zoom towards the focus point
+  * -: zoom away from the focus point
+  * f: make the simulation speed faster
+  * s: make the simulation speed slower
+  * m: toggle (open/close) IMGUI menu window
+* Exiting
+  * ESC: Will properly close all windows and exit program
 
 ## IMGUI Menu System
 There is a menu system that runs in a separate window. The menu system can be used to help help move around in the solar system. <br>
@@ -41,19 +52,9 @@ There is a menu system that runs in a separate window. The menu system can be us
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
 By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the configuration. See the example file given.
 
-## Keyboard & Mouse Controls
-IMPORTANT: For any of the controls to work, the main window (not menu window) must be selected. <br>
-* Keyboard controls
-  * f: make the simulation speed faster
-  * s: make the simulation speed slower
-  * m: toggle (open/close) IMGUI menu window
-* Exiting
-  * ESC: Will properly close all windows and exit program
-
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
   * -l: load configuration file
-
 The default behavior can be achieved with the following arguments
 ```bash
 -l launch/DefaultConfig.txt
