@@ -29,7 +29,7 @@ make
 This program makes use of configuration files to specify the characteristics of the solar system. It contains all the information about the relative size and orbits of all the planets and moons. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. You should only change the values. Adding new lines/variables may cause errors.
 
 ## Simulation Speed - Extra Credit
-The program offers the ability to change the simulation speed of the solar system. Pressing and holding down 'f' make the speed faster while pressing and holding down 's' will make the speed slower. The solar system can be stopped entirely by holding down 's' for long enough.
+The program offers the ability to change the simulation speed of the solar system. Pressing and holding down 'f' makes the speed faster while pressing and holding down 's' will make the speed slower. The solar system can be stopped entirely by holding down 's' for long enough.
 
 ## Planets & Rings - Extra Credit
 The solar system includes all planets, including Pluto. Each planet can be focused on directly from the IMGUI menu. The orbits of other planets can seem strange from the perspective of a specific planet because the orbits are elliptical. Jupiter, Saturn, Neptune, & Uranus have rings. Some of the larger planets have many moons. Since planets such as Jupiter have a large number of moons, we only showed the major ones.
@@ -46,7 +46,7 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
   * ESC: Will properly close all windows and exit program
 
 ## IMGUI Menu System
-There is a menu system that runs in a separate window. The menu system can be used to help help move around in the solar system. <br>
+There is a menu system that runs in a separate window. The menu system can be used to help move around in the solar system. <br>
 
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
@@ -54,7 +54,7 @@ By default, the vertex shader code is in "vertShader.vert" and the fragment shad
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
-  * -l: load configuration file
+  * -l: load configuration file.
 The default behavior can be achieved with the following arguments
 ```bash
 -l launch/DefaultConfig.txt
