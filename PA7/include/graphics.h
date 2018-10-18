@@ -21,6 +21,7 @@ public:
 
 	void AddPlanet(const Planet & planet, const std::string & moonObjFile);
 	void FollowPlanet(const std::string & planetName);
+	std::string GetFollowPlanet(void) const;
 	void SystemView(void);
 	void UserControlledView(void);
 	void ZoomCloser(void);

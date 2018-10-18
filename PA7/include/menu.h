@@ -14,7 +14,7 @@
 class Menu {
 
 public:
-	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
+	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const std::string & following);
 	~Menu(void);
 
 	bool Initialize(const SDL_GLContext & gl_context);
@@ -29,8 +29,8 @@ public:
 
 	void UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
 
-        std::string GetFocusPlanet(void) const;
-        void SetFocusPlanet(const std::string & planet);
+	std::string GetFocusPlanet(void) const;
+	void SetFocusPlanet(const std::string & planet);
 
 private:
 	SDL_Window * m_window;
@@ -44,7 +44,7 @@ private:
 
 	void UpdateMenuParams(void);
 
-        std::string focus_planet;
+	std::string focus_planet;
 };
 
 #endif /* MENU_H */

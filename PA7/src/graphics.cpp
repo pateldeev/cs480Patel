@@ -148,6 +148,17 @@ void Graphics::FollowPlanet(const std::string & planetName) {
 	}
 }
 
+std::string Graphics::GetFollowPlanet(void) const {
+	switch (m_followingPlanet) {
+	case -2:
+		return "System";
+	case -1:
+		return "UserDefined";
+	default:
+		return m_planetNames[m_followingPlanet];
+	}
+}
+
 void Graphics::SystemView(void) {
 	m_followingPlanet = -2;
 }

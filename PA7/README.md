@@ -37,8 +37,8 @@ The solar system includes all planets, including Pluto. Each planet can be focus
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard controls
-  * +: zoom towards the focus point
-  * -: zoom away from the focus point
+  * i: zoom inwards towards the focus point
+  * o: zoom outwards away from the focus point
   * f: make the simulation speed faster
   * s: make the simulation speed slower
   * m: toggle (open/close) IMGUI menu window
