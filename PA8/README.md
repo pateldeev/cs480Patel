@@ -1,4 +1,4 @@
-# PA8: Under Development
+# PA8: Collisions with Bullet - UNDER DEVELOPMENT
 
 ## Group
 This is the main repository for the code. The group members include
@@ -7,12 +7,18 @@ This is the main repository for the code. The group members include
   * Braeden Richards
 
 ## Dependency Instructions
-To run this project installation for the following is required: [GLEW](http://glew.sourceforge.net/), [GLM](http://glm.g-truc.net/0.9.7/index.html), [SDL2](https://wiki.libsdl.org/Tutorials), [assimp](https://github.com/assimp/assimp/wiki), and [magick++](http://www.imagemagick.org/Magick%2B%2B/).
-This project uses OpenGL 3.3.
+This project uses OpenGL 3.3. Newer versions should work, but nothing is guaranteed. <br> 
+In addition to OpenGL, this project requires installation of the following libaries: 
+ * [ASSIMP](https://github.com/assimp/assimp/wiki) 
+ * [Bullet](https://github.com/bulletphysics/bullet3)
+ * [GLEW](http://glew.sourceforge.net/)
+ * [GLM](http://glm.g-truc.net/0.9.7/index.html)
+ * [Magick++](http://www.imagemagick.org/Magick%2B%2B/).
+ * [SDL2](https://wiki.libsdl.org/Tutorials), 
 
 ### Ubuntu 18.04
 ```bash
- sudo apt-get install libglew-dev libglm-dev libsdl2-dev libassimp-dev libmagick++-dev
+ sudo apt-get install libassimp-dev libbullet-dev libglew-dev libglm-dev libmagick++-dev libsdl2-dev 
 ```
 
 ## Building and Running - CMake Instructions
@@ -22,7 +28,7 @@ mkdir build
 cd build
 cmake ..
 make
-./Solar_System
+./PA08
 ```
 
 ## Configuration File - Extra Credit
@@ -62,5 +68,5 @@ The default behavior can be achieved with the following arguments
 
 Full Usage
 ```bash
-./Solar_System -l launch/DefaultConfig.txt
+./PA08 -l launch/DefaultConfig.txt
 ```
