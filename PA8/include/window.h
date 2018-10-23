@@ -8,21 +8,21 @@ class Window {
 public:
 	Window(void);
 	~Window(void);
-	bool Initialize(const std::string & name);
+	bool Initialize(const std::string & name,  unsigned int height, unsigned int width);
 	void Swap(void);
 
 	SDL_Window * GetWindow(void);
 	SDL_GLContext & GetContext(void);
 
-	int GetWindowHeight(void) const;
-	int GetWindowWidth(void) const;
+	unsigned int GetWindowHeight(void) const;
+	unsigned int GetWindowWidth(void) const;
 	
 private:
 	SDL_Window * gWindow;
 	SDL_GLContext gContext;
 	
-	int m_height;
-	int m_width;
+	unsigned int m_height;
+	unsigned int m_width;
 };
 
 #endif /* WINDOW_H */

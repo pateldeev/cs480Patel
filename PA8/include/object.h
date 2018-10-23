@@ -4,12 +4,13 @@
 #include "graphics_headers.h"
 
 #include <assimp/Importer.hpp>
-
 #include <vector>
+
+#include <btBulletDynamicsCommon.h>
 
 class Object {
 public:
-	Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, const glm::vec3 & rotationAngles, float orbitSpeed, float rotationSpeed);
+	Object(const std::string & objFile);
 	~Object(void);
 	void Update(unsigned int dt);
 	void Render(void);
@@ -22,16 +23,7 @@ public:
 	void SetRotationAngles(const glm::vec3 & rotationAngles);
 	glm::vec3 GetRotationAngles(void) const;
 	
-	void SetOrbitSpeed(float orbitSpeed);
-	float GetOrbitSpeed(void) const;
-	void SetOrbitCenter(const glm::vec3 & center);
-	glm::vec3 GetOrbitCenter(void) const;
-	
 	glm::vec3 GetCurrentLocation(void) const;
-
-	void SetRotationSpeed(float rotationSpeed);
-	float GetRotationSpeed(void) const;
-
 
 private:
 	glm::mat4 m_model;
@@ -46,20 +38,10 @@ private:
 	GLuint VB;
 	std::vector<GLuint> IB; //vector of index set buffers
 
-	//orbital variables
-	float m_orbitRadiusX;
-	float m_orbitRadiusZ;
-	float m_orbitSpeed;
-	float m_angleOfOrbit;
-	glm::vec3 m_orbitCenter;
-
-	float m_rotationSpeed;
-
 	std::vector<GLuint> m_textures; //vector of texture locations on GPU
-	std::vector<aiString> m_textureFiles; //vector of text file names
 
 	bool loadObjAssimp(const std::string & objFile);
-	void loadTextures(const std::string & objFile);
+	void loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles);
 };
 
 #endif /* OBJECT_H */

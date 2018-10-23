@@ -8,18 +8,14 @@
 
 #include <algorithm>
 
-Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiusZ, const glm::vec3 & rotationAngles, float orbitSpeed, float rotationSpeed) :
-		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(rotationAngles), VB(0), m_orbitRadiusX(
-				orbitRadiusX), m_orbitRadiusZ(orbitRadiusZ), m_orbitSpeed(orbitSpeed), m_angleOfOrbit(0), m_orbitCenter(glm::vec3(0.0, 0.0, 0.0)), m_rotationSpeed(
-				rotationSpeed) {
+Object::Object(const std::string & objFile) :
+		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(glm::vec3(0.0, 0.0, 0.0)), VB(0) {
 
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	if (!loadObjAssimp(objFile)) {
 		printf("Object not properly loaded \n");
 		return;
 	}
-
-	loadTextures(objFile);
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -30,9 +26,6 @@ Object::Object(const std::string & objFile, float orbitRadiusX, float orbitRadiu
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
-
-	//randomize start angle
-	m_angleOfOrbit = ((float) rand() / INT_MAX) * M_PI * 2;
 }
 
 Object::~Object(void) {
@@ -43,15 +36,9 @@ Object::~Object(void) {
 	m_indices.clear();
 
 	m_textures.clear();
-	m_textureFiles.clear();
 }
 
 void Object::Update(unsigned int dt) {
-	m_rotationAngles.y += dt * M_PI * m_rotationSpeed;
-	m_angleOfOrbit += dt * M_PI * m_orbitSpeed;
-
-	m_translation = m_orbitCenter + glm::vec3(m_orbitRadiusX * std::cos(m_angleOfOrbit), 0.0, m_orbitRadiusZ * std::sin(m_angleOfOrbit));
-
 	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
 			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
 
@@ -99,32 +86,8 @@ glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
 }
 
-void Object::SetOrbitSpeed(float orbitSpeed) {
-	m_orbitSpeed = orbitSpeed;
-}
-
-float Object::GetOrbitSpeed(void) const {
-	return m_orbitSpeed;
-}
-
-void Object::SetOrbitCenter(const glm::vec3 & center) {
-	m_orbitCenter = center;
-}
-
-glm::vec3 Object::GetOrbitCenter(void) const {
-	return m_orbitCenter;
-}
-
 glm::vec3 Object::GetCurrentLocation(void) const {
 	return m_translation;
-}
-
-void Object::SetRotationSpeed(float rotationSpeed) {
-	m_rotationSpeed = rotationSpeed;
-}
-
-float Object::GetRotationSpeed(void) const {
-	return m_rotationSpeed;
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {
@@ -138,6 +101,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 	const aiVector3D * uv;
 	const aiMaterial * tempMat;
 	aiString path;
+	std::vector<aiString> textureFiles;
 
 	if (!scene) {
 		printf("Error loading object: %s \n", importer.GetErrorString());
@@ -165,10 +129,10 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					tempMat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 
 					//check if texture file has already been encourned and add new one if needed
-					const std::vector<aiString>::const_iterator nameLoc = std::find(m_textureFiles.begin(), m_textureFiles.end(), path);
-					std::size_t textureIndex = nameLoc - m_textureFiles.begin();
-					if(textureIndex == m_textureFiles.size()) {
-						m_textureFiles.push_back(path);
+					const std::vector<aiString>::const_iterator nameLoc = std::find(textureFiles.begin(), textureFiles.end(), path);
+					std::size_t textureIndex = nameLoc - textureFiles.begin();
+					if(textureIndex == textureFiles.size()) {
+						textureFiles.push_back(path);
 						std::vector<unsigned int> newIndicyArr;
 						m_indices.push_back(newIndicyArr);
 					}
@@ -179,13 +143,16 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 				}
 			}
 
-			IB.resize(m_textureFiles.size());
+			IB.resize(textureFiles.size());
 		}
 	}
+
+	loadTextures(objFile, textureFiles);
+
 	return true;
 }
 
-void Object::loadTextures(const std::string & objFile) {
+void Object::loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles) {
 	GLuint tempTexture;
 	Magick::Image * img;
 	std::string fileNameStart = "";
@@ -195,10 +162,10 @@ void Object::loadTextures(const std::string & objFile) {
 	if (tempPos != std::string::npos)
 		fileNameStart = objFile.substr(0, tempPos + 1);
 
-	for (const aiString & path : m_textureFiles) {
+	for (const aiString & path : textureFiles) {
 		Magick::Blob blob;
 		img = new Magick::Image(std::string(fileNameStart + path.C_Str()));
-                img->flip();
+		img->flip();
 		img->write(&blob, "RGBA");
 
 		//store textures on GPU
@@ -212,5 +179,4 @@ void Object::loadTextures(const std::string & objFile) {
 
 		m_textures.push_back(tempTexture);
 	}
-	m_textureFiles.clear();
 }

@@ -5,18 +5,6 @@
 
 #include <sstream>
 
-struct Planet {
-	std::string name;
-	std::string objFile;
-	glm::vec3 modelScale;
-	unsigned int numMoons;
-	float moonMinDistance;
-	glm::vec2 radius;
-	float orbitSpeed;
-	float rotationSpeed;
-	glm::vec3 axialTilt;
-};
-
 //class to parse configuration file of paramters
 class ConfigFileParser {
 
@@ -26,15 +14,13 @@ public:
 
 	bool getShaderFileNames(std::string & vertexShaderFile, std::string & fragmentShaderFile);
 
-	bool getMenuState(bool & menu);
+	bool getMenuState(bool & menu, glm::uvec2 & size);
 
-	bool getWindowInfo(std::string & windowName);
+	bool getWindowInfo(std::string & windowName, glm::uvec2 & size);
 
 	bool getCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
 
-	bool getMoonObjFile(std::string & objFile);
-
-	bool getPlanetInfo(Planet & planet);
+	bool getObjFile(std::string & objFile);
 
 private:
 	std::stringstream m_fileBuffer;

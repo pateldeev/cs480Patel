@@ -1,7 +1,7 @@
 #include <window.h>
 
 Window::Window(void) :
-		gWindow(nullptr), m_height(0), m_width(0) {
+		gWindow(nullptr) {
 }
 
 Window::~Window(void) {
@@ -10,7 +10,7 @@ Window::~Window(void) {
 	SDL_Quit();
 }
 
-bool Window::Initialize(const std::string & name) {
+bool Window::Initialize(const std::string & name, unsigned int height, unsigned int width) {
 	// Start SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL failed to initialize: %s\n", SDL_GetError());
@@ -33,8 +33,8 @@ bool Window::Initialize(const std::string & name) {
 	//use for fullscreen
 	SDL_DisplayMode display;
 	SDL_GetDesktopDisplayMode(0, &display);
-	m_height = display.h;
-	m_width = display.w;
+	m_height = (height) ? height : display.h;
+	m_width = (width) ? width : display.w;
 
 	gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_width, m_height,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -72,10 +72,10 @@ SDL_GLContext & Window::GetContext(void) {
 	return gContext;
 }
 
-int Window::GetWindowHeight(void) const{
+unsigned int Window::GetWindowHeight(void) const {
 	return m_height;
 }
 
-int Window::GetWindowWidth(void) const{
+unsigned int Window::GetWindowWidth(void) const {
 	return m_width;
 }

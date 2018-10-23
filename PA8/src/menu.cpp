@@ -1,7 +1,7 @@
 #include "menu.h"
 
-Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const std::string & following) :
-		m_window(nullptr), m_eyeLoc(eyeLoc), m_eyeFocus(eyeFocus), focus_planet(following) {
+Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize) :
+		m_window(nullptr), m_eyeLoc(eyeLoc), m_eyeFocus(eyeFocus), m_menuSize(menuSize), m_menuTL(50, 50) {
 	UpdateMenuParams();
 }
 
@@ -14,7 +14,7 @@ Menu::~Menu(void) {
 
 bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
-	m_window = SDL_CreateWindow("Movement_Menu", 50, 50, 600, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	m_window = SDL_CreateWindow("Movement_Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	const char * glsl_version = "#version 330";
 
@@ -42,7 +42,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	ImGui::NewFrame();
 
 	ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
-	ImGui::SetNextWindowSize(ImVec2(575, 375));
+	ImGui::SetNextWindowSize(ImVec2((m_menuSize.y) > 25 ? m_menuSize.y - 25 : 0, (m_menuSize.x) > 25 ? m_menuSize.x - 25 : 0));
 	ImGui::Begin("Menu");
 
 	ImGui::Text("Use this menu to move the camera around or follow a planet.");
@@ -57,68 +57,9 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	ImGui::Text("\n");
 	if (ImGui::Button("Update")) {
 		updated = true;
-		focus_planet = "UserDefined";
 		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
-
-	ImGui::Text("\n");
-	ImGui::Text("Chosen focus for camera: ");
-	ImGui::SameLine();
-	if (ImGui::CollapsingHeader(focus_planet.empty() ? "No focus selected" : focus_planet.c_str())) {
-		if (ImGui::Button("System")) {
-			focus_planet = "System";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Mercury")) {
-			focus_planet = "Mercury";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Venus")) {
-			focus_planet = "Venus";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Earth")) {
-			focus_planet = "Earth";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Mars")) {
-			focus_planet = "Mars";
-			updated = true;
-		}
-		if (ImGui::Button("Jupiter")) {
-			focus_planet = "Jupiter";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Saturn")) {
-			focus_planet = "Saturn";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Uranus")) {
-			focus_planet = "Uranus";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Neptune")) {
-			focus_planet = "Neptune";
-			updated = true;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Pluto")) {
-			focus_planet = "Pluto";
-			updated = true;
-		}
-	}
-
-	ImGui::Text("\n");
-	ImGui::Text("Note: You can make the simulation slower/faster with 's'/'f'  keys \n      You can zoom in/out with the 'i'/'o' keys. \n      You can close this menu with the 'm' key");
-	ImGui::Text("\n");
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
@@ -163,12 +104,4 @@ void Menu::UpdateMenuParams(void) {
 	mn_eyeFocus[0] = m_eyeFocus.x;
 	mn_eyeFocus[1] = m_eyeFocus.y;
 	mn_eyeFocus[2] = m_eyeFocus.z;
-}
-
-std::string Menu::GetFocusPlanet(void) const {
-	return focus_planet;
-}
-
-void Menu::SetFocusPlanet(const std::string & planet) {
-	focus_planet = planet;
 }

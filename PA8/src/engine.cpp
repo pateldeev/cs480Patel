@@ -24,19 +24,20 @@ bool Engine::Initialize(void) {
 	}
 
 	bool menu;
-	if (!m_configFile.getMenuState(menu)) {
+	if (!m_configFile.getMenuState(menu, m_menuSize)) {
 		printf("Could not get menu information from configuration file \n");
 		return false;
 	}
 
 	std::string windowName;
-	if (!m_configFile.getWindowInfo(windowName)) {
+	glm::uvec2 windowSize;
+	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
 		printf("Could not get window information from configuration file \n");
 		return false;
 	}
 	//Start the window
 	m_window = new Window();
-	if (!m_window->Initialize(windowName)) {
+	if (!m_window->Initialize(windowName, windowSize.x, windowSize.y)) {
 		printf("The window failed to initialize.\n");
 		return false;
 	}
@@ -53,24 +54,16 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 
-	std::string moonObjFile;
-	if (!m_configFile.getMoonObjFile(moonObjFile)) {
-		printf("Could not get moon information from configuration file \n");
+	std::string objFile;
+	if (!m_configFile.getObjFile(objFile)) {
+		printf("Could not get object file information from configuration file \n");
 		return false;
 	}
-
-	Planet planet;
-	while (m_configFile.getPlanetInfo(planet)) {
-		m_graphics->AddPlanet(planet, moonObjFile);
-	}
+	m_graphics->AddObject(objFile);
 
 	//Start the menu if necessary
 	if (menu)
 		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-
-	//Start in Whole System View
-	m_graphics->SystemView();
-	m_menu->SetFocusPlanet("System");
 
 	// No errors
 	return true;
@@ -102,32 +95,20 @@ void Engine::Run(void) {
 		//update menu and change variables if necessary
 		if (m_running != false) {
 			if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos())) {
-				m_graphics->SetZoomFlag(false);
-				m_graphics->SetViewDistance(10);
-
-				std::string focus_planet = m_menu->GetFocusPlanet();
-
-				if (focus_planet == "UserDefined") {
-					m_graphics->UserControlledView();
-					if (!m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus())) {
-						printf("Error updating parameters from menu update. Shutting down /n");
-						m_running = false;
-					}
-				} else if (focus_planet == "System") {
-					m_graphics->SystemView();
-				} else {
-					m_graphics->FollowPlanet(focus_planet);
+				if (!m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus())) {
+					printf("Error updating parameters from menu update. Shutting down /n");
+					m_running = false;
 				}
-
 			}
-		}
 
-		//enforce max frame rate
-		t2 = std::chrono::high_resolution_clock::now();
-		duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
-		if (duration < minFrameTime)
-			SDL_Delay(minFrameTime - duration);
+		}
 	}
+
+	//enforce max frame rate
+	t2 = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
+	if (duration < minFrameTime)
+		SDL_Delay(minFrameTime - duration);
 }
 
 unsigned int Engine::getDT(void) {
@@ -151,27 +132,6 @@ void Engine::HandleEvent(const SDL_Event & event) {
 				CloseMenu();
 			else
 				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-		} else if (event.key.keysym.sym == SDLK_f) {
-			m_simulationSpeed += 0.1;
-		} else if (event.key.keysym.sym == SDLK_s && m_simulationSpeed >= 0.05) {
-			m_simulationSpeed -= 0.1;
-		} else if (event.key.keysym.sym == SDLK_i || event.key.keysym.sym == SDLK_o) {
-
-			std::string focusPlanet = (m_menu) ? m_menu->GetFocusPlanet() : "UserDefined";
-
-			if (focusPlanet == "UserDefined" || focusPlanet == "System") {
-				glm::vec3 eyeFocus = m_graphics->GetEyeLoc();
-				glm::vec3 eyePosition = m_graphics->GetEyePos();
-				glm::vec3 newEyePosition = glm::normalize(eyeFocus - eyePosition);
-				m_graphics->UserControlledView();
-
-				(event.key.keysym.sym == SDLK_i) ?
-						m_graphics->UpdateCamera(eyePosition + newEyePosition, eyeFocus) :
-						m_graphics->UpdateCamera(eyePosition - newEyePosition, eyeFocus);
-			} else {
-				m_graphics->SetZoomFlag(true);
-				(event.key.keysym.sym == SDLK_i) ? m_graphics->ZoomCloser() : m_graphics->ZoomAway();
-			}
 		}
 	}
 }
@@ -198,19 +158,14 @@ void Engine::EventChecker(void) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
 					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
-			else if (m_event.type == SDL_KEYDOWN
-					&& (m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_i
-							|| m_event.key.keysym.sym == SDLK_o))
-				HandleEvent(m_event); //send certain key controls to main window anyways
 			else
 				m_menu->HandleEvent(m_event);
-
 		}
 	}
 }
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
-	m_menu = new Menu(eyePos, eyeLoc, m_graphics->GetFollowPlanet());
+	m_menu = new Menu(eyePos, eyeLoc, m_menuSize);
 	if (!m_menu->Initialize(m_window->GetContext())) {
 		printf("The imgui menu failed to initialize. Running without it. \n");
 		delete m_menu;

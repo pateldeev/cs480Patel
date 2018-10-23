@@ -1,16 +1,11 @@
 #include "graphics.h"
 
 Graphics::Graphics(void) :
-		m_camera(nullptr), m_shader(nullptr), m_followingPlanet(-1), m_zoomFlag(false), m_viewDistance(10) {
+		m_camera(nullptr), m_shader(nullptr) {
 }
 
 Graphics::~Graphics(void) {
-	for (Object * obj : m_planets)
-		delete obj;
-
-	for (std::vector<Object *> & temp : m_moons)
-		for (Object * moon : temp)
-			delete moon;
+	m_objects.clear();
 
 	delete m_camera;
 	delete m_shader;
@@ -105,66 +100,13 @@ bool Graphics::Initialize(int windowWidth, int windowHeight, const std::string &
 	return true;
 }
 
-void Graphics::AddPlanet(const Planet & planet, const std::string & moonObjFile) {
-
-	m_planets.push_back(new Object(planet.objFile, planet.radius.x, planet.radius.y, planet.axialTilt, planet.orbitSpeed, planet.rotationSpeed));
-	m_planetNames.push_back(planet.name);
-	m_planets.back()->SetScale(planet.modelScale);
-
-	std::vector<Object *> moons;
-	m_moons.push_back(moons);
-
-	const int offsetPerMoon = 1;
-	float orbitSpeed, rotationSpeed, scale;
-	glm::vec3 tilt;
-	for (unsigned int i = 0; i < planet.numMoons; ++i) {
-		orbitSpeed = (float) (rand() / INT_MAX / 10000) + 0.00025;
-		rotationSpeed = (float) (rand() / INT_MAX / 100000) + 0.000005;
-		tilt = glm::vec3(((float) rand() / INT_MAX * 1.751 / 2), 0, ((float) rand() / INT_MAX * 1.751 / 2));
-		m_moons.back().push_back(
-				new Object(moonObjFile, planet.moonMinDistance + offsetPerMoon * i, planet.moonMinDistance + offsetPerMoon * i, tilt, orbitSpeed,
-						rotationSpeed));
-		scale = (((float) (rand() / INT_MAX) / 4) + .25);
-		m_moons.back().back()->SetScale(glm::vec3(scale, scale, scale));
-	}
+void Graphics::AddObject(const std::string & objFile) {
+	m_objects.push_back(Object(objFile));
 }
 
 void Graphics::Update(unsigned int dt) {
-	for (int i = 0; i < m_planets.size(); ++i) {
-		m_planets[i]->Update(dt);
-
-		for (int m = 0; m < m_moons[i].size(); ++m) {
-			m_moons[i][m]->SetOrbitCenter(m_planets[i]->GetCurrentLocation());
-			m_moons[i][m]->Update(dt);
-		}
-	}
-}
-
-void Graphics::FollowPlanet(const std::string & planetName) {
-	m_followingPlanet = -1;
-	for (int i = 0; i < m_planetNames.size(); ++i) {
-		if (m_planetNames[i] == planetName)
-			m_followingPlanet = i;
-	}
-}
-
-std::string Graphics::GetFollowPlanet(void) const {
-	switch (m_followingPlanet) {
-	case -2:
-		return "System";
-	case -1:
-		return "UserDefined";
-	default:
-		return m_planetNames[m_followingPlanet];
-	}
-}
-
-void Graphics::SystemView(void) {
-	m_followingPlanet = -2;
-}
-
-void Graphics::UserControlledView(void) {
-	m_followingPlanet = -1;
+	for (Object & obj : m_objects)
+		obj.Update(dt);
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -173,27 +115,6 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
-	if (m_followingPlanet > -1) {
-		glm::vec3 eyeFocus;
-		float distSun = glm::length(m_planets[m_followingPlanet]->GetCurrentLocation());
-		glm::vec3 eyePos = (distSun + m_viewDistance * m_planets[m_followingPlanet]->GetScale().y)
-				* glm::normalize(m_planets[m_followingPlanet]->GetCurrentLocation());
-		;
-
-		if (!m_zoomFlag) {
-			eyeFocus = {0, 0, 0};
-			eyePos.y += 3 * m_planets[m_followingPlanet]->GetScale().y;
-		}
-		else {
-			eyeFocus = m_planets[m_followingPlanet]->GetCurrentLocation();
-			eyePos.y += m_planets[m_followingPlanet]->GetScale().y;
-		}
-		UpdateCamera(eyePos, eyeFocus);
-	} else if (m_followingPlanet == -2) {
-		m_camera->ReturnToDefault();
-		m_followingPlanet = -1;
-	}
-
 	//Clear the screen
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -206,13 +127,9 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
 	//Render each planet and its moons
-	for (int i = 0; i < m_planets.size(); ++i) {
-		for (int m = 0; m < m_moons[i].size(); ++m) {
-			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_moons[i][m]->GetModel()));
-			m_moons[i][m]->Render();
-		}
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_planets[i]->GetModel()));
-		m_planets[i]->Render();
+	for (Object & obj : m_objects) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj.GetModel()));
+		obj.Render();
 	}
 
 	//Get any errors from OpenGL
@@ -221,6 +138,14 @@ void Graphics::Render(void) {
 		std::string val = ErrorString(error);
 		printf("Error initializing OpenGL! %d: %s \n", error, val.c_str());
 	}
+}
+
+glm::vec3 Graphics::GetEyePos(void) const {
+	return m_camera->GetEyePos();
+}
+
+glm::vec3 Graphics::GetEyeLoc(void) const {
+	return m_camera->GetFocusPos();
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
@@ -236,34 +161,4 @@ std::string Graphics::ErrorString(const GLenum error) const {
 		return "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command.";
 	else
 		return "None";
-}
-
-glm::vec3 Graphics::GetEyePos(void) const {
-	return m_camera->GetEyePos();
-}
-
-glm::vec3 Graphics::GetEyeLoc(void) const {
-	return m_camera->GetFocusPos();
-}
-
-void Graphics::ZoomCloser(void) {
-	if (m_viewDistance > 1 || m_viewDistance < -1)
-		--m_viewDistance;
-	else
-		m_viewDistance -= 2;
-}
-
-void Graphics::ZoomAway(void) {
-	if (m_viewDistance > 1 || m_viewDistance < -1)
-		++m_viewDistance;
-	else
-		m_viewDistance += 2;
-}
-
-void Graphics::SetZoomFlag(bool setFlag) {
-	m_zoomFlag = setFlag;
-}
-
-void Graphics::SetViewDistance(int distance) {
-	m_viewDistance = 10;
 }

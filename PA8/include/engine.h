@@ -25,6 +25,7 @@ private:
 	SDL_Event m_event;
 
 	Menu * m_menu;
+	glm::uvec2 m_menuSize;
 	long long m_menuLastTime; // last time when menu was created or destoryed
 	
 	ConfigFileParser m_configFile; //used to get parameters from
