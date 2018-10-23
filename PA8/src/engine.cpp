@@ -4,7 +4,7 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & launchFile) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_simulationSpeed(1), m_currentTimeMillis(
+		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
 				Engine::GetCurrentTimeMillis()), m_running(false) {
 	std::srand(time(nullptr));
 }
@@ -86,7 +86,7 @@ void Engine::Run(void) {
 
 		m_DT = getDT();
 		// Update and render the graphics
-		m_graphics->Update(m_DT * m_simulationSpeed);
+		m_graphics->Update(m_DT);
 		m_graphics->Render();
 
 		// Swap to the Window
@@ -123,19 +123,6 @@ long long Engine::GetCurrentTimeMillis() {
 	return std::chrono::duration_cast < std::chrono::milliseconds > (std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-void Engine::HandleEvent(const SDL_Event & event) {
-	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_ESCAPE) {
-			m_running = false;
-		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
-			if (m_menu)
-				CloseMenu();
-			else
-				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-		}
-	}
-}
-
 void Engine::EventChecker(void) {
 	while (SDL_PollEvent (&m_event)) {
 
@@ -160,6 +147,19 @@ void Engine::EventChecker(void) {
 				CloseMenu();
 			else
 				m_menu->HandleEvent(m_event);
+		}
+	}
+}
+
+void Engine::HandleEvent(const SDL_Event & event) {
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE) {
+			m_running = false;
+		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
+			if (m_menu)
+				CloseMenu();
+			else
+				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 		}
 	}
 }
