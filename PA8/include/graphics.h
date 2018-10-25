@@ -50,6 +50,13 @@ private:
 
 	std::vector<Object> m_objects;
 	std::vector<std::string> m_objectNames;
+	
+	//for bullet
+	btBroadphaseInterface * mbt_broadphase;
+	btDefaultCollisionConfiguration * mbt_collisionConfig;
+	btCollisionDispatcher * mbt_dispatcher;
+	btSequentialImpulseConstraintSolver * mbt_solver;
+	btDiscreteDynamicsWorld * mbt_dynamicsWorld;
 };
 
 #endif /* GRAPHICS_H */

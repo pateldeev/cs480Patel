@@ -1,13 +1,20 @@
 #include "graphics.h"
 
 Graphics::Graphics(void) :
-		m_camera(nullptr), m_currentShader(-1) {
+		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
+				nullptr) {
 }
 
 Graphics::~Graphics(void) {
 	m_objects.clear();
 
 	delete m_camera;
+
+	delete mbt_broadphase;
+	delete mbt_collisionConfig;
+	delete mbt_dispatcher;
+	delete mbt_solver;
+	delete mbt_dynamicsWorld;
 }
 
 bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos) {
@@ -47,6 +54,15 @@ bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, c
 
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//create bullet world
+	mbt_broadphase = new btDbvtBroadphase();
+	mbt_collisionConfig = new btDefaultCollisionConfiguration();
+	mbt_dispatcher = new btCollisionDispatcher(mbt_collisionConfig);
+	mbt_solver = new btSequentialImpulseConstraintSolver;
+
+	mbt_dynamicsWorld = new btDiscreteDynamicsWorld(mbt_dispatcher, mbt_broadphase, mbt_solver, mbt_collisionConfig);
+	mbt_dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 
 	return true;
 }
