@@ -7,7 +7,7 @@ class Camera {
 public:
 	Camera(const glm::vec3 & eyePos, const glm::vec3 & focusPos = glm::vec3(0.0, 0.0, 0.0));
 	~Camera(void);
-	bool Initialize(int width, int height);
+	bool Initialize(unsigned int width, unsigned int height);
 	
 	void UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos);
         void ReturnToDefault(void);

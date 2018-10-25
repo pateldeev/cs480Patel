@@ -16,14 +16,15 @@ public:
 	void Render(void);
 
 	glm::mat4 GetModel(void);
-
+	
+	void SetCurrentLocation(const glm::vec3 & location);
+	glm::vec3 GetCurrentLocation(void) const;
+	
 	void SetScale(const glm::vec3 & scale);
 	glm::vec3 GetScale(void) const;
 	
 	void SetRotationAngles(const glm::vec3 & rotationAngles);
-	glm::vec3 GetRotationAngles(void) const;
-	
-	glm::vec3 GetCurrentLocation(void) const;
+	glm::vec3 GetRotationAngles(void) const;	
 
 private:
 	glm::mat4 m_model;

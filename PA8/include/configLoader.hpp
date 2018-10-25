@@ -5,6 +5,16 @@
 
 #include <sstream>
 
+//holds data related to each object
+struct objectModel {
+	std::string name;
+	std::string objFile;
+	glm::vec3 startingLoc;
+	glm::vec3 scale;
+	glm::vec3 rotation;
+	std::string type;
+};
+
 //class to parse configuration file of paramters
 class ConfigFileParser {
 
@@ -12,15 +22,15 @@ public:
 	ConfigFileParser(const std::string & configFile);
 	~ConfigFileParser(void);
 
-	bool getShaderFileNames(std::string & vertexShaderFile, std::string & fragmentShaderFile);
-
-	bool getMenuState(bool & menu, glm::uvec2 & size);
-
 	bool getWindowInfo(std::string & windowName, glm::uvec2 & size);
 
 	bool getCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
 
-	bool getObjFile(std::string & objFile);
+	bool getShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
+
+	bool getMenuState(bool & menu, glm::uvec2 & size);
+
+	bool getObject(objectModel & obj);
 
 private:
 	std::stringstream m_fileBuffer;

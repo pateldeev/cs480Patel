@@ -10,7 +10,7 @@ Camera::~Camera(void) {
 
 }
 
-bool Camera::Initialize(int width, int height) {
+bool Camera::Initialize(unsigned int width, unsigned int height) {
 	//--Init the view and projection matrices
 	m_view = glm::lookAt(m_eyePos, //Eye Position
 			m_focusPos, //Focus point

@@ -17,25 +17,13 @@ Engine::~Engine(void) {
 
 bool Engine::Initialize(void) {
 
-	std::string shaderSrcVert, shaderSrcFrag;
-	if (!m_configFile.getShaderFileNames(shaderSrcVert, shaderSrcFrag)) {
-		printf("Could not get shader file information from configuration file \n");
-		return false;
-	}
-
-	bool menu;
-	if (!m_configFile.getMenuState(menu, m_menuSize)) {
-		printf("Could not get menu information from configuration file \n");
-		return false;
-	}
-
 	std::string windowName;
 	glm::uvec2 windowSize;
 	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
 		printf("Could not get window information from configuration file \n");
 		return false;
 	}
-	//Start the window
+	//start the window
 	m_window = new Window();
 	if (!m_window->Initialize(windowName, windowSize.x, windowSize.y)) {
 		printf("The window failed to initialize.\n");
@@ -47,19 +35,32 @@ bool Engine::Initialize(void) {
 		printf("Could not get camera information from configuration file \n");
 		return false;
 	}
-	//Start the graphics
+	//start the graphics
 	m_graphics = new Graphics();
-	if (!m_graphics->Initialize(m_window->GetWindowWidth(), m_window->GetWindowHeight(), shaderSrcVert, shaderSrcFrag, eyePos, eyeLoc)) {
+	if (!m_graphics->Initialize(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc)) {
 		printf("The graphics failed to initialize.\n");
 		return false;
 	}
 
-	std::string objFile;
-	if (!m_configFile.getObjFile(objFile)) {
-		printf("Could not get object file information from configuration file \n");
+	//add shader sets
+	std::string shaderSetName, shaderSrcVert, shaderSrcFrag;
+	while (m_configFile.getShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
+		m_graphics->AddShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag);
+		m_graphics->UseShaderSet(shaderSetName);
+	}
+
+	//check if menu needs to be initalized
+	bool menu;
+	if (!m_configFile.getMenuState(menu, m_menuSize)) {
+		printf("Could not get menu information from configuration file \n");
 		return false;
 	}
-	m_graphics->AddObject(objFile);
+
+	//add objects from configuration file
+	objectModel obj;
+	while (m_configFile.getObject(obj)) {
+		m_graphics->AddObject(obj);
+	}
 
 	//Start the menu if necessary
 	if (menu)

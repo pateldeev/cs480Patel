@@ -70,6 +70,14 @@ glm::mat4 Object::GetModel(void) {
 	return m_model;
 }
 
+void Object::SetCurrentLocation(const glm::vec3 & location){
+	m_translation = location;
+}
+
+glm::vec3 Object::GetCurrentLocation(void) const{
+	return m_translation;
+}
+
 void Object::SetScale(const glm::vec3 & scale) {
 	m_scale = scale;
 }
@@ -84,10 +92,6 @@ void Object::SetRotationAngles(const glm::vec3 & rotationAngles) {
 
 glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
-}
-
-glm::vec3 Object::GetCurrentLocation(void) const {
-	return m_translation;
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {

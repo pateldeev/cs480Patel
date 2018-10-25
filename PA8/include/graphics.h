@@ -18,12 +18,14 @@ public:
 	Graphics(void);
 	~Graphics(void);
 
-	bool Initialize(int windowWidth, int windowHeight, const std::string & vertShaderSrc, const std::string & fragShaderSrc, const glm::vec3 & eyePos,
-			const glm::vec3 & focusPos);
+	bool Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos);
 
 	void Update(unsigned int dt);
-	
-	void AddObject(const std::string & objFile);
+
+	void AddObject(const objectModel & obj);
+
+	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
+	bool UseShaderSet(const std::string & setName);
 
 	bool UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 
@@ -36,13 +38,18 @@ private:
 	std::string ErrorString(const GLenum error) const;
 
 	Camera * m_camera;
-	Shader * m_shader;
+
+	//variables to keep track of shaders
+	std::vector<Shader> m_shaders;
+	std::vector<std::string> m_shaderNames;
+	int m_currentShader;
 
 	GLint m_projectionMatrix;
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;
 
 	std::vector<Object> m_objects;
+	std::vector<std::string> m_objectNames;
 };
 
 #endif /* GRAPHICS_H */
