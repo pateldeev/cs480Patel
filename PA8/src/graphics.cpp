@@ -68,13 +68,21 @@ bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, c
 }
 
 void Graphics::AddObject(const objectModel & obj) {
+    Object* newObject;
+    if (obj.name == "Sphere") {
+        *newObject = Sphere(obj.ObjFile);
+    } else if (obj.name == "Board") {
+        *newObject = Board(obj.ObjFile);
+    } else if (obj.name == "cube") {
+        *newObject = Cube(obj.ObjFile);
+    }
 	m_objects.push_back(obj.objFile);
-	m_objectNames.push_back(obj.name);
-
+	
 	//set default properties
-	m_objects.back().SetCurrentLocation(obj.startingLoc);
-	m_objects.back().SetScale(obj.scale);
-	m_objects.back().SetRotationAngles(obj.rotation);
+        m_objects.back()->SetName(obj.name);
+	m_objects.back()->SetCurrentLocation(obj.startingLoc);
+	m_objects.back()->SetScale(obj.scale);
+	m_objects.back()->SetRotationAngles(obj.rotation);
 }
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -151,8 +159,8 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 }
 
 void Graphics::Update(unsigned int dt) {
-	for (Object & obj : m_objects)
-		obj.Update(dt);
+	for (Object * obj : m_objects)
+		obj->Update(dt);
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -174,10 +182,15 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-	//Render each planet and its moons
-	for (Object & obj : m_objects) {
+	//sort objects so that furthest objects render first
+        glm::vec3 cameraPosition = m_camera->GetEyePos());
+        sort(m_objects.begin(), m_objects.end(), [&cameraPosition](const Object* a, const Object* b){
+                return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
+        });
+        //Render each planet and its moons
+	for (Object* obj : m_objects) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj.GetModel()));
-		obj.Render();
+		obj->Render();
 	}
 
 	//Get any errors from OpenGL

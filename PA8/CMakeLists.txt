@@ -33,6 +33,7 @@ ENDIF(NOT APPLE)
 INCLUDE_DIRECTORIES(
   "${PROJECT_SOURCE_DIR}/include"
   "${PROJECT_SOURCE_DIR}/include/imgui"
+  "${PROJECT_SOURCE_DIR}/include/objects"
   ${ASSIMP_INCLUDE_DIR}
   ${BULLET_INCLUDE_DIRS}
   ${ImageMagick_INCLUDE_DIRS}
@@ -45,7 +46,7 @@ SET(INCLUDES ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${INCLUDES})
 
 # Set sources
-FILE(GLOB_RECURSE SOURCES "src/*.cpp" "src/imgui/*.cpp")
+FILE(GLOB_RECURSE SOURCES "src/*.cpp" "src/imgui/*.cpp" "src/objects/*.cpp")
 ADD_EXECUTABLE(${PROJECT_NAME} ${SOURCES})
 
 add_custom_target("${PROJECT_NAME}_SUCCESSFUL" ALL

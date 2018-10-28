@@ -49,7 +49,7 @@ bool Engine::Initialize(void) {
 		m_graphics->UseShaderSet(shaderSetName);
 	}
 
-	//check if menu needs to be initalized
+	//check if menu needs to be initialized
 	bool menu;
 	if (!m_configFile.getMenuState(menu, m_menuSize)) {
 		printf("Could not get menu information from configuration file \n");

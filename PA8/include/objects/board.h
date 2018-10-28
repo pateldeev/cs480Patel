@@ -1,20 +1,16 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef BOARD_H
+#define BOARD_H
 
-#include "graphics_headers.h"
+#include "object.h"
 
-#include <assimp/Importer.hpp>
-#include <vector>
-
-#include <btBulletDynamicsCommon.h>
-
-class Object {
+class Board : Object {
 public:
-	Object(const std::string & objFile);
-	~Object(void);
-	virtual void Update(unsigned int dt) = 0;
-	virtual void Render(void) = 0;
-
+	Board(const std::string & objFile);
+	~Board(void);
+        
+	void Update(unsigned int dt);
+	void Render(void);
+        /*
 	glm::mat4 GetModel(void);
 	
 	void SetCurrentLocation(const glm::vec3 & location);
@@ -25,15 +21,9 @@ public:
 	
 	void SetRotationAngles(const glm::vec3 & rotationAngles);
 	glm::vec3 GetRotationAngles(void) const;
-        
-        void SetName(const std::string & name);
-        std::string getName(void) const; 
-
-        float GetDistanceFromPoint(glm::vec3 point);
-
-protected:
-        std::string m_name;
-    
+        */	
+/*
+private:
 	glm::mat4 m_model;
 
 	glm::vec3 m_translation;
@@ -50,6 +40,7 @@ protected:
 
 	bool loadObjAssimp(const std::string & objFile);
 	void loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles);
+*/
 };
 
-#endif /* OBJECT_H */
+#endif /* BOARD_H */
