@@ -8,11 +8,12 @@
 //holds data related to each object
 struct objectModel {
 	std::string name;
+	std::string type;
 	std::string objFile;
 	glm::vec3 startingLoc;
 	glm::vec3 scale;
 	glm::vec3 rotation;
-	std::string type;
+	std::string btType;
 };
 
 //class to parse configuration file of paramters

@@ -1,7 +1,7 @@
-# Configuration File for Solar System Project
+# Configuration File for PA08
 # This file must be properly formatted for everything to work correctly.
 # All lines are in the format "aribute=value". Notice there is no space after the = sign and no quotations around the value.
-# One shouldOI only change the values of variables. Changing the order or adding new variables may cause the program to fail.
+# One should only change the values of variables. Changing the order or adding new variables may cause the program to fail.
 
 #Main window paramters - height & width only used when fullscreen is off
 WINDOW_NAME=PA08
@@ -9,7 +9,7 @@ WINDOW_FULLSCREEN=1
 WINDOW_SIZE=1000,2000
 
 #Initial camera information
-CAMERA_EYEPOS=0.0,8.0,-16.0
+CAMERA_EYEPOS=0.0,35.0,-16.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
 #Source code for shaders
@@ -23,6 +23,7 @@ MENU_SIZE=400,600
 
 #Objects to load
 OBJ_NAME=Sphere
+OBJ_TYPE=Sphere
 OBJ_FILE=objFiles/sphere/earth.obj
 OBJ_STARTING_LOC=0,0,0
 OBJ_SCALE=1,1,1
@@ -31,6 +32,7 @@ OBJ_TYPE=static
 
 #Objects to load
 OBJ_NAME=Cube
+OBJ_TYPE=Cube
 OBJ_FILE=objFiles/cube/cube.obj
 OBJ_STARTING_LOC=-5,5,7
 OBJ_SCALE=1,1,1
@@ -39,8 +41,9 @@ OBJ_TYPE=static
 
 #Objects to load
 OBJ_NAME=Board
+OBJ_TYPE=Board
 OBJ_FILE=objFiles/board/board.obj
-OBJ_STARTING_LOC=-5,-5,-7
-OBJ_SCALE=1,1,1
+OBJ_STARTING_LOC=0,0,0
+OBJ_SCALE=10,10,10
 OBJ_ROTATION=0,0,0
 OBJ_TYPE=static

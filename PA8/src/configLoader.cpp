@@ -127,6 +127,12 @@ bool ConfigFileParser::getObject(objectModel & obj) {
 		return false;
 	}
 
+	//get type
+	if (!parseLine < std::string > (varName, &obj.type) || varName.compare("OBJ_TYPE")) {
+		printf("Could not get object type from config file \n");
+		return false;
+	}
+
 	//get obj file name
 	if (!parseLine < std::string > (varName, &obj.objFile) || varName.compare("OBJ_FILE")) {
 		printf("Could not get object name from config file \n");
@@ -155,8 +161,8 @@ bool ConfigFileParser::getObject(objectModel & obj) {
 	obj.rotation = glm::vec3(values[0], values[1], values[2]);
 
 	//get type
-	if (!parseLine < std::string > (varName, &obj.type) || varName.compare("OBJ_TYPE")) {
-		printf("Could not get object type from config file \n");
+	if (!parseLine < std::string > (varName, &obj.btType) || varName.compare("OBJ_TYPE")) {
+		printf("Could not get bullet object type from config file \n");
 		return false;
 	}
 

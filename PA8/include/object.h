@@ -16,24 +16,24 @@ public:
 	virtual void Render(void) = 0;
 
 	glm::mat4 GetModel(void);
-	
+
 	void SetCurrentLocation(const glm::vec3 & location);
 	glm::vec3 GetCurrentLocation(void) const;
-	
+
 	void SetScale(const glm::vec3 & scale);
 	glm::vec3 GetScale(void) const;
-	
+
 	void SetRotationAngles(const glm::vec3 & rotationAngles);
 	glm::vec3 GetRotationAngles(void) const;
-        
-        void SetName(const std::string & name);
-        std::string GetName(void) const; 
 
-        float GetDistanceFromPoint(glm::vec3 point);
+	void SetName(const std::string & name);
+	std::string GetName(void) const;
+
+	float GetDistanceFromPoint(glm::vec3 point);
 
 protected:
-        std::string m_name;
-    
+	std::string m_name;
+
 	glm::mat4 m_model;
 
 	glm::vec3 m_translation;
@@ -51,5 +51,10 @@ protected:
 	bool loadObjAssimp(const std::string & objFile);
 	void loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles);
 };
+
+//sub classes
+#include "objects/board.h"
+#include "objects/sphere.h"
+#include "objects/cube.h"
 
 #endif /* OBJECT_H */

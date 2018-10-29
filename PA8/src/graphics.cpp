@@ -68,16 +68,15 @@ bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, c
 }
 
 void Graphics::AddObject(const objectModel & obj) {
-    if (obj.name == "Sphere") {
-        m_objects.emplace_back(new Sphere(obj.objFile));
-    } else if (obj.name == "Board") {
-        m_objects.emplace_back(new Board(obj.objFile));
-    } else if (obj.name == "Cube") {
-        m_objects.emplace_back(new Board(obj.objFile));
-    }
-	
+	if (obj.type == "Sphere")
+		m_objects.emplace_back(new Sphere(obj.objFile));
+	else if (obj.type == "Board")
+		m_objects.emplace_back(new Board(obj.objFile));
+	else if (obj.type == "Cube")
+		m_objects.emplace_back(new Board(obj.objFile));
+
 	//set default properties
-        m_objects.back()->SetName(obj.name);
+	m_objects.back()->SetName(obj.name);
 	m_objects.back()->SetCurrentLocation(obj.startingLoc);
 	m_objects.back()->SetScale(obj.scale);
 	m_objects.back()->SetRotationAngles(obj.rotation);
@@ -181,12 +180,12 @@ void Graphics::Render(void) {
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
 	//sort objects so that furthest objects render first
-        glm::vec3 cameraPosition = m_camera->GetEyePos();
-        sort(m_objects.begin(), m_objects.end(), [&cameraPosition](std::unique_ptr<Object> & a, std::unique_ptr<Object> & b) {
-                return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
-        });
-        
-        //Render each planet and its moons
+	glm::vec3 cameraPosition = m_camera->GetEyePos();
+	sort(m_objects.begin(), m_objects.end(), [&cameraPosition](std::unique_ptr<Object> & a, std::unique_ptr<Object> & b) {
+		return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
+	});
+
+	//Render each planet and its moons
 	for (auto & obj : m_objects) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj->GetModel()));
 		obj->Render();

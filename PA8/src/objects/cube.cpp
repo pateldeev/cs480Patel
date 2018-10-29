@@ -1,4 +1,4 @@
-#include "cube.h"
+#include "objects/cube.h"
 
 Cube::Cube(const std::string & objFile) : Object(objFile) {
       

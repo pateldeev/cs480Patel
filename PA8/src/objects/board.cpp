@@ -1,4 +1,4 @@
-#include "board.h"
+#include "objects/board.h"
 
 Board::Board(const std::string & objFile) : Object(objFile) {
     

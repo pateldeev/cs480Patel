@@ -1,4 +1,4 @@
-#include "sphere.h"
+#include "objects/sphere.h"
 
 Sphere::Sphere(const std::string & objFile) : Object(objFile) {
         

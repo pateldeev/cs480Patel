@@ -26,7 +26,7 @@ Object::Object(const std::string & objFile) :
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
-        
+
 }
 
 Object::~Object(void) {
@@ -43,11 +43,11 @@ glm::mat4 Object::GetModel(void) {
 	return m_model;
 }
 
-void Object::SetCurrentLocation(const glm::vec3 & location){
+void Object::SetCurrentLocation(const glm::vec3 & location) {
 	m_translation = location;
 }
 
-glm::vec3 Object::GetCurrentLocation(void) const{
+glm::vec3 Object::GetCurrentLocation(void) const {
 	return m_translation;
 }
 
@@ -68,15 +68,15 @@ glm::vec3 Object::GetRotationAngles(void) const {
 }
 
 void Object::SetName(const std::string & name) {
-    m_name = name;
+	m_name = name;
 }
 
 std::string Object::GetName(void) const {
-    return m_name;
+	return m_name;
 }
 
 float Object::GetDistanceFromPoint(glm::vec3 point) {
-    return glm::distance(m_translation, point);
+	return glm::distance(m_translation, point);
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {
@@ -90,7 +90,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 	const aiVector3D * uv;
 	const aiMaterial * tempMat;
 	aiString path;
-	std::vector<aiString> textureFiles;
+	std::vector < aiString > textureFiles;
 
 	if (!scene) {
 		printf("Error loading object: %s \n", importer.GetErrorString());

@@ -7,9 +7,6 @@
 #include "shader.h"
 
 #include "object.h"
-#include "objects/board.h"
-#include "objects/sphere.h"
-#include "objects/cube.h"
 
 #include "configLoader.hpp"
 
