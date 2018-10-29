@@ -9,21 +9,23 @@ bool GetLaunchFile(int argc, char * argv[], std::string & launchFile);
 Engine * StartEngine(const std::string & launchFile);
 
 int main(int argc, char * argv[]) {
-
+        
+        printf("Loading launchFile");
 	std::string launchFile;
 
 	if (!GetLaunchFile(argc, argv, launchFile)) {
 		std::cerr << "Error getting paramter values " << std::endl;
 		return 0;
 	}
-
+        printf("Creating Engine");
 	Engine * engine = StartEngine(launchFile);
 
 	if (!engine) {
 		std::cerr << "Error starting engine! " << std::endl;
 		return 0;
 	}
-
+        
+        printf("Starting Engine");
 	engine->Run();
 
 	delete engine;

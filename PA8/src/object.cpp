@@ -11,7 +11,7 @@
 //does this need to keep constructor and destructor?
 Object::Object(const std::string & objFile) :
 		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(glm::vec3(0.0, 0.0, 0.0)), VB(0) {
-
+        printf("And Object is being created");
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	if (!loadObjAssimp(objFile)) {
 		printf("Object not properly loaded \n");
@@ -27,6 +27,7 @@ Object::Object(const std::string & objFile) :
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
+        
 }
 
 Object::~Object(void) {

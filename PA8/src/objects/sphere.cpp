@@ -1,6 +1,6 @@
 #include "sphere.h"
 
-Sphere::Sphere(const std::string & objFile) : Object(objFile) {
+Sphere::Sphere(const std::string & objFile) : Object::Object(objFile) {
         
 }
 

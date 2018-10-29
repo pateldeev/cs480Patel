@@ -1,6 +1,6 @@
 #include "cube.h"
 
-Cube::Cube(const std::string & objFile) : Object(objFile) {
+Cube::Cube(const std::string & objFile) : Object::Object(objFile) {
       
 }
 

@@ -18,6 +18,7 @@ Graphics::~Graphics(void) {
 }
 
 bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos) {
+    printf("Initializing Graphics");
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
 	// std::cout << glewGetString(GLEW_VERSION) << endl;
@@ -68,6 +69,7 @@ bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, c
 }
 
 void Graphics::AddObject(const objectModel & obj) {
+    printf("Adding Object to Graphics");
     Object* newObject;
     if (obj.name == "Sphere") {
         *newObject = Sphere(obj.objFile);
@@ -184,6 +186,7 @@ void Graphics::Render(void) {
 
 	//sort objects so that furthest objects render first
         glm::vec3 cameraPosition = m_camera->GetEyePos();
+        printf("Sorting m_objects vector");
         sort(m_objects.begin(), m_objects.end(), [&cameraPosition](Object* a, Object* b) {
                 return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
         });
