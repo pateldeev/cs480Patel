@@ -18,7 +18,6 @@ Graphics::~Graphics(void) {
 }
 
 bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos) {
-    printf("Initializing Graphics");
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
 	// std::cout << glewGetString(GLEW_VERSION) << endl;
@@ -69,16 +68,13 @@ bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, c
 }
 
 void Graphics::AddObject(const objectModel & obj) {
-    printf("Adding Object to Graphics");
-    Object* newObject;
     if (obj.name == "Sphere") {
-        *newObject = Sphere(obj.objFile);
+        m_objects.emplace_back(new Sphere(obj.objFile));
     } else if (obj.name == "Board") {
-        *newObject = Board(obj.objFile);
+        m_objects.emplace_back(new Board(obj.objFile));
     } else if (obj.name == "Cube") {
-        *newObject = Cube(obj.objFile);
+        m_objects.emplace_back(new Board(obj.objFile));
     }
-	m_objects.push_back(newObject);
 	
 	//set default properties
         m_objects.back()->SetName(obj.name);
@@ -161,7 +157,7 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 }
 
 void Graphics::Update(unsigned int dt) {
-	for (Object * obj : m_objects)
+	for (auto & obj : m_objects)
 		obj->Update(dt);
 }
 
@@ -186,12 +182,12 @@ void Graphics::Render(void) {
 
 	//sort objects so that furthest objects render first
         glm::vec3 cameraPosition = m_camera->GetEyePos();
-        printf("Sorting m_objects vector");
-        sort(m_objects.begin(), m_objects.end(), [&cameraPosition](Object* a, Object* b) {
+        sort(m_objects.begin(), m_objects.end(), [&cameraPosition](std::unique_ptr<Object> & a, std::unique_ptr<Object> & b) {
                 return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
         });
+        
         //Render each planet and its moons
-	for (Object* obj : m_objects) {
+	for (auto & obj : m_objects) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj->GetModel()));
 		obj->Render();
 	}

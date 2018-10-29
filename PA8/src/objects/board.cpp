@@ -1,6 +1,6 @@
 #include "board.h"
 
-Board::Board(const std::string & objFile) : Object::Object(objFile) {
+Board::Board(const std::string & objFile) : Object(objFile) {
     
 }
 

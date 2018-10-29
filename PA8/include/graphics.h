@@ -15,6 +15,7 @@
 
 #include <SDL2/SDL.h>
 #include <vector>
+#include <memory>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -53,7 +54,7 @@ private:
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;
 
-	std::vector<Object*> m_objects;
+	std::vector<std::unique_ptr<Object>> m_objects;
 	//std::vector<std::string> m_objectNames; names now stored in objects
 	
 	//for bullet

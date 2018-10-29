@@ -16,7 +16,6 @@ Engine::~Engine(void) {
 }
 
 bool Engine::Initialize(void) {
-        printf("Initializing Engine");
 	std::string windowName;
 	glm::uvec2 windowSize;
 	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
@@ -57,7 +56,6 @@ bool Engine::Initialize(void) {
 	}
 
 	//add objects from configuration file
-        printf("Beginning process of adding objects");
 	objectModel obj;
 	while (m_configFile.getObject(obj)) {
 		m_graphics->AddObject(obj);
