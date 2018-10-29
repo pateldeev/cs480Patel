@@ -11,7 +11,7 @@
 class Object {
 public:
 	Object(const std::string & objFile);
-	~Object(void);
+	virtual ~Object(void);
 	virtual void Update(unsigned int dt) = 0;
 	virtual void Render(void) = 0;
 
@@ -27,7 +27,7 @@ public:
 	glm::vec3 GetRotationAngles(void) const;
         
         void SetName(const std::string & name);
-        std::string getName(void) const; 
+        std::string GetName(void) const; 
 
         float GetDistanceFromPoint(glm::vec3 point);
 

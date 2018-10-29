@@ -76,7 +76,7 @@ std::string Object::GetName(void) const {
 }
 
 float Object::GetDistanceFromPoint(glm::vec3 point) {
-    return glm::distance(m_position, point));
+    return glm::distance(m_translation, point);
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {

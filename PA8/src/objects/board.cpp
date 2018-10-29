@@ -1,6 +1,7 @@
 #include "board.h"
 
-Board::Board(const std::string & objFile) {
+Board::Board(const std::string & objFile) : Object(objFile){
+    /*
         this->m_model = glm::mat4(1.0); 
         this->m_translation = glm::vec3(0.0, 0.0, 0.0);
         this->m_scale = glm::vec3(1.0, 1.0, 1.0);
@@ -21,6 +22,7 @@ Board::Board(const std::string & objFile) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
+    */
 }
 
 Board::~Board(void) {

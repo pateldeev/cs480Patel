@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-class Board : Object {
+class Board : public Object {
 public:
 	Board(const std::string & objFile);
 	~Board(void);

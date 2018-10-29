@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-class Cube : Object {
+class Cube : public Object {
 public:
 	Cube(const std::string & objFile);
 	~Cube(void);

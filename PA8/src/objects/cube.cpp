@@ -1,26 +1,7 @@
 #include "cube.h"
 
-Cube::Cube(const std::string & objFile) {
-        this->m_model = glm::mat4(1.0); 
-        this->m_translation = glm::vec3(0.0, 0.0, 0.0);
-        this->m_scale = glm::vec3(1.0, 1.0, 1.0);
-        this->m_rotationAngles = glm::vec3(0.0, 0.0, 0.0);
-        this->VB = 0;
-	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
-	if (!loadObjAssimp(objFile)) {
-		printf("Object not properly loaded \n");
-		return;
-	}
-
-	glGenBuffers(1, &VB);
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertices.size(), &m_vertices[0], GL_STATIC_DRAW);
-
-	for (int i = 0; i < IB.size(); ++i) {
-		glGenBuffers(1, &IB[i]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
-	}
+Cube::Cube(const std::string & objFile) : Object(objFile) {
+      
 }
 
 Cube::~Cube(void) {

@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-class Sphere : Object {
+class Sphere : public Object {
 public:
 	Sphere(const std::string & objFile);
 	~Sphere(void);
