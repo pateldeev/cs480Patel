@@ -8,9 +8,9 @@
 
 #include <algorithm>
 
+//does this need to keep constructor and destructor?
 Object::Object(const std::string & objFile) :
 		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(glm::vec3(0.0, 0.0, 0.0)), VB(0) {
-
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	if (!loadObjAssimp(objFile)) {
 		printf("Object not properly loaded \n");
@@ -26,6 +26,7 @@ Object::Object(const std::string & objFile) :
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
+        
 }
 
 Object::~Object(void) {
@@ -36,34 +37,6 @@ Object::~Object(void) {
 	m_indices.clear();
 
 	m_textures.clear();
-}
-
-void Object::Update(unsigned int dt) {
-	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
-			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
-
-	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
-}
-
-void Object::Render(void) {
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
-
-	for (int i = 0; i < IB.size(); ++i) {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-
-		glActiveTexture (GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
-
-		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
-	}
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
 }
 
 glm::mat4 Object::GetModel(void) {
@@ -92,6 +65,18 @@ void Object::SetRotationAngles(const glm::vec3 & rotationAngles) {
 
 glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
+}
+
+void Object::SetName(const std::string & name) {
+    m_name = name;
+}
+
+std::string Object::GetName(void) const {
+    return m_name;
+}
+
+float Object::GetDistanceFromPoint(glm::vec3 point) {
+    return glm::distance(m_translation, point);
 }
 
 bool Object::loadObjAssimp(const std::string & objFile) {

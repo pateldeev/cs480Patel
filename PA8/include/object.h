@@ -11,9 +11,9 @@
 class Object {
 public:
 	Object(const std::string & objFile);
-	~Object(void);
-	void Update(unsigned int dt);
-	void Render(void);
+	virtual ~Object(void);
+	virtual void Update(unsigned int dt) = 0;
+	virtual void Render(void) = 0;
 
 	glm::mat4 GetModel(void);
 	
@@ -24,9 +24,16 @@ public:
 	glm::vec3 GetScale(void) const;
 	
 	void SetRotationAngles(const glm::vec3 & rotationAngles);
-	glm::vec3 GetRotationAngles(void) const;	
+	glm::vec3 GetRotationAngles(void) const;
+        
+        void SetName(const std::string & name);
+        std::string GetName(void) const; 
 
-private:
+        float GetDistanceFromPoint(glm::vec3 point);
+
+protected:
+        std::string m_name;
+    
 	glm::mat4 m_model;
 
 	glm::vec3 m_translation;

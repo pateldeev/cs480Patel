@@ -16,7 +16,6 @@ Engine::~Engine(void) {
 }
 
 bool Engine::Initialize(void) {
-
 	std::string windowName;
 	glm::uvec2 windowSize;
 	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
@@ -49,7 +48,7 @@ bool Engine::Initialize(void) {
 		m_graphics->UseShaderSet(shaderSetName);
 	}
 
-	//check if menu needs to be initalized
+	//check if menu needs to be initialized
 	bool menu;
 	if (!m_configFile.getMenuState(menu, m_menuSize)) {
 		printf("Could not get menu information from configuration file \n");
