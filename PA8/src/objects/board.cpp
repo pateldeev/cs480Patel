@@ -9,6 +9,10 @@ Board::~Board(void) {
 }
 
 void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
+
+#define USEMESH 0 //use mesh or plane colliders
+
+#if USEMESH
 	mbt_shape = new btBvhTriangleMeshShape(mbt_mesh, true);
 	mbt_shape->setLocalScaling(btVector3(m_scale.x, m_scale.y, m_scale.z));
 
@@ -24,4 +28,27 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
+
+#else 
+	//bottom floor
+	btCollisionShape * floor = new btStaticPlaneShape(btVector3(0, 1, 0), btScalar(0));
+	btDefaultMotionState * floorMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo floorRigidBodyCI(btScalar(0), floorMotionState, floor, btVector3(0, 0, 0));
+	floorRigidBodyCI.m_friction = 100;
+	floorRigidBodyCI.m_rollingFriction = 100;
+	floorRigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyFloor = new btRigidBody(floorRigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyFloor);
+
+	//side walls
+	btCollisionShape * wallL = new btStaticPlaneShape(btVector3(1, 0, 0), btScalar(-40));
+	btDefaultMotionState * wallLMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo wallLRigidBodyCI(btScalar(0), wallLMotionState, wallL, btVector3(0, 0, 0));
+	wallLRigidBodyCI.m_friction = 100;
+	wallLRigidBodyCI.m_rollingFriction = 100;
+	wallLRigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyWallL = new btRigidBody(wallLRigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyWallL);
+
+#endif
 }

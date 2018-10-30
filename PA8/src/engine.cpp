@@ -164,7 +164,7 @@ void Engine::EventChecker(void) {
 }
 
 void Engine::HandleEvent(const SDL_Event & event) {
-	const int impulse = 120;
+	const int impulse = 30;
 
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
@@ -172,13 +172,13 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
 			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 		} else if (event.key.keysym.sym == SDLK_w) {
-			m_graphics->ApplyImpulse(glm::vec3(0, 0, -impulse));
+			m_graphics->ApplyImpulse(glm::vec3(0, 0, -impulse), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_s) {
-			m_graphics->ApplyImpulse(glm::vec3(0, 0, impulse));
+			m_graphics->ApplyImpulse(glm::vec3(0, 0, impulse), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_a) {
-			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0));
+			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_d) {
-			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0));
+			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
 		}
 	}
 }

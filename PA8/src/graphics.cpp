@@ -79,14 +79,6 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	mbt_dynamicsWorld = new btDiscreteDynamicsWorld(mbt_dispatcher, mbt_broadphase, mbt_solver, mbt_collisionConfig);
 	mbt_dynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
-#if 0
-	btCollisionShape * shape = new btStaticPlaneShape(btVector3(0, 1, 0), btScalar(0));
-	btDefaultMotionState * shapeMotionState = new btDefaultMotionState();
-	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, shape, btVector3(0, 0, 0));
-	btRigidBody * rigidBody = new btRigidBody(shapeRigidBodyCI);
-	mbt_dynamicsWorld->addRigidBody(rigidBody);
-#endif 
-
 	return true;
 }
 
@@ -207,6 +199,9 @@ void Graphics::Update(unsigned int dt) {
 		for (Object * obj : m_objects) {
 			if (obj->GetRigidBody() == body) {
 				obj->SetTranslation(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+				glm::vec3 newRotations;
+				trans.getRotation().getEulerZYX (newRotations.z, newRotations.x, newRotations.y);
+				obj->SetRotationAngles(newRotations);
 			}
 		}
 	}
