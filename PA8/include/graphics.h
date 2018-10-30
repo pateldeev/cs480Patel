@@ -22,10 +22,13 @@ public:
 	~Graphics(void);
 
 	bool Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos);
+	bool InitializeBt(const glm::vec3 & gravity);
 
 	void Update(unsigned int dt);
 
 	void AddObject(const objectModel & obj);
+	
+	void moveSphere(const glm::vec3 & impulse);
 
 	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
 	bool UseShaderSet(const std::string & setName);
@@ -52,7 +55,7 @@ private:
 	GLint m_modelMatrix;
 
 	std::vector<std::unique_ptr<Object>> m_objects;
-	//std::vector<std::string> m_objectNames; names now stored in objects
+	int m_movingObject; //points to object that can be moved via user keys
 	
 	//for bullet
 	btBroadphaseInterface * mbt_broadphase;

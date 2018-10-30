@@ -114,6 +114,19 @@ bool ConfigFileParser::getMenuState(bool & menu, glm::uvec2 & size) {
 	return true;
 }
 
+bool ConfigFileParser::getWorldGravity(glm::vec3 & gravity) {
+	std::string varName;
+	float values[3];
+
+	//gravity
+	if (!parseLine<float, 3>(varName, values) || varName.compare("WORLD_GRAVITY")) {
+		printf("Could not get gravity from config file \n");
+		return false;
+	}
+	gravity = glm::vec3(values[0], values[1], values[2]);
+	return true;
+}
+
 bool ConfigFileParser::getObject(objectModel & obj) {
 	if (m_fileBuffer.eof() || m_fileBuffer.peek() != 'O')
 		return false; //return false if there is no object to parse
@@ -166,5 +179,10 @@ bool ConfigFileParser::getObject(objectModel & obj) {
 		return false;
 	}
 
+	//get mass
+	if (!parseLine<unsigned int>(varName, &obj.mass) || varName.compare("OBJ_MASS")) {
+		printf("Could not get bullet object mass from config file \n");
+		return false;
+	}
 	return true;
 }

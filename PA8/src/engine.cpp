@@ -55,6 +55,17 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 
+	//start bullet
+	glm::vec3 gravity;
+	if (!m_configFile.getWorldGravity(gravity)) {
+		printf("Could not get gravity information from configuration file \n");
+		return false;
+	}
+	if (!m_graphics->InitializeBt(gravity)) {
+		printf("The graphics failed to initialize bullet.\n");
+		return false;
+	}
+
 	//add objects from configuration file
 	objectModel obj;
 	while (m_configFile.getObject(obj)) {
@@ -156,10 +167,15 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
 		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
-			if (m_menu)
-				CloseMenu();
-			else
-				StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+			m_menu ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+		} else if (event.key.keysym.sym == SDLK_w) {
+			m_graphics->moveSphere(glm::vec3(0, 0, -35));
+		} else if (event.key.keysym.sym == SDLK_s) {
+			m_graphics->moveSphere(glm::vec3(0, 0, 35));
+		} else if (event.key.keysym.sym == SDLK_a) {
+			m_graphics->moveSphere(glm::vec3(-35, 0, 0));
+		} else if (event.key.keysym.sym == SDLK_d) {
+			m_graphics->moveSphere(glm::vec3(35, 0, 0));
 		}
 	}
 }
@@ -176,8 +192,9 @@ bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
 	return true;
 }
 
-void Engine::CloseMenu(void) {
+bool Engine::CloseMenu(void) {
 	delete m_menu;
 	m_menu = nullptr;
 	m_menuLastTime = Engine::GetCurrentTimeMillis();
+	return true;
 }

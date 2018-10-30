@@ -14,6 +14,7 @@ struct objectModel {
 	glm::vec3 scale;
 	glm::vec3 rotation;
 	std::string btType;
+	unsigned int mass;
 };
 
 //class to parse configuration file of paramters
@@ -30,6 +31,8 @@ public:
 	bool getShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
 
 	bool getMenuState(bool & menu, glm::uvec2 & size);
+	
+	bool getWorldGravity(glm::vec3 & gravity);
 
 	bool getObject(objectModel & obj);
 

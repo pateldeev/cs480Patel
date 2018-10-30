@@ -38,7 +38,7 @@ private:
 	void HandleEvent(const SDL_Event & event);
 
 	bool StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc);
-	void CloseMenu(void);
+	bool CloseMenu(void);
 
 };
 

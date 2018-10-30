@@ -9,10 +9,12 @@
 #include <algorithm>
 
 //does this need to keep constructor and destructor?
-Object::Object(const std::string & objFile) :
-		m_model(1.0), m_translation(glm::vec3(0.0, 0.0, 0.0)), m_scale(glm::vec3(1.0, 1.0, 1.0)), m_rotationAngles(glm::vec3(0.0, 0.0, 0.0)), VB(0) {
+Object::Object(const std::string & objFile, const glm::vec3 & translation, const glm::vec3 & rotationAngles,
+		const glm::vec3 & scale, bool loadBtMesh) :
+m_model(1.0), m_translation(translation), m_scale(scale), m_rotationAngles(rotationAngles), VB(0), mbt_mesh(
+		nullptr) {
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
-	if (!loadObjAssimp(objFile)) {
+	if (!loadObjAssimp(objFile, loadBtMesh)) {
 		printf("Object not properly loaded \n");
 		return;
 	}
@@ -26,7 +28,6 @@ Object::Object(const std::string & objFile) :
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices[i].size(), &m_indices[i][0], GL_STATIC_DRAW);
 	}
-
 }
 
 Object::~Object(void) {
@@ -37,34 +38,33 @@ Object::~Object(void) {
 	m_indices.clear();
 
 	m_textures.clear();
+
+	delete mbt_mesh;
+}
+
+void Object::Render(void) {
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
+
+	for (int i = 0; i < IB.size(); ++i) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
+
+		glActiveTexture (GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
+
+		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
+	}
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }
 
 glm::mat4 Object::GetModel(void) {
 	return m_model;
-}
-
-void Object::SetCurrentLocation(const glm::vec3 & location) {
-	m_translation = location;
-}
-
-glm::vec3 Object::GetCurrentLocation(void) const {
-	return m_translation;
-}
-
-void Object::SetScale(const glm::vec3 & scale) {
-	m_scale = scale;
-}
-
-glm::vec3 Object::GetScale(void) const {
-	return m_scale;
-}
-
-void Object::SetRotationAngles(const glm::vec3 & rotationAngles) {
-	m_rotationAngles = rotationAngles;
-}
-
-glm::vec3 Object::GetRotationAngles(void) const {
-	return m_rotationAngles;
 }
 
 void Object::SetName(const std::string & name) {
@@ -75,11 +75,19 @@ std::string Object::GetName(void) const {
 	return m_name;
 }
 
+void Object::SetMass(unsigned int mass) {
+	m_mass = mass;
+}
+
+unsigned int Object::GetMass(void) const {
+	return m_mass;
+}
+
 float Object::GetDistanceFromPoint(glm::vec3 point) {
 	return glm::distance(m_translation, point);
 }
 
-bool Object::loadObjAssimp(const std::string & objFile) {
+bool Object::loadObjAssimp(const std::string & objFile, bool loadBtMesh) {
 	Assimp::Importer importer;
 	const aiScene * scene = importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
@@ -91,6 +99,10 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 	const aiMaterial * tempMat;
 	aiString path;
 	std::vector < aiString > textureFiles;
+
+	btVector3 triArray[3];
+	if (loadBtMesh)
+		mbt_mesh = new btTriangleMesh();
 
 	if (!scene) {
 		printf("Error loading object: %s \n", importer.GetErrorString());
@@ -129,6 +141,12 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					//add vertex and index to correct texture and vertex
 					m_vertices.push_back(Vertex(tempVertex, tempUV));
 					m_indices[textureIndex].push_back(m_vertices.size()-1);
+
+					//load mesh into bullet if requested
+					if (loadBtMesh) {
+						triArray[indexNum] = btVector3(tempVertex.x, tempVertex.y, tempVertex.z);
+						mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
+					}
 				}
 			}
 

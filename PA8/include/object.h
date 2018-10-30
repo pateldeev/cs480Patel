@@ -10,28 +10,27 @@
 
 class Object {
 public:
-	Object(const std::string & objFile);
+	Object(const std::string & objFile, const glm::vec3 & translation = glm::vec3(0, 0, 0), const glm::vec3 & rotationAngles = glm::vec3(0, 0, 0),
+			const glm::vec3 & scale = glm::vec3(1, 1, 1), bool loadBtMesh = false);
 	virtual ~Object(void);
-	virtual void Update(unsigned int dt) = 0;
-	virtual void Render(void) = 0;
+
+	virtual void Update(void) = 0;
+	virtual void IntializeBt(btDiscreteDynamicsWorld * dynamicsWorld) = 0;
+
+	virtual void Render(void);
 
 	glm::mat4 GetModel(void);
-
-	void SetCurrentLocation(const glm::vec3 & location);
-	glm::vec3 GetCurrentLocation(void) const;
-
-	void SetScale(const glm::vec3 & scale);
-	glm::vec3 GetScale(void) const;
-
-	void SetRotationAngles(const glm::vec3 & rotationAngles);
-	glm::vec3 GetRotationAngles(void) const;
 
 	void SetName(const std::string & name);
 	std::string GetName(void) const;
 
 	float GetDistanceFromPoint(glm::vec3 point);
+	unsigned int GetMass(void) const;
 
 protected:
+	unsigned int m_mass;
+	void SetMass(unsigned int mass);
+
 	std::string m_name;
 
 	glm::mat4 m_model;
@@ -48,8 +47,10 @@ protected:
 
 	std::vector<GLuint> m_textures; //vector of texture locations on GPU
 
-	bool loadObjAssimp(const std::string & objFile);
+	bool loadObjAssimp(const std::string & objFile, bool loadBtMesh);
 	void loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles);
+
+	btTriangleMesh * mbt_mesh;
 };
 
 //sub classes

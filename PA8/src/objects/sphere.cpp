@@ -1,7 +1,9 @@
 #include "objects/sphere.h"
 
-Sphere::Sphere(const std::string & objFile) : Object(objFile) {
-        
+Sphere::Sphere(const std::string & objFile, unsigned int mass, const glm::vec3 & translation, const glm::vec3 & rotationAngles,
+		const glm::vec3 & scale) :
+		Object(objFile, translation, rotationAngles, scale), mbt_rigidBody(nullptr) {
+	SetMass(mass);
 }
 
 Sphere::~Sphere(void) {
@@ -14,32 +16,35 @@ Sphere::~Sphere(void) {
 	m_textures.clear();
 }
 
-void Sphere::Update(unsigned int dt) {
-	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
-			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
+void Sphere::IntializeBt(btDiscreteDynamicsWorld * dynamicsWorld) {
 
-	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
+	btCollisionShape * shape = new btSphereShape(btScalar((m_scale.x + m_scale.y + m_scale.z) / 3));
+
+	btQuaternion startRotations;
+	startRotations.setEulerZYX(m_rotationAngles.z, m_rotationAngles.y, m_rotationAngles.x);
+	btTransform startTransform(startRotations, btVector3(m_translation.x, m_translation.y, m_translation.z));
+	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
+
+	btScalar mass(m_mass);
+	btVector3 inertia(0, 0, 0);
+	shape->calculateLocalInertia(mass, inertia);
+
+	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, shape, inertia);
+
+	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
+	dynamicsWorld->addRigidBody(mbt_rigidBody);
 }
 
-void Sphere::Render(void) {
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+void Sphere::Update(void) {
+	btTransform trans;
+	btScalar m[16];
 
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
-
-	for (int i = 0; i < IB.size(); ++i) {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-
-		glActiveTexture (GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_textures[i]);
-
-		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
-	}
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+	mbt_rigidBody->getMotionState()->getWorldTransform(trans);
+	trans.getOpenGLMatrix(m);
+	m_model = glm::make_mat4(m) * glm::scale(m_scale);
 }
 
+void Sphere::applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
+	mbt_rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z), btVector3(spin.x, spin.y, spin.z));
+}
 
