@@ -16,6 +16,7 @@ Engine::~Engine(void) {
 }
 
 bool Engine::Initialize(void) {
+
 	std::string windowName;
 	glm::uvec2 windowSize;
 	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
@@ -69,7 +70,7 @@ bool Engine::Initialize(void) {
 	//add objects from configuration file
 	objectModel obj;
 	while (m_configFile.getObject(obj)) {
-		m_graphics->AddObject(obj);
+		m_graphics->AddObject(obj, obj.name == "Ball");
 	}
 
 	//Start the menu if necessary
@@ -163,19 +164,21 @@ void Engine::EventChecker(void) {
 }
 
 void Engine::HandleEvent(const SDL_Event & event) {
+	const int impulse = 120;
+
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
 		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
-			m_menu ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
 		} else if (event.key.keysym.sym == SDLK_w) {
-			m_graphics->moveSphere(glm::vec3(0, 0, -35));
+			m_graphics->ApplyImpulse(glm::vec3(0, 0, -impulse));
 		} else if (event.key.keysym.sym == SDLK_s) {
-			m_graphics->moveSphere(glm::vec3(0, 0, 35));
+			m_graphics->ApplyImpulse(glm::vec3(0, 0, impulse));
 		} else if (event.key.keysym.sym == SDLK_a) {
-			m_graphics->moveSphere(glm::vec3(-35, 0, 0));
+			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_d) {
-			m_graphics->moveSphere(glm::vec3(35, 0, 0));
+			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0));
 		}
 	}
 }

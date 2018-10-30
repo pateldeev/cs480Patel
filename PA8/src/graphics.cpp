@@ -2,22 +2,30 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_movingObject(-1) {
+				nullptr), m_objCtr(-1) {
 }
 
 Graphics::~Graphics(void) {
-	m_objects.clear();
+	//remove the rigidbodies from the dynamics world and delete them
+	for (int i = mbt_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; --i) {
+		btCollisionObject * obj = mbt_dynamicsWorld->getCollisionObjectArray()[i];
+		btRigidBody * body = btRigidBody::upcast(obj);
+		if (body && body->getMotionState())
+			delete body->getMotionState();
+		mbt_dynamicsWorld->removeCollisionObject(obj);
+		delete obj;
+	}
 
-	delete m_camera;
-
-	for (auto & obj : m_objects)
-		delete obj.get();
+	for (Object * obj : m_objects)
+		delete obj;
 
 	delete mbt_dynamicsWorld;
 	delete mbt_solver;
 	delete mbt_dispatcher;
 	delete mbt_collisionConfig;
 	delete mbt_broadphase;
+
+	delete m_camera;
 }
 
 bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos) {
@@ -71,28 +79,42 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	mbt_dynamicsWorld = new btDiscreteDynamicsWorld(mbt_dispatcher, mbt_broadphase, mbt_solver, mbt_collisionConfig);
 	mbt_dynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
+#if 0
+	btCollisionShape * shape = new btStaticPlaneShape(btVector3(0, 1, 0), btScalar(0));
+	btDefaultMotionState * shapeMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, shape, btVector3(0, 0, 0));
+	btRigidBody * rigidBody = new btRigidBody(shapeRigidBodyCI);
+	mbt_dynamicsWorld->addRigidBody(rigidBody);
+#endif 
+
 	return true;
 }
 
-void Graphics::AddObject(const objectModel & obj) {
-	if (obj.type == "Sphere") {
-		m_objects.push_back(std::unique_ptr < Object > (new Sphere(obj.objFile, obj.mass, obj.startingLoc, obj.rotation, obj.scale)));
-	} else if (obj.type == "Board") {
-		m_objects.push_back(std::unique_ptr < Object > (new Board(obj.objFile, obj.startingLoc, obj.rotation, obj.scale)));
-	} else if (obj.type == "Cube") {
-		m_objects.push_back(std::unique_ptr < Object > (new Cube(obj.objFile, obj.mass, obj.startingLoc, obj.rotation, obj.scale)));
+void Graphics::AddObject(const objectModel & obj, bool control) {
+	if (obj.btType == "SphereDynamic") {
+		m_objects.push_back(new Sphere(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
+	} else if (obj.btType == "CubeDynamic") {
+		m_objects.push_back(new Cube(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
+	} else if (obj.btType == "MeshStatic") {
+		m_objects.push_back(new Board(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else {
-		printf("Unknown object type");
+		printf("Unknown bt object type: %s", obj.btType.c_str());
 		return;
 	}
+	m_renderOrder.push_back(m_objects.size() - 1);
 
-//set default properties
-	m_objects.back()->SetName(obj.name);
-	m_objects.back()->IntializeBt(mbt_dynamicsWorld);
+	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
+
+	if (control)
+		m_objCtr = m_objects.size() - 1;
 }
 
-void Graphics::moveSphere(const glm::vec3 & impulse) {
-	dynamic_cast<Sphere *>(m_objects[0].get())->applyImpulse(impulse);
+void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
+	m_objects[m_objCtr]->applyImpulse(impulse, spin);
+}
+
+void Graphics::ApplyForce(const glm::vec3 & force, const glm::vec3 & spin) {
+	m_objects[m_objCtr]->applyForce(force, spin);
 }
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -111,14 +133,14 @@ bool Graphics::AddShaderSet(const std::string & setName, const std::string & ver
 		return false;
 	}
 
-// Add the fragment shader
+	// Add the fragment shader
 	if (!m_shaders.back().AddShader(GL_FRAGMENT_SHADER, fragmentShaderSrc)) {
 		printf("Fragment Shader failed to Initialize\n");
 		m_shaders.pop_back();
 		return false;
 	}
 
-// Connect the program
+	// Connect the program
 	if (!m_shaders.back().Finalize()) {
 		printf("Program to Finalize\n");
 		m_shaders.pop_back();
@@ -130,7 +152,7 @@ bool Graphics::AddShaderSet(const std::string & setName, const std::string & ver
 }
 
 bool Graphics::UseShaderSet(const std::string & setName) {
-//find shader set
+	//find shader set
 	unsigned int i;
 	for (i = 0; i < m_shaderNames.size(); ++i)
 		if (m_shaderNames[i] == setName)
@@ -141,36 +163,57 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 		return false;
 	}
 
-// Locate the projection matrix in the shader
+	// Locate the projection matrix in the shader
 	m_projectionMatrix = m_shaders[i].GetUniformLocation("projectionMatrix");
 	if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_projectionMatrix not found\n");
 		return false;
 	}
 
-// Locate the view matrix in the shader
+	// Locate the view matrix in the shader
 	m_viewMatrix = m_shaders[i].GetUniformLocation("viewMatrix");
 	if (m_viewMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_viewMatrix not found\n");
 		return false;
 	}
 
-// Locate the model matrix in the shader
+	// Locate the model matrix in the shader
 	m_modelMatrix = m_shaders[i].GetUniformLocation("modelMatrix");
 	if (m_modelMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_modelMatrix not found\n");
 		return false;
 	}
 
-//update current shader
+	//update current shader
 	m_currentShader = i;
 	return true;
+
 }
 
 void Graphics::Update(unsigned int dt) {
-	mbt_dynamicsWorld->stepSimulation(1);
-	for (auto & obj : m_objects)
+	//mbt_dynamicsWorld->stepSimulation(dt / 1000, 50);
+	mbt_dynamicsWorld->stepSimulation(1.f / 60.f, 500);
+
+	for (int j = mbt_dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; --j) {
+		btCollisionObject * obj = mbt_dynamicsWorld->getCollisionObjectArray()[j];
+		btRigidBody * body = btRigidBody::upcast(obj);
+		btTransform trans;
+		if (body && body->getMotionState()) {
+			body->getMotionState()->getWorldTransform(trans);
+		} else {
+			trans = obj->getWorldTransform();
+		}
+
+		for (Object * obj : m_objects) {
+			if (obj->GetRigidBody() == body) {
+				obj->SetTranslation(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+			}
+		}
+	}
+
+	for (Object * obj : m_objects)
 		obj->Update();
+
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -179,32 +222,31 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
-//Clear the screen
+	//Clear the screen
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//Start the correct program
+	//Start the correct program
 	if (m_currentShader < 0)
 		printf("No shader has been enabled!\n");
 	m_shaders.at(m_currentShader).Enable();
 
-//Send in the projection and view to the shader
+	//Send in the projection and view to the shader
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-//sort objects so that furthest objects render first
-	glm::vec3 cameraPosition = m_camera->GetEyePos();
-	sort(m_objects.begin(), m_objects.end(), [&cameraPosition](std::unique_ptr<Object> & a, std::unique_ptr<Object> & b) {
-		return a->GetDistanceFromPoint(cameraPosition) > b->GetDistanceFromPoint(cameraPosition);
-	});
+	//update render order based on distance
+	glm::vec3 cameraPos = m_camera->GetEyePos();
+	std::sort(std::begin(m_renderOrder), std::end(m_renderOrder), [this, &cameraPos](unsigned int a, unsigned int b) {
+		return m_objects[a]->GetDistanceFromPoint(cameraPos) > m_objects[b]->GetDistanceFromPoint(cameraPos);});
 
-//Render each planet and its moons
-	for (auto & obj : m_objects) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(obj->GetModel()));
-		obj->Render();
+	//Render each object
+	for (unsigned int i = 0; i < m_renderOrder.size(); ++i) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_objects[m_renderOrder[i]]->GetModel()));
+		m_objects[m_renderOrder[i]]->Render();
 	}
 
-//Get any errors from OpenGL
+	//Get any errors from OpenGL
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		std::string val = ErrorString(error);

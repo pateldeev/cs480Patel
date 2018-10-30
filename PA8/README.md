@@ -35,6 +35,10 @@ make
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
+  * w: add upward impulse to ball
+  * s: add downward impulse to ball
+  * d: add rightward impulse to ball
+  * a: add leftward impulse to ball
 * Exiting
   * ESC: Will properly close all windows and exit program
 

@@ -5,14 +5,11 @@
 
 #include "camera.h"
 #include "shader.h"
-
-#include "object.h"
-
+#include "objects/object.h"
 #include "configLoader.hpp"
 
 #include <SDL2/SDL.h>
 #include <vector>
-#include <memory>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -26,9 +23,9 @@ public:
 
 	void Update(unsigned int dt);
 
-	void AddObject(const objectModel & obj);
-	
-	void moveSphere(const glm::vec3 & impulse);
+	void AddObject(const objectModel & obj, bool control = false);
+	void ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply impulse to object being controlled
+	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to object being controlled
 
 	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
 	bool UseShaderSet(const std::string & setName);
@@ -54,9 +51,10 @@ private:
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;
 
-	std::vector<std::unique_ptr<Object>> m_objects;
-	int m_movingObject; //points to object that can be moved via user keys
-	
+	std::vector<Object *> m_objects;
+	int m_objCtr; //index of object being controlled by user input
+	std::vector<unsigned int> m_renderOrder; 
+
 	//for bullet
 	btBroadphaseInterface * mbt_broadphase;
 	btDefaultCollisionConfiguration * mbt_collisionConfig;
