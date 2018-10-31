@@ -48,6 +48,13 @@ void Object::applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
 		printf("Object is not a bullet object. Cannot apply impulse!\n");
 }
 
+void Object::setLinearVelocity(const glm::vec3 & vel) {
+	if (mbt_rigidBody)
+		mbt_rigidBody->setLinearVelocity(btVector3(vel.x, vel.y, vel.z));
+	else
+		printf("Object is not a bullet object. Cannot apply impulse!\n");
+}
+
 void Object::applyForce(const glm::vec3 & force, const glm::vec3 & spin) {
 	if (mbt_rigidBody)
 		mbt_rigidBody->applyForce(btVector3(force.x, force.y, force.z), btVector3(spin.x, spin.y, spin.z));

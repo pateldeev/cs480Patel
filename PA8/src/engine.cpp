@@ -114,13 +114,14 @@ void Engine::Run(void) {
 			}
 
 		}
+                //enforce max frame rate
+                t2 = std::chrono::high_resolution_clock::now();
+                duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
+                if (duration < minFrameTime)
+                        SDL_Delay(minFrameTime - duration);
 	}
 
-	//enforce max frame rate
-	t2 = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
-	if (duration < minFrameTime)
-		SDL_Delay(minFrameTime - duration);
+	
 }
 
 unsigned int Engine::getDT(void) {
@@ -168,7 +169,7 @@ void Engine::EventChecker(void) {
 
 void Engine::HandleEvent(const SDL_Event & event) {
 	const int impulse = 30;
-
+        /*
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
@@ -182,6 +183,24 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_d) {
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
+		} else if (event.key.keysym.sym == SDLK_r) {
+			m_graphics->ResetObjects();
+		}
+	}
+        */
+        if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE) {
+			m_running = false;
+		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
+			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+		} else if (event.key.keysym.sym == SDLK_w) {
+			m_graphics->SetLinearVelocity(glm::vec3(0, 0, -15));
+		} else if (event.key.keysym.sym == SDLK_s) {
+			m_graphics->SetLinearVelocity(glm::vec3(0, 0, 15));
+		} else if (event.key.keysym.sym == SDLK_a) {
+			m_graphics->SetLinearVelocity(glm::vec3(-15, 0, 0));
+		} else if (event.key.keysym.sym == SDLK_d) {
+			m_graphics->SetLinearVelocity(glm::vec3(15, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_r) {
 			m_graphics->ResetObjects();
 		}

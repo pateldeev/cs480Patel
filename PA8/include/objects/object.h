@@ -18,6 +18,7 @@ public:
 
 	void applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1));
 	void applyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1));
+        void setLinearVelocity(const glm::vec3 & vel);
 
 	void Update(void);
 	void Render(void);

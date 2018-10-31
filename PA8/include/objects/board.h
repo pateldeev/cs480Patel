@@ -2,6 +2,10 @@
 #define BOARD_H
 
 #include "objects/object.h"
+#include <BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
+#include <BulletCollision/CollisionShapes/btTriangleShape.h>
+#include <BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h>
+
 
 class Board: public Object {
 public:

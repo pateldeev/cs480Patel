@@ -8,24 +8,22 @@ Board::~Board(void) {
 
 }
 
-void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 
+void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 #define USEMESH 0 //use mesh or plane colliders
 
 #if USEMESH
-	mbt_shape = new btBvhTriangleMeshShape(mbt_mesh, true);
-	mbt_shape->setLocalScaling(btVector3(m_scale.x, m_scale.y, m_scale.z));
-
+        btScaledBvhTriangleMeshShape* mesh = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 	btQuaternion startRotations;
 	startRotations.setEulerZYX(m_rotationAngles.z, m_rotationAngles.y, m_rotationAngles.x);
 	btTransform startTransform(startRotations, btVector3(m_translation.x, m_translation.y, m_translation.z));
 	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
-
-	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
+                
+	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, mesh, btVector3(0, 0, 0));
 	//shapeRigidBodyCI.m_friction = 000;
 	//shapeRigidBodyCI.m_rollingFriction = 000;
 	//shapeRigidBodyCI.m_spinningFriction = 000;
-
+        mbt_shape = mesh;
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 

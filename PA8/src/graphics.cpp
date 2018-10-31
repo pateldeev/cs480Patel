@@ -115,6 +115,10 @@ void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
 	m_objects[m_objCtr]->applyImpulse(impulse, spin);
 }
 
+void Graphics::SetLinearVelocity(const glm::vec3 & vel) {
+	m_objects[m_objCtr]->setLinearVelocity(vel);
+}
+
 void Graphics::ApplyForce(const glm::vec3 & force, const glm::vec3 & spin) {
 	m_objects[m_objCtr]->applyForce(force, spin);
 }
