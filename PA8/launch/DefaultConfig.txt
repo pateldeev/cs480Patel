@@ -5,11 +5,11 @@
 
 #Main window paramters - height & width only used when fullscreen is off
 WINDOW_NAME=PA08
-WINDOW_FULLSCREEN=0
+WINDOW_FULLSCREEN=1
 WINDOW_SIZE=1000,2000
 
 #Initial camera information
-CAMERA_EYEPOS=0.0,50.0,1.0
+CAMERA_EYEPOS=0.0,50.0,10.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
 #Source code for shaders
@@ -22,34 +22,37 @@ ENABLE_MENU=1
 MENU_SIZE=400,600
 
 #For bullet
-WORLD_GRAVITY=0,-10,0
-
-#Objects to load
-OBJ_NAME=Sphere
-OBJ_TYPE=Sphere
-OBJ_FILE=objFiles/sphere/earth.obj
-OBJ_STARTING_LOC=0,7,-8
-OBJ_SCALE=1,1,1
-OBJ_ROTATION=0,0,0
-OBJ_TYPE=dynamic
-OBJ_MASS=100
-
-#Objects to load
-OBJ_NAME=Cube
-OBJ_TYPE=Cube
-OBJ_FILE=objFiles/cube/cube.obj
-OBJ_STARTING_LOC=-5,5,7
-OBJ_SCALE=1,1,1
-OBJ_ROTATION=0,0,0
-OBJ_TYPE=dynamic
-OBJ_MASS=100
+WORLD_GRAVITY=0,-20,0
 
 #Objects to load
 OBJ_NAME=Board
-OBJ_TYPE=Board
+BT_TYPE=MeshStatic
 OBJ_FILE=objFiles/board/board.obj
 OBJ_STARTING_LOC=0,0,0
-OBJ_SCALE=12,12,12
+OBJ_SCALE=10,3,3.15
 OBJ_ROTATION=0,0,0
-OBJ_TYPE=static
+OBJ_MASS=0
+
+OBJ_NAME=Ball
+BT_TYPE=SphereDynamic
+OBJ_FILE=objFiles/sphere/earth.obj
+OBJ_STARTING_LOC=10,3,-10
+OBJ_SCALE=1.5,1.5,1.5
+OBJ_ROTATION=0,0,0
+OBJ_MASS=10
+
+OBJ_NAME=Cube
+BT_TYPE=CubeDynamic
+OBJ_FILE=objFiles/cube/cube.obj
+OBJ_STARTING_LOC=0,6,0
+OBJ_SCALE=3,3,3
+OBJ_ROTATION=0,0,0
+OBJ_MASS=10
+
+OBJ_NAME=Cylinder
+BT_TYPE=CylinderStatic
+OBJ_FILE=objFiles/cylinder/cylinder.obj
+OBJ_STARTING_LOC=-10,0,-10
+OBJ_SCALE=5,5,5
+OBJ_ROTATION=0,0,0
 OBJ_MASS=0

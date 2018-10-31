@@ -2,8 +2,8 @@
 
 Camera::Camera(const glm::vec3 & eyePos, const glm::vec3 & focusPos) :
 		m_eyePos(eyePos), m_focusPos(focusPos) {
-	default_eyePos = eyePos;
-	default_focusPos = focusPos;
+    default_eyePos = eyePos;
+    default_focusPos = focusPos;
 }
 
 Camera::~Camera(void) {
@@ -35,7 +35,7 @@ void Camera::UpdatePosition(const glm::vec3 & eyePos, const glm::vec3 & focusPos
 }
 
 void Camera::ReturnToDefault(void) {
-	m_eyePos = default_eyePos;
+    m_eyePos = default_eyePos;
 	m_focusPos = default_focusPos;
 
 	//reinitialize the view matrix

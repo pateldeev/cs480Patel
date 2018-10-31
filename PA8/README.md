@@ -1,4 +1,4 @@
-# PA8: Collisions with Bullet - UNDER DEVELOPMENT
+# PA8: Collisions with Bullet
 
 ## Group
 This is the main repository for the code. The group members include
@@ -13,8 +13,8 @@ In addition to OpenGL, this project requires installation of the following libar
  * [Bullet](https://github.com/bulletphysics/bullet3)
  * [GLEW](http://glew.sourceforge.net/)
  * [GLM](http://glm.g-truc.net/0.9.7/index.html)
- * [Magick++](http://www.imagemagick.org/Magick%2B%2B/).
- * [SDL2](https://wiki.libsdl.org/Tutorials), 
+ * [Magick++](http://www.imagemagick.org/Magick%2B%2B/)
+ * [SDL2](https://wiki.libsdl.org/Tutorials)
 
 ### Ubuntu 18.04
 ```bash
@@ -26,23 +26,34 @@ The building of the project is done using CMake.
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake .. -DUSE_COMPLEX_BOARD_MESH=OFF
 make
 ./PA08
 ```
+
+## General Comments
+This project impliments a basic version of collisions as required. If there are any inconsistencies or anything gets stuck, press 'r' to reset. You can only move the ball (Earth) with the WASD keys. The Cube is a dynamic collision object while the cylinder is a static collision object, as required. 
+
+## Collision Shapes
+All collisions are done via basic collision shapes (plane, sphere, cylinder, cube). We tried to add complex shapes, but it resulted in very choppy motion. You can make the version that loades the full triangles meshes into bullet by using the '-DUSE_COMPLEX_BOARD_MESH=ON' CMake flag. However, we need to find a way to make the meshes smoother for this to work in the future.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
+  * w: add upward impulse to ball
+  * s: add downward impulse to ball
+  * d: add rightward impulse to ball
+  * a: add leftward impulse to ball
+  * r: reset all objects
 * Exiting
   * ESC: Will properly close all windows and exit program
 
 ## Configuration File
-This program makes use of configuration files to initalize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. You should only change the values. Adding new lines/variables may cause errors.
+This program makes use of configuration files to initalize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.
 
 ## IMGUI Menu System
-There is a menu system that runs in a separate window. The menu system be started and closed with the 'm' key. <br>
+There is a menu system that runs in a separate window. The menu system may be opened and closed with the 'm' key. <br>
 
 ## Shaders
 The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>

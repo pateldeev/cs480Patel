@@ -27,6 +27,6 @@ This uses the assimp library in conjunction with the magick++ image library to r
 ## PA7: Solar System
 This renders a solar system simulation with all major planets and moons. To run this project ```cd PA7``` then follow the instructions in the README.md.
 
-## PA8: Collisions with Bullet - UNDER DEVELOPMENT
-This uses the Bullet physics engine to create dynamic object collisons on a board. To run this project ```cd PA8``` then follow the instructions in the README.md.
+## PA8: Collisions with Bullet 
+This uses the Bullet physics engine to create simple object collisons on a board. To run this project ```cd PA8``` then follow the instructions in the README.md.
 

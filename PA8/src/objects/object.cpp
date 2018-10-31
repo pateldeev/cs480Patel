@@ -1,4 +1,4 @@
-#include "object.h"
+#include "objects/object.h"
 
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -8,13 +8,12 @@
 
 #include <algorithm>
 
-//does this need to keep constructor and destructor?
-Object::Object(const std::string & objFile, const glm::vec3 & translation, const glm::vec3 & rotationAngles,
-		const glm::vec3 & scale, bool loadBtMesh) :
-m_model(1.0), m_translation(translation), m_scale(scale), m_rotationAngles(rotationAngles), VB(0), mbt_mesh(
-		nullptr) {
+Object::Object(const std::string & objFile, const glm::vec3 & traslation, const glm::vec3 & rotation, const glm::vec3 & scale) :
+		m_model(1.0), m_translation(traslation), m_rotationAngles(rotation), m_scale(scale), VB(0), mbt_rigidBody(nullptr), mbt_mesh(nullptr), mbt_shape(
+				nullptr) {
+
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
-	if (!loadObjAssimp(objFile, loadBtMesh)) {
+	if (!loadObjAssimp(objFile)) {
 		printf("Object not properly loaded \n");
 		return;
 	}
@@ -39,7 +38,36 @@ Object::~Object(void) {
 
 	m_textures.clear();
 
-	delete mbt_mesh;
+	delete mbt_shape;
+}
+
+void Object::applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
+	if (mbt_rigidBody)
+		mbt_rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z), btVector3(spin.x, spin.y, spin.z));
+	else
+		printf("Object is not a bullet object. Cannot apply impulse!\n");
+}
+
+void Object::setLinearVelocity(const glm::vec3 & vel) {
+	if (mbt_rigidBody)
+		mbt_rigidBody->setLinearVelocity(btVector3(vel.x, vel.y, vel.z));
+	else
+		printf("Object is not a bullet object. Cannot apply impulse!\n");
+}
+
+void Object::applyForce(const glm::vec3 & force, const glm::vec3 & spin) {
+	if (mbt_rigidBody)
+		mbt_rigidBody->applyForce(btVector3(force.x, force.y, force.z), btVector3(spin.x, spin.y, spin.z));
+	else
+		printf("Object is not a bullet object. Cannot apply force!\n");
+}
+
+void Object::Update(void) {
+
+	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
+			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
+
+	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
 }
 
 void Object::Render(void) {
@@ -67,27 +95,53 @@ glm::mat4 Object::GetModel(void) {
 	return m_model;
 }
 
-void Object::SetName(const std::string & name) {
-	m_name = name;
+glm::vec3 Object::GetTranslation(void) const {
+	return m_translation;
 }
 
-std::string Object::GetName(void) const {
-	return m_name;
+void Object::SetTranslation(const glm::vec3 & translation) {
+	m_translation = translation;
 }
 
-void Object::SetMass(unsigned int mass) {
-	m_mass = mass;
+void Object::ResetBt(const glm::vec3 & loc) {
+	if (mbt_rigidBody) {
+		btTransform currentTransform;
+		mbt_rigidBody->getMotionState()->getWorldTransform(currentTransform);
+
+		btVector3 trans = btVector3(loc.x, loc.y, loc.z) - currentTransform.getOrigin();
+		mbt_rigidBody->translate(trans);
+
+		mbt_rigidBody->clearForces();
+		mbt_rigidBody->setLinearVelocity(btVector3(0, 0, 0));
+		mbt_rigidBody->setAngularVelocity(btVector3(0, 0, 0));
+	}
 }
 
-unsigned int Object::GetMass(void) const {
-	return m_mass;
+glm::vec3 Object::GetRotationAngles(void) const {
+	return m_rotationAngles;
 }
 
-float Object::GetDistanceFromPoint(glm::vec3 point) {
+void Object::SetRotationAngles(const glm::vec3 & rotation) {
+	m_rotationAngles = rotation;
+}
+
+glm::vec3 Object::GetScale(void) const {
+	return m_scale;
+}
+
+void Object::SetScale(const glm::vec3 & scale) {
+	m_scale = scale;
+}
+
+btRigidBody * Object::GetRigidBody(void) {
+	return mbt_rigidBody;
+}
+
+float Object::GetDistanceFromPoint(glm::vec3 point) const {
 	return glm::distance(m_translation, point);
 }
 
-bool Object::loadObjAssimp(const std::string & objFile, bool loadBtMesh) {
+bool Object::loadObjAssimp(const std::string & objFile) {
 	Assimp::Importer importer;
 	const aiScene * scene = importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
@@ -101,8 +155,7 @@ bool Object::loadObjAssimp(const std::string & objFile, bool loadBtMesh) {
 	std::vector < aiString > textureFiles;
 
 	btVector3 triArray[3];
-	if (loadBtMesh)
-		mbt_mesh = new btTriangleMesh();
+	mbt_mesh = new btTriangleMesh();
 
 	if (!scene) {
 		printf("Error loading object: %s \n", importer.GetErrorString());
@@ -142,11 +195,9 @@ bool Object::loadObjAssimp(const std::string & objFile, bool loadBtMesh) {
 					m_vertices.push_back(Vertex(tempVertex, tempUV));
 					m_indices[textureIndex].push_back(m_vertices.size()-1);
 
-					//load mesh into bullet if requested
-					if (loadBtMesh) {
-						triArray[indexNum] = btVector3(tempVertex.x, tempVertex.y, tempVertex.z);
-						mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
-					}
+					//load mesh into bullet
+					triArray[indexNum] = btVector3(tempVertex.x, tempVertex.y, tempVertex.z);
+					mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
 				}
 			}
 
@@ -164,7 +215,7 @@ void Object::loadTextures(const std::string & objFile, const std::vector<aiStrin
 	Magick::Image * img;
 	std::string fileNameStart = "";
 
-	//get leading information on filename
+//get leading information on filename
 	std::size_t tempPos = objFile.find_last_of('/');
 	if (tempPos != std::string::npos)
 		fileNameStart = objFile.substr(0, tempPos + 1);

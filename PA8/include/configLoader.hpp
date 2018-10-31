@@ -8,12 +8,11 @@
 //holds data related to each object
 struct objectModel {
 	std::string name;
-	std::string type;
+	std::string btType;
 	std::string objFile;
 	glm::vec3 startingLoc;
 	glm::vec3 scale;
 	glm::vec3 rotation;
-	std::string btType;
 	unsigned int mass;
 };
 
@@ -72,5 +71,6 @@ private:
 		return true;
 	}
 };
+
 
 #endif /* CONFIGLOADER_HPP */

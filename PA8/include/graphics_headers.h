@@ -30,4 +30,6 @@ struct Vertex {
 	}
 };
 
+#include <iostream>
+
 #endif /* GRAPHICS_HEADERS_H */
