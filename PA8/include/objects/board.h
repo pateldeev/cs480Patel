@@ -6,7 +6,6 @@
 #include <BulletCollision/CollisionShapes/btTriangleShape.h>
 #include <BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h>
 
-
 class Board: public Object {
 public:
 	Board(const std::string & objFile, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation = glm::vec3(0, 0, 0),
@@ -14,6 +13,9 @@ public:
 	~Board(void);
 
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
+
+private:
+	void AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction = 100);
 };
 
 #endif /* BOARD_H */
