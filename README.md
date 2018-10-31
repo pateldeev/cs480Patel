@@ -30,3 +30,6 @@ This renders a solar system simulation with all major planets and moons. To run 
 ## PA8: Collisions with Bullet 
 This uses the Bullet physics engine to create simple object collisons on a board. To run this project ```cd PA8``` then follow the instructions in the README.md.
 
+## PA9: Lighting with Bullet - UNDER DEVELOPMENT 
+This uses the Bullet physics engine to create simple object collisons with lighting on a board. To run this project ```cd PA9``` then follow the instructions in the README.md.
+
