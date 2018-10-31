@@ -31,6 +31,9 @@ make
 ./PA08
 ```
 
+## General Comments
+This project impliments a basic version of collisions as required.
+
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard controls
@@ -39,6 +42,7 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
   * s: add downward impulse to ball
   * d: add rightward impulse to ball
   * a: add leftward impulse to ball
+  * r: reset all objects
 * Exiting
   * ESC: Will properly close all windows and exit program
 

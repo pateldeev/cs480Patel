@@ -26,6 +26,7 @@ public:
 
 	glm::vec3 GetTranslation(void) const;
 	void SetTranslation(const glm::vec3 & translation);
+	void ResetBt(const glm::vec3 & loc);
 
 	glm::vec3 GetRotationAngles(void) const;
 	void SetRotationAngles(const glm::vec3 & rotation);

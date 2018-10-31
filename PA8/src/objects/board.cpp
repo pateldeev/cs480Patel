@@ -41,7 +41,7 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	dynamicsWorld->addRigidBody(rigidBodyFloor);
 
 	//side walls
-	btCollisionShape * wallL = new btStaticPlaneShape(btVector3(1, 0, 0), btScalar(-40));
+	btCollisionShape * wallL = new btStaticPlaneShape(btVector3(1, 0, 0), btScalar(-36));
 	btDefaultMotionState * wallLMotionState = new btDefaultMotionState();
 	btRigidBody::btRigidBodyConstructionInfo wallLRigidBodyCI(btScalar(0), wallLMotionState, wallL, btVector3(0, 0, 0));
 	wallLRigidBodyCI.m_friction = 100;
@@ -49,6 +49,33 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	wallLRigidBodyCI.m_spinningFriction = 100;
 	btRigidBody * rigidBodyWallL = new btRigidBody(wallLRigidBodyCI);
 	dynamicsWorld->addRigidBody(rigidBodyWallL);
+
+	btCollisionShape * wallR = new btStaticPlaneShape(btVector3(-1, 0, 0), btScalar(-38));
+	btDefaultMotionState * wallRMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo wallRRigidBodyCI(btScalar(0), wallRMotionState, wallR, btVector3(0, 0, 0));
+	wallRRigidBodyCI.m_friction = 100;
+	wallRRigidBodyCI.m_rollingFriction = 100;
+	wallRRigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyWallR = new btRigidBody(wallRRigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyWallR);
+
+	btCollisionShape * wallU = new btStaticPlaneShape(btVector3(0, 0, 1), btScalar(-19));
+	btDefaultMotionState * wallUMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo wallURigidBodyCI(btScalar(0), wallUMotionState, wallU, btVector3(0, 0, 0));
+	wallURigidBodyCI.m_friction = 100;
+	wallURigidBodyCI.m_rollingFriction = 100;
+	wallURigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyWallU = new btRigidBody(wallURigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyWallU);
+
+	btCollisionShape * wallD = new btStaticPlaneShape(btVector3(0, 0, -1), btScalar(-20));
+	btDefaultMotionState * wallDMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo wallDRigidBodyCI(btScalar(0), wallDMotionState, wallD, btVector3(0, 0, 0));
+	wallDRigidBodyCI.m_friction = 100;
+	wallDRigidBodyCI.m_rollingFriction = 100;
+	wallDRigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyWallD = new btRigidBody(wallDRigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyWallD);
 
 #endif
 }

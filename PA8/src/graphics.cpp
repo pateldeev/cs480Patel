@@ -94,11 +94,19 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 		return;
 	}
 	m_renderOrder.push_back(m_objects.size() - 1);
+	m_startingLocs.push_back(obj.startingLoc);
 
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
 	if (control)
 		m_objCtr = m_objects.size() - 1;
+}
+
+void Graphics::ResetObjects(void) {
+	for (unsigned int i = 0; i < m_objects.size(); ++i) {
+		m_objects[i]->ResetBt(m_startingLocs[i]);
+		m_objects[i]->SetTranslation(m_startingLocs[i]);
+	}
 }
 
 void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
@@ -200,7 +208,7 @@ void Graphics::Update(unsigned int dt) {
 			if (obj->GetRigidBody() == body) {
 				obj->SetTranslation(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
 				glm::vec3 newRotations;
-				trans.getRotation().getEulerZYX (newRotations.z, newRotations.x, newRotations.y);
+				trans.getRotation().getEulerZYX(newRotations.z, newRotations.x, newRotations.y);
 				obj->SetRotationAngles(newRotations);
 			}
 		}

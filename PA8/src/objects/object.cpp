@@ -96,6 +96,20 @@ void Object::SetTranslation(const glm::vec3 & translation) {
 	m_translation = translation;
 }
 
+void Object::ResetBt(const glm::vec3 & loc) {
+	if (mbt_rigidBody) {
+		btTransform currentTransform;
+		mbt_rigidBody->getMotionState()->getWorldTransform(currentTransform);
+
+		btVector3 trans = btVector3(loc.x, loc.y, loc.z) - currentTransform.getOrigin();
+		mbt_rigidBody->translate(trans);
+
+		mbt_rigidBody->clearForces();
+		mbt_rigidBody->setLinearVelocity(btVector3(0, 0, 0));
+		mbt_rigidBody->setAngularVelocity(btVector3(0, 0, 0));
+	}
+}
+
 glm::vec3 Object::GetRotationAngles(void) const {
 	return m_rotationAngles;
 }

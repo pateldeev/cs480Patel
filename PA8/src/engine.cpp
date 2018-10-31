@@ -179,6 +179,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_d) {
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
+		} else if(event.key.keysym.sym == SDLK_r){
+			m_graphics->ResetObjects();
 		}
 	}
 }
