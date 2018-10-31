@@ -64,6 +64,8 @@ private:
 
 #include "objects/board.h"
 #include "objects/cube.h"
+#include "objects/cylinder.h"
 #include "objects/sphere.h"
+
 
 #endif /* OBJECT_H */

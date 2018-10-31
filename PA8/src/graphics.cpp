@@ -89,6 +89,8 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 		m_objects.push_back(new Cube(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else if (obj.btType == "MeshStatic") {
 		m_objects.push_back(new Board(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
+	} else if (obj.btType == "CylinderStatic") {
+		m_objects.push_back(new Cylinder(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else {
 		printf("Unknown bt object type: %s", obj.btType.c_str());
 		return;

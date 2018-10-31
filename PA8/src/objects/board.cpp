@@ -77,5 +77,15 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	btRigidBody * rigidBodyWallD = new btRigidBody(wallDRigidBodyCI);
 	dynamicsWorld->addRigidBody(rigidBodyWallD);
 
+	//top
+	btCollisionShape * top = new btStaticPlaneShape(btVector3(0, -1, 0), btScalar(-15));
+	btDefaultMotionState * topMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo topRigidBodyCI(btScalar(0), topMotionState, top, btVector3(0, 0, 0));
+	topRigidBodyCI.m_friction = 100;
+	topRigidBodyCI.m_rollingFriction = 100;
+	topRigidBodyCI.m_spinningFriction = 100;
+	btRigidBody * rigidBodyTop = new btRigidBody(topRigidBodyCI);
+	dynamicsWorld->addRigidBody(rigidBodyTop);
+
 #endif
 }

@@ -157,7 +157,10 @@ void Engine::EventChecker(void) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
 					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
-			else
+			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
+					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r) {
+				HandleEvent(m_event);
+			} else
 				m_menu->HandleEvent(m_event);
 		}
 	}
@@ -179,7 +182,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_d) {
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
-		} else if(event.key.keysym.sym == SDLK_r){
+		} else if (event.key.keysym.sym == SDLK_r) {
 			m_graphics->ResetObjects();
 		}
 	}
