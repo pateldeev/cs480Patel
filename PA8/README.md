@@ -23,12 +23,21 @@ In addition to OpenGL, this project requires installation of the following libar
 
 ## Building and Running - CMake Instructions
 The building of the project is done using CMake.
+Quick Usage with defaults
+```bash
+mkdir build
+cd build
+cmake ..
+make
+./PA08
+```
+Full Usage with all variables
 ```bash
 mkdir build
 cd build
 cmake .. -DUSE_COMPLEX_BOARD_MESH=OFF
 make
-./PA08
+./PA08 -l launch/DefaultConfig.txt
 ```
 
 ## General Comments
@@ -62,13 +71,3 @@ By default, the vertex shader code is in "vertShader.vert" and the fragment shad
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project
   * -l: load configuration file
-
-The default behavior can be achieved with the following arguments
-```bash
--l launch/DefaultConfig.txt
-```
-
-Full Usage
-```bash
-./PA08 -l launch/DefaultConfig.txt
-```
