@@ -13,8 +13,8 @@ In addition to OpenGL, this project requires installation of the following libar
  * [Bullet](https://github.com/bulletphysics/bullet3)
  * [GLEW](http://glew.sourceforge.net/)
  * [GLM](http://glm.g-truc.net/0.9.7/index.html)
- * [Magick++](http://www.imagemagick.org/Magick%2B%2B/).
- * [SDL2](https://wiki.libsdl.org/Tutorials), 
+ * [Magick++](http://www.imagemagick.org/Magick%2B%2B/)
+ * [SDL2](https://wiki.libsdl.org/Tutorials)
 
 ### Ubuntu 18.04
 ```bash
