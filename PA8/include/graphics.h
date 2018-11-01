@@ -27,9 +27,9 @@ public:
 	void ResetObjects(void);
 	void ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply impulse to object being controlled
 	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to object being controlled
-        void SetLinearVelocity(const glm::vec3 & vel); //apply velocity to object being controlled
+	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
+	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
 
-        
 	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
 	bool UseShaderSet(const std::string & setName);
 

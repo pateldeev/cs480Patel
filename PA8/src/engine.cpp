@@ -168,7 +168,7 @@ void Engine::EventChecker(void) {
 
 void Engine::HandleEvent(const SDL_Event & event) {
 
-#define USEIMPULSE 0 //have arrow keys apply impulse
+#define USEIMPULSE 1 //have arrow keys apply impulse
 
 #if USEIMPULSE
 	const int impulse = 30;

@@ -11,8 +11,8 @@ Board::~Board(void) {
 void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 
 #if USE_COMPLEX_BOARD_MESH //use mesh
-	mbt_shape = new btBvhTriangleMeshShape(mbt_mesh, true);
-	mbt_shape->setLocalScaling(btVector3(m_scale.x, m_scale.y, m_scale.z));
+	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
+	//mbt_shape->setLocalScaling();
 
 	btQuaternion startRotations;
 	startRotations.setEulerZYX(m_rotationAngles.z, m_rotationAngles.y, m_rotationAngles.x);

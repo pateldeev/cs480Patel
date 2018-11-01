@@ -18,7 +18,8 @@ public:
 
 	void applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1));
 	void applyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1));
-        void setLinearVelocity(const glm::vec3 & vel);
+	void setLinearVelocity(const glm::vec3 & vel, bool accumulate = false);
+	void setAngularVelocity(const glm::vec3 & vel, bool accumulate = false);
 
 	void Update(void);
 	void Render(void);
@@ -67,6 +68,5 @@ private:
 #include "objects/cube.h"
 #include "objects/cylinder.h"
 #include "objects/sphere.h"
-
 
 #endif /* OBJECT_H */

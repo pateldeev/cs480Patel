@@ -115,8 +115,12 @@ void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
 	m_objects[m_objCtr]->applyImpulse(impulse, spin);
 }
 
-void Graphics::SetLinearVelocity(const glm::vec3 & vel) {
-	m_objects[m_objCtr]->setLinearVelocity(vel);
+void Graphics::SetLinearVelocity(const glm::vec3 & vel, bool accumulate) {
+	m_objects[m_objCtr]->setLinearVelocity(vel, accumulate);
+}
+
+void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
+	m_objects[m_objCtr]->setAngularVelocity(vel, accumulate);
 }
 
 void Graphics::ApplyForce(const glm::vec3 & force, const glm::vec3 & spin) {
@@ -197,8 +201,8 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 }
 
 void Graphics::Update(unsigned int dt) {
-	//mbt_dynamicsWorld->stepSimulation(dt / 1000, 50);
-	mbt_dynamicsWorld->stepSimulation(1.f / 60.f, 500);
+	mbt_dynamicsWorld->stepSimulation((float) dt / 1000, 500);
+	//mbt_dynamicsWorld->stepSimulation(1.f / 60.f, 500);
 
 	for (int j = mbt_dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; --j) {
 		btCollisionObject * obj = mbt_dynamicsWorld->getCollisionObjectArray()[j];

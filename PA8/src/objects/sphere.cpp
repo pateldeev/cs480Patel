@@ -22,4 +22,6 @@ void Sphere::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, mbt_shape, inertia);
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
+
+	mbt_rigidBody->setSleepingThresholds(0, 0);
 }
