@@ -24,6 +24,9 @@ Graphics::~Graphics(void) {
 	delete mbt_dispatcher;
 	delete mbt_collisionConfig;
 	delete mbt_broadphase;
+	
+	for(Shader * shader: m_shaders)
+		delete shader;
 
 	delete m_camera;
 }
@@ -74,7 +77,7 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	mbt_broadphase = new btDbvtBroadphase();
 	mbt_collisionConfig = new btDefaultCollisionConfiguration();
 	mbt_dispatcher = new btCollisionDispatcher(mbt_collisionConfig);
-	mbt_solver = new btSequentialImpulseConstraintSolver;
+	mbt_solver = new btSequentialImpulseConstraintSolver();
 
 	mbt_dynamicsWorld = new btDiscreteDynamicsWorld(mbt_dispatcher, mbt_broadphase, mbt_solver, mbt_collisionConfig);
 	mbt_dynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
@@ -129,30 +132,30 @@ void Graphics::ApplyForce(const glm::vec3 & force, const glm::vec3 & spin) {
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
 	//Set up the shader
-	m_shaders.push_back(Shader());
-	if (!m_shaders.back().Initialize()) {
+	m_shaders.push_back(new Shader());
+	if (!m_shaders.back()->Initialize()) {
 		printf("Shader set %s Failed to Initialize\n", setName.c_str());
 		m_shaders.pop_back();
 		return false;
 	}
 
 	// Add the vertex shader
-	if (!m_shaders.back().AddShader(GL_VERTEX_SHADER, vertexShaderSrc)) {
+	if (!m_shaders.back()->AddShader(GL_VERTEX_SHADER, vertexShaderSrc)) {
 		printf("Vertex Shader failed to Initialize\n");
 		m_shaders.pop_back();
 		return false;
 	}
 
 	// Add the fragment shader
-	if (!m_shaders.back().AddShader(GL_FRAGMENT_SHADER, fragmentShaderSrc)) {
+	if (!m_shaders.back()->AddShader(GL_FRAGMENT_SHADER, fragmentShaderSrc)) {
 		printf("Fragment Shader failed to Initialize\n");
 		m_shaders.pop_back();
 		return false;
 	}
 
 	// Connect the program
-	if (!m_shaders.back().Finalize()) {
-		printf("Program to Finalize\n");
+	if (!m_shaders.back()->Finalize()) {
+		printf("Program failed to Finalize\n");
 		m_shaders.pop_back();
 		return false;
 	}
@@ -174,21 +177,21 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 	}
 
 	// Locate the projection matrix in the shader
-	m_projectionMatrix = m_shaders[i].GetUniformLocation("projectionMatrix");
+	m_projectionMatrix = m_shaders[i]->GetUniformLocation("projectionMatrix");
 	if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_projectionMatrix not found\n");
 		return false;
 	}
 
 	// Locate the view matrix in the shader
-	m_viewMatrix = m_shaders[i].GetUniformLocation("viewMatrix");
+	m_viewMatrix = m_shaders[i]->GetUniformLocation("viewMatrix");
 	if (m_viewMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_viewMatrix not found\n");
 		return false;
 	}
 
 	// Locate the model matrix in the shader
-	m_modelMatrix = m_shaders[i].GetUniformLocation("modelMatrix");
+	m_modelMatrix = m_shaders[i]->GetUniformLocation("modelMatrix");
 	if (m_modelMatrix == INVALID_UNIFORM_LOCATION) {
 		printf("m_modelMatrix not found\n");
 		return false;
@@ -197,11 +200,10 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 	//update current shader
 	m_currentShader = i;
 	return true;
-
 }
 
 void Graphics::Update(unsigned int dt) {
-	mbt_dynamicsWorld->stepSimulation((float) dt / 1000, 500);
+	mbt_dynamicsWorld->stepSimulation(dt / 1000.f, 500);
 	//mbt_dynamicsWorld->stepSimulation(1.f / 60.f, 500);
 
 	for (int j = mbt_dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; --j) {
@@ -242,7 +244,7 @@ void Graphics::Render(void) {
 	//Start the correct program
 	if (m_currentShader < 0)
 		printf("No shader has been enabled!\n");
-	m_shaders.at(m_currentShader).Enable();
+	m_shaders.at(m_currentShader)->Enable();
 
 	//Send in the projection and view to the shader
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));

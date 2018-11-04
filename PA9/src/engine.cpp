@@ -46,8 +46,8 @@ bool Engine::Initialize(void) {
 	std::string shaderSetName, shaderSrcVert, shaderSrcFrag;
 	while (m_configFile.getShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
 		m_graphics->AddShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag);
-		m_graphics->UseShaderSet(shaderSetName);
 	}
+	m_graphics->UseShaderSet("passThroughTexture");
 
 	//check if menu needs to be initialized
 	bool menu;

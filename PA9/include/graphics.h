@@ -46,7 +46,7 @@ private:
 	Camera * m_camera;
 
 	//variables to keep track of shaders
-	std::vector<Shader> m_shaders;
+	std::vector<Shader *> m_shaders;
 	std::vector<std::string> m_shaderNames;
 	int m_currentShader;
 
