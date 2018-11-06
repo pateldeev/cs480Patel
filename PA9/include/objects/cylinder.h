@@ -10,6 +10,8 @@ public:
 	~Cylinder(void);
 
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
+private:
+        void DrawDebug(); 
 };
 
 #endif /* CYLINDER_H */

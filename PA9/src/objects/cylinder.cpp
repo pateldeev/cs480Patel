@@ -27,3 +27,6 @@ void Cylinder::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int ma
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 }
 
+void Cylinder::DrawDebug() {
+
+}

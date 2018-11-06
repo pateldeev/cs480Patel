@@ -25,4 +25,7 @@ void Cube::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) 
 
 	mbt_rigidBody->setSleepingThresholds(0, 0);
 }
+void Cube::DrawDebug() {
+
+}
 

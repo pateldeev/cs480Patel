@@ -101,9 +101,15 @@ void Object::Render(void) {
 
 		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
 	}
-
-	glDisableVertexAttribArray(0);
+        
+        glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+        
+        #if DEBUG
+        DrawDebug();
+        #endif
+        
+        
 }
 
 glm::mat4 Object::GetModel(void) {

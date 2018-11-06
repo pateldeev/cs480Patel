@@ -1,5 +1,10 @@
 PROJECT(PA09)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+add_custom_target(run
+    COMMAND PA09
+    DEPENDS PA09
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules")
 
@@ -23,6 +28,10 @@ ENDIF(USE_COMPLEX_BOARD_MESH)
 
 SET(CXX11_FLAGS -std=gnu++11)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+
+IF(DEBUG)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+ENDIF(DEBUG)
 
 IF(UNIX)
   ADD_DEFINITIONS(-DUNIX)
@@ -61,7 +70,7 @@ add_custom_target("${PROJECT_NAME}_SUCCESSFUL" ALL
                   COMMAND ${CMAKE_COMMAND} -E echo "====================="
                   COMMAND ${CMAKE_COMMAND} -E echo "${CMAKE_CURRENT_BINARY_DIR}"
                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/shaders/ ${CMAKE_CURRENT_BINARY_DIR}/shaders
-		  COMMAND ${CMAKE_COMMAND} -E echo "shaders folder copied!"                  
+		  COMMAND ${CMAKE_COMMAND} -E echo "shaders folder copied!"
 		  COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/objFiles/ ${CMAKE_CURRENT_BINARY_DIR}/objFiles
 		  COMMAND ${CMAKE_COMMAND} -E echo "objFiles folder copied!"
 		  COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/launch/ ${CMAKE_CURRENT_BINARY_DIR}/launch
