@@ -3,26 +3,44 @@
 # All lines are in the format "aribute=value". Notice there is no space after the = sign and no quotations around the value.
 # One should only change the values of variables. Changing the order or adding new variables may cause the program to fail.
 
+
 #Main window paramters - height & width only used when fullscreen is off
 WINDOW_NAME=PA09
 WINDOW_FULLSCREEN=1
 WINDOW_SIZE=1000,2000
 
+
 #Initial camera information
 CAMERA_EYEPOS=0.0,50.0,10.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
+
 #Source code for shaders
-SHADER_NAMES=texture
-VERTEX_SHADER=shaders/vertShader.vert
-FRAGMENT_SHADER=shaders/fragShader.frag
+SHADER_NAMES=passThroughTexture
+VERTEX_SHADER=shaders/passThroughTexture/vertex.vert
+FRAGMENT_SHADER=shaders/passThroughTexture/fragment.frag
+
+SHADER_NAMES=fragmentLighting
+VERTEX_SHADER=shaders/fragmentLighting/vertex.vert
+FRAGMENT_SHADER=shaders/fragmentLighting/fragment.frag
+
+SHADER_NAMES=vertexLighting
+VERTEX_SHADER=shaders/vertexLighting/vertex.vert
+FRAGMENT_SHADER=shaders/vertexLighting/fragment.frag
+
 
 #IMGUI menu system
 ENABLE_MENU=1
 MENU_SIZE=400,600
 
+
 #For bullet
 WORLD_GRAVITY=0,-20,0
+
+
+#For lighting
+SPOTLIGHT_LOC=10,5,-10
+
 
 #Objects to load
 OBJ_NAME=Board

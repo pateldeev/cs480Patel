@@ -61,8 +61,7 @@ bool Shader::AddShader(const GLenum ShaderType, const std::string & fileName) {
 	return true;
 }
 
-// After all the shaders have been added to the program call this function
-// to link and validate the program.
+// After all the shaders have been added to the program call this function to link and validate the program.
 bool Shader::Finalize(void) {
 	GLint success = 0;
 	GLchar errorLog[1024] = { 0 };

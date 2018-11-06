@@ -88,10 +88,12 @@ void Object::Update(void) {
 void Object::Render(void) {
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_vertex));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_normal));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, m_texture));
 
 	for (int i = 0; i < IB.size(); ++i) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
@@ -104,12 +106,11 @@ void Object::Render(void) {
         
         glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         
         #if DEBUG
         DrawDebug();
-        #endif
-        
-        
+        #endif	
 }
 
 glm::mat4 Object::GetModel(void) {
@@ -167,7 +168,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 	const aiScene * scene = importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
 
-	glm::vec3 tempVertex;
+	glm::vec3 tempVertex, tempNormal;
 
 	glm::vec2 tempUV;
 	const aiVector3D * uv;
@@ -195,6 +196,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 				//iterate through each index of face - should be 3 for triangles
 				for (unsigned int indexNum = 0; indexNum < currMesh->mFaces[faceNum].mNumIndices; ++indexNum) {
 					tempVertex = {currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
+					tempNormal = {currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
 
 					uv = &currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
 					tempUV = glm::vec2(uv->x,uv->y);
@@ -213,7 +215,7 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 					}
 
 					//add vertex and index to correct texture and vertex
-					m_vertices.push_back(Vertex(tempVertex, tempUV));
+					m_vertices.push_back(Vertex(tempVertex, tempNormal ,tempUV));
 					m_indices[textureIndex].push_back(m_vertices.size()-1);
 
 					//load mesh into bullet

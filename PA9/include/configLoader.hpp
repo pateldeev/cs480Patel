@@ -33,6 +33,8 @@ public:
 	
 	bool getWorldGravity(glm::vec3 & gravity);
 
+	bool getSpotLightLoc(glm::vec3 & location);
+
 	bool getObject(objectModel & obj);
 
 private:

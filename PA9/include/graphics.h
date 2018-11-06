@@ -21,6 +21,8 @@ public:
 	bool Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos);
 	bool InitializeBt(const glm::vec3 & gravity);
 
+	void SetSpotlightLoc(const glm::vec3 & location);
+
 	void Update(unsigned int dt);
 
 	void AddObject(const objectModel & obj, bool control = false);
@@ -31,7 +33,7 @@ public:
 	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
 
 	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
-	bool UseShaderSet(const std::string & setName);
+	bool UseShaderSet(const std::string & setName, bool hasLighting = false);
 
 	bool UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 
@@ -46,7 +48,7 @@ private:
 	Camera * m_camera;
 
 	//variables to keep track of shaders
-	std::vector<Shader> m_shaders;
+	std::vector<Shader *> m_shaders;
 	std::vector<std::string> m_shaderNames;
 	int m_currentShader;
 
@@ -54,6 +56,14 @@ private:
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;
 
+	GLint m_lightPos;
+	GLint m_ambientProduct;
+	GLint m_diffuseProduct;
+	GLint m_specularProduct;
+	GLint m_shininess;
+	bool m_lightingStatus;
+	glm::vec3 m_spotlightLoc;
+	
 	std::vector<Object *> m_objects;
 	int m_objCtr; //index of object being controlled by user input
 	std::vector<unsigned int> m_renderOrder;
