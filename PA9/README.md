@@ -29,7 +29,7 @@ mkdir build
 cd build
 cmake ..
 make
-./PA08
+./PA09
 ```
 Full Usage with all variables
 ```bash
@@ -37,7 +37,7 @@ mkdir build
 cd build
 cmake .. -DUSE_COMPLEX_BOARD_MESH=OFF
 make
-./PA08 -l launch/DefaultConfig.txt
+./PA09 -l launch/DefaultConfig.txt
 ```
 
 ## General Comments
@@ -65,8 +65,8 @@ This program makes use of configuration files to initialize various parameters. 
 There is a menu system that runs in a separate window. The menu system may be opened and closed with the 'm' key. <br>
 
 ## Shaders
-The GLSL source code for the vertex and fragment shaders must be located under the "shaders/" directory. <br>
-By default, the vertex shader code is in "vertShader.vert" and the fragment shader code is in "fragShader.frag". You can specify the name of the files via the configuration. See the example file given.
+The GLSL source code for the various vertex and fragment shaders are located under the "shaders/" directory. <br>
+The shader sets loaded into the program are specified via the configuration file. See the example file given.
 
 ## Command Line Arguments
 The following command line arguments can be used to change the default behavior of the project

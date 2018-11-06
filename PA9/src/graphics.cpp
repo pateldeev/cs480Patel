@@ -2,7 +2,7 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_objCtr(-1) {
+				nullptr), m_lightingStatus(false), m_spotlightLoc(0, 0, 0), m_objCtr(-1) {
 }
 
 Graphics::~Graphics(void) {
@@ -24,8 +24,8 @@ Graphics::~Graphics(void) {
 	delete mbt_dispatcher;
 	delete mbt_collisionConfig;
 	delete mbt_broadphase;
-	
-	for(Shader * shader: m_shaders)
+
+	for (Shader * shader : m_shaders)
 		delete shader;
 
 	delete m_camera;
@@ -83,6 +83,10 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	mbt_dynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
 	return true;
+}
+
+void Graphics::SetSpotlightLoc(const glm::vec3 & location) {
+	m_spotlightLoc = location;
 }
 
 void Graphics::AddObject(const objectModel & obj, bool control) {
@@ -164,7 +168,7 @@ bool Graphics::AddShaderSet(const std::string & setName, const std::string & ver
 	return true;
 }
 
-bool Graphics::UseShaderSet(const std::string & setName) {
+bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 	//find shader set
 	unsigned int i;
 	for (i = 0; i < m_shaderNames.size(); ++i)
@@ -178,23 +182,63 @@ bool Graphics::UseShaderSet(const std::string & setName) {
 
 	// Locate the projection matrix in the shader
 	m_projectionMatrix = m_shaders[i]->GetUniformLocation("projectionMatrix");
-	if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) {
+	if (m_projectionMatrix == -1) {
 		printf("m_projectionMatrix not found\n");
 		return false;
 	}
 
 	// Locate the view matrix in the shader
 	m_viewMatrix = m_shaders[i]->GetUniformLocation("viewMatrix");
-	if (m_viewMatrix == INVALID_UNIFORM_LOCATION) {
+	if (m_viewMatrix == -1) {
 		printf("m_viewMatrix not found\n");
 		return false;
 	}
 
 	// Locate the model matrix in the shader
 	m_modelMatrix = m_shaders[i]->GetUniformLocation("modelMatrix");
-	if (m_modelMatrix == INVALID_UNIFORM_LOCATION) {
+	if (m_modelMatrix == -1) {
 		printf("m_modelMatrix not found\n");
 		return false;
+	}
+
+	//find lighting uniforms
+	if (hasLighting) {
+		m_lightingStatus = true;
+		m_lightPos = m_shaders[i]->GetUniformLocation("lightPosition");
+		if (m_lightPos == -1) {
+			printf("lightPosition not found\n");
+			return false;
+		}
+
+		m_lightPos = m_shaders[i]->GetUniformLocation("lightPosition");
+		if (m_lightPos == -1) {
+			printf("lightPosition not found\n");
+			return false;
+		}
+
+		m_ambientProduct = m_shaders[i]->GetUniformLocation("ambientProduct");
+		if (m_ambientProduct == -1) {
+			printf("ambient product not found\n");
+			return false;
+		}
+
+		m_diffuseProduct = m_shaders[i]->GetUniformLocation("diffuseProduct");
+		if (m_diffuseProduct == -1) {
+			printf("diffuse product not found\n");
+			return false;
+		}
+
+		m_specularProduct = m_shaders[i]->GetUniformLocation("specularProduct");
+		if (m_specularProduct == -1) {
+			printf("specular product not found\n");
+			return false;
+		}
+
+		m_shininess = m_shaders[i]->GetUniformLocation("shininess");
+		if (m_shininess == -1) {
+			printf("shininess not found\n");
+			return false;
+		};
 	}
 
 	//update current shader
@@ -258,6 +302,19 @@ void Graphics::Render(void) {
 	//Render each object
 	for (unsigned int i = 0; i < m_renderOrder.size(); ++i) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_objects[m_renderOrder[i]]->GetModel()));
+
+		if (m_lightingStatus) {
+			glm::vec3 kA(0, 0, 0), kD(0.5, 0.5, 0.5), kS(0.2, 0.2, 0.2);
+			float shininess = 0;
+			glm::vec3 lightPos = m_spotlightLoc - m_objects[m_renderOrder[i]]->GetTranslation();
+
+			glUniform3f(m_lightPos, lightPos.x, lightPos.y, lightPos.z);
+			glUniform3f(m_ambientProduct, kA.x, kA.y, kA.z);
+			glUniform3f(m_diffuseProduct, kD.x, kD.y, kD.z);
+			glUniform3f(m_specularProduct, kS.x, kS.y, kS.z);
+			glUniform1f(m_shininess, m_shininess);
+		}
+
 		m_objects[m_renderOrder[i]]->Render();
 	}
 

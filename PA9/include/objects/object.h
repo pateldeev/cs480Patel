@@ -60,6 +60,9 @@ private:
 
 	std::vector<GLuint> m_textures; //vector of texture locations on GPU
 
+	glm::vec3 m_kDiffuse;
+	glm::vec3 m_kSpecular;
+
 	bool loadObjAssimp(const std::string & objFile);
 	void loadTextures(const std::string & objFile, const std::vector<aiString> & textureFiles);
 };

@@ -23,10 +23,11 @@
 
 struct Vertex {
 	glm::vec3 m_vertex;
+	glm::vec3 m_normal;
 	glm::vec2 m_texture;
 
-	Vertex(const glm::vec3 & vertex, const glm::vec2 & texture) :
-			m_vertex(vertex), m_texture(texture) {
+	Vertex(const glm::vec3 & vertex, const glm::vec3 & normal, const glm::vec2 & texture) :
+			m_vertex(vertex), m_normal(normal), m_texture(texture) {
 	}
 };
 

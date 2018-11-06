@@ -38,6 +38,10 @@ MENU_SIZE=400,600
 WORLD_GRAVITY=0,-20,0
 
 
+#For lighting
+SPOTLIGHT_LOC=10,5,-10
+
+
 #Objects to load
 OBJ_NAME=Board
 BT_TYPE=MeshStatic

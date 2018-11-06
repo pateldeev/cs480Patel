@@ -47,7 +47,7 @@ bool Engine::Initialize(void) {
 	while (m_configFile.getShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
 		m_graphics->AddShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag);
 	}
-	m_graphics->UseShaderSet("passThroughTexture");
+	m_graphics->UseShaderSet("vertexLighting", true);
 
 	//check if menu needs to be initialized
 	bool menu;
@@ -66,6 +66,13 @@ bool Engine::Initialize(void) {
 		printf("The graphics failed to initialize bullet.\n");
 		return false;
 	}
+
+	glm::vec3 spotlightLoc;
+	if (!m_configFile.getSpotLightLoc(spotlightLoc)) {
+		printf("Could not get gravity information from configuration file \n");
+		return false;
+	}
+	m_graphics->SetSpotlightLoc(spotlightLoc);
 
 	//add objects from configuration file
 	objectModel obj;

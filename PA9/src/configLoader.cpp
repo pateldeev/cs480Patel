@@ -127,6 +127,19 @@ bool ConfigFileParser::getWorldGravity(glm::vec3 & gravity) {
 	return true;
 }
 
+bool ConfigFileParser::getSpotLightLoc(glm::vec3 & location){
+	std::string varName;
+	float values[3];
+
+	//gravity
+	if (!parseLine<float, 3>(varName, values) || varName.compare("SPOTLIGHT_LOC")) {
+		printf("Could not get spotlight location from config file \n");
+		return false;
+	}
+	location = glm::vec3(values[0], values[1], values[2]);
+	return true;
+}
+
 bool ConfigFileParser::getObject(objectModel & obj) {
 	if (m_fileBuffer.eof() || m_fileBuffer.peek() != 'O')
 		return false; //return false if there is no object to parse
