@@ -86,7 +86,6 @@ public:
 		glDrawElements(GL_LINE_STRIP, 3, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
-
 	}
 };
 //#endif
