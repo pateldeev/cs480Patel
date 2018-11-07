@@ -96,6 +96,16 @@ bool ConfigFileParser::getShaderSet(std::string & shaderSetName, std::string & v
 	return true;
 }
 
+bool ConfigFileParser::getShaderSetActive(std::string & set) {
+	std::string varName;
+	//get shader set name
+	if (!parseLine < std::string > (varName, &set) || varName.compare("USE_SET")) {
+		printf("Could not get active shader set from config file \n");
+		return false;
+	}
+	return true;
+}
+
 bool ConfigFileParser::getMenuState(bool & menu, glm::uvec2 & size) {
 	std::string varName;
 	if (!parseLine<bool>(varName, &menu) || varName.compare("ENABLE_MENU")) {
@@ -124,19 +134,6 @@ bool ConfigFileParser::getWorldGravity(glm::vec3 & gravity) {
 		return false;
 	}
 	gravity = glm::vec3(values[0], values[1], values[2]);
-	return true;
-}
-
-bool ConfigFileParser::getSpotLightLoc(glm::vec3 & location){
-	std::string varName;
-	float values[3];
-
-	//gravity
-	if (!parseLine<float, 3>(varName, values) || varName.compare("SPOTLIGHT_LOC")) {
-		printf("Could not get spotlight location from config file \n");
-		return false;
-	}
-	location = glm::vec3(values[0], values[1], values[2]);
 	return true;
 }
 

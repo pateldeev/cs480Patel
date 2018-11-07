@@ -8,6 +8,10 @@
 
 #include <btBulletDynamicsCommon.h>
 
+//#if DEBUG
+#include <LinearMath/btIDebugDraw.h>
+//#endif
+
 class Object {
 public:
 	Object(const std::string & objFile, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation = glm::vec3(0, 0, 0),
@@ -48,6 +52,10 @@ protected:
 	btRigidBody * mbt_rigidBody;
 	btTriangleMesh * mbt_mesh;
 	btCollisionShape * mbt_shape;
+
+	//#if DEBUG
+	virtual void DrawDebug() = 0;
+	//#endif
 
 private:
 	glm::mat4 m_model;

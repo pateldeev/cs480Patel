@@ -21,8 +21,6 @@ public:
 	bool Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos);
 	bool InitializeBt(const glm::vec3 & gravity);
 
-	void SetSpotlightLoc(const glm::vec3 & location);
-
 	void Update(unsigned int dt);
 
 	void AddObject(const objectModel & obj, bool control = false);
@@ -42,6 +40,8 @@ public:
 	glm::vec3 GetEyePos(void) const;
 	glm::vec3 GetEyeLoc(void) const;
 
+	void SetAmbientLight(const glm::vec3 & change);
+
 private:
 	std::string ErrorString(const GLenum error) const;
 
@@ -57,17 +57,23 @@ private:
 	GLint m_modelMatrix;
 
 	GLint m_lightPos;
+	GLint m_cameraPos;
 	GLint m_ambientProduct;
 	GLint m_diffuseProduct;
 	GLint m_specularProduct;
 	GLint m_shininess;
 	bool m_lightingStatus;
+	glm::vec3 m_ambientLevel;
 	glm::vec3 m_spotlightLoc;
-	
+
+	void UpdateSpotlightLoc(void); //update spotlight to be above following object
+
 	std::vector<Object *> m_objects;
 	int m_objCtr; //index of object being controlled by user input
 	std::vector<unsigned int> m_renderOrder;
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
+	std::vector<glm::vec3> m_objectsDiffuseProducts;
+	std::vector<glm::vec3> m_objectsSpecularProducts;
 
 	//for bullet
 	btBroadphaseInterface * mbt_broadphase;

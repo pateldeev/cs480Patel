@@ -47,7 +47,11 @@ bool Engine::Initialize(void) {
 	while (m_configFile.getShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
 		m_graphics->AddShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag);
 	}
-	m_graphics->UseShaderSet("vertexLighting", true);
+	if (!m_configFile.getShaderSetActive(shaderSetName)) {
+		printf("Could not get active shader set from configuration file \n");
+		return false;
+	}
+	m_graphics->UseShaderSet(shaderSetName, true);
 
 	//check if menu needs to be initialized
 	bool menu;
@@ -66,13 +70,6 @@ bool Engine::Initialize(void) {
 		printf("The graphics failed to initialize bullet.\n");
 		return false;
 	}
-
-	glm::vec3 spotlightLoc;
-	if (!m_configFile.getSpotLightLoc(spotlightLoc)) {
-		printf("Could not get gravity information from configuration file \n");
-		return false;
-	}
-	m_graphics->SetSpotlightLoc(spotlightLoc);
 
 	//add objects from configuration file
 	objectModel obj;
@@ -165,7 +162,8 @@ void Engine::EventChecker(void) {
 					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
 			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
-					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r) {
+					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS
+					||m_event.key.keysym.sym == SDLK_MINUS) {
 				HandleEvent(m_event);
 			} else
 				m_menu->HandleEvent(m_event);
@@ -174,11 +172,8 @@ void Engine::EventChecker(void) {
 }
 
 void Engine::HandleEvent(const SDL_Event & event) {
-
-#define USEIMPULSE 1 //have arrow keys apply impulse
-
-#if USEIMPULSE
 	const int impulse = 30;
+
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
@@ -194,30 +189,12 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
 		} else if (event.key.keysym.sym == SDLK_r) {
 			m_graphics->ResetObjects();
+		} else if (event.key.keysym.sym == SDLK_EQUALS) {
+			m_graphics->SetAmbientLight(glm::vec3(0.03, 0.03, 0.03));
+		} else if (event.key.keysym.sym == SDLK_MINUS) {
+			m_graphics->SetAmbientLight(-glm::vec3(0.03, 0.03, 0.03));
 		}
 	}
-
-#else //have arrow keys change linear velocity
-	const float velocity = 23;
-
-	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_ESCAPE) {
-			m_running = false;
-		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
-			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-		} else if (event.key.keysym.sym == SDLK_w) {
-			m_graphics->SetLinearVelocity(glm::vec3(0, 0, -velocity));
-		} else if (event.key.keysym.sym == SDLK_s) {
-			m_graphics->SetLinearVelocity(glm::vec3(0, 0, velocity));
-		} else if (event.key.keysym.sym == SDLK_a) {
-			m_graphics->SetLinearVelocity(glm::vec3(-velocity, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_d) {
-			m_graphics->SetLinearVelocity(glm::vec3(velocity, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_r) {
-			m_graphics->ResetObjects();
-		}
-	}
-#endif
 }
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {

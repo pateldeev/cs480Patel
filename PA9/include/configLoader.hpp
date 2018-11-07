@@ -29,11 +29,11 @@ public:
 
 	bool getShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
 
+	bool getShaderSetActive(std::string & set);
+
 	bool getMenuState(bool & menu, glm::uvec2 & size);
 	
 	bool getWorldGravity(glm::vec3 & gravity);
-
-	bool getSpotLightLoc(glm::vec3 & location);
 
 	bool getObject(objectModel & obj);
 
