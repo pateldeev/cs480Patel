@@ -163,7 +163,7 @@ void Engine::EventChecker(void) {
 				CloseMenu();
 			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
 					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS
-					||m_event.key.keysym.sym == SDLK_MINUS) {
+					|| m_event.key.keysym.sym == SDLK_MINUS) {
 				HandleEvent(m_event);
 			} else
 				m_menu->HandleEvent(m_event);
