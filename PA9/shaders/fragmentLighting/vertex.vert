@@ -14,10 +14,10 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
 void main(void){
-    v_posWorld = vec3(modelMatrix * vec4(v_pos, 1.0));
-    gl_Position = projectionMatrix * viewMatrix * vec4(v_posWorld, 1.0);
+  v_posWorld = (modelMatrix * vec4(v_pos, 1.0)).xyz;
+  gl_Position = projectionMatrix * viewMatrix * vec4(v_posWorld, 1.0);
 
-    v_normalWorld = mat3(transpose(inverse(modelMatrix))) * v_normal;  
+  v_normalWorld = mat3(transpose(inverse(modelMatrix))) * v_normal;  
 
-    texture = v_texture;
+  texture = v_texture;
 }

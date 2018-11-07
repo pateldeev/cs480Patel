@@ -5,7 +5,7 @@
 
 Engine::Engine(const std::string & launchFile) :
 		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
-				Engine::GetCurrentTimeMillis()), m_running(false) {
+				Engine::GetCurrentTimeMillis()), m_running(false), m_shift(false) {
 	std::srand(time(nullptr));
 }
 
@@ -150,6 +150,12 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
+		//keep track of shift key being pressed/released
+		if (m_event.type == SDL_KEYDOWN && (m_event.key.keysym.sym == SDLK_RSHIFT || m_event.key.keysym.sym == SDLK_LSHIFT))
+			m_shift = true;
+		else if (m_event.type == SDL_KEYUP && (m_event.key.keysym.sym == SDLK_RSHIFT || m_event.key.keysym.sym == SDLK_LSHIFT))
+			m_shift = false;
+
 		//handle event based on correct window location
 		if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
@@ -159,13 +165,17 @@ void Engine::EventChecker(void) {
 			}
 		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
-					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
+					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
 			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
 					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS
-					|| m_event.key.keysym.sym == SDLK_MINUS || m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT|| m_event.key.keysym.sym == SDLK_DOWN|| m_event.key.keysym.sym == SDLK_UP|| m_event.key.keysym.sym == SDLK_i|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v) {
+					|| m_event.key.keysym.sym == SDLK_MINUS || m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT
+					|| m_event.key.keysym.sym == SDLK_DOWN || m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i
+					|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v
+					|| m_event.key.keysym.sym == SDLK_m || m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z
+					|| m_event.key.keysym.sym == SDLK_x)
 				HandleEvent(m_event);
-			} else
+			else
 				m_menu->HandleEvent(m_event);
 		}
 	}
@@ -175,43 +185,48 @@ void Engine::HandleEvent(const SDL_Event & event) {
 	const int impulse = 30;
 
 	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_ESCAPE) {
+		if (event.key.keysym.sym == SDLK_ESCAPE)
 			m_running = false;
-		} else if (event.key.keysym.sym == SDLK_m && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()) {
+		else if (event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis())
 			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-		} else if (event.key.keysym.sym == SDLK_w) {
+		else if (event.key.keysym.sym == SDLK_w)
 			m_graphics->ApplyImpulse(glm::vec3(0, 0, -impulse), glm::vec3(0, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_s) {
+		else if (event.key.keysym.sym == SDLK_s)
 			m_graphics->ApplyImpulse(glm::vec3(0, 0, impulse), glm::vec3(0, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_a) {
+		else if (event.key.keysym.sym == SDLK_a)
 			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_d) {
+		else if (event.key.keysym.sym == SDLK_d)
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
-		} else if (event.key.keysym.sym == SDLK_r) {
+		else if (event.key.keysym.sym == SDLK_r)
 			m_graphics->ResetObjects();
-		} else if (event.key.keysym.sym == SDLK_EQUALS) {
+		else if (event.key.keysym.sym == SDLK_EQUALS)
 			m_graphics->SetAmbientLight(glm::vec3(0.03, 0.03, 0.03));
-		} else if (event.key.keysym.sym == SDLK_MINUS) {
+		else if (event.key.keysym.sym == SDLK_MINUS)
 			m_graphics->SetAmbientLight(-glm::vec3(0.03, 0.03, 0.03));
-		} else if (event.key.keysym.sym == SDLK_RIGHT) {
-      m_graphics->IncreaseEyePosX(1.0);
-    } else if (event.key.keysym.sym == SDLK_LEFT) {
-      m_graphics->DecreaseEyePosX(1.0);
-    } else if (event.key.keysym.sym == SDLK_UP) {
-      m_graphics->IncreaseEyePosZ(1.0);
-    } else if (event.key.keysym.sym == SDLK_DOWN) {
-      m_graphics->DecreaseEyePosZ(1.0);
-    } else if (event.key.keysym.sym == SDLK_i) {
-      m_graphics->ZoomIn(1.0);
-    } else if (event.key.keysym.sym == SDLK_o) {
-      m_graphics->ZoomOut(1.0);
-    } else if(event.key.keysym.sym == SDLK_f) {
-      std::string shaderToUse = "fragmentLighting";
-      m_graphics->UseShaderSet(shaderToUse, true);
-    } else if(event.key.keysym.sym == SDLK_v) {
-      std::string shaderToUse = "vertexLighting";
-      m_graphics->UseShaderSet(shaderToUse, true);
-    }
+		else if (event.key.keysym.sym == SDLK_m)
+			(m_shift) ? m_graphics->SetSpecularofBall(glm::vec3(0.03, 0.03, 0.03)) : m_graphics->SetDiffuseofBall(glm::vec3(0.03, 0.03, 0.03));
+		else if (event.key.keysym.sym == SDLK_l)
+			(m_shift) ? m_graphics->SetSpecularofBall(-glm::vec3(0.03, 0.03, 0.03)) : m_graphics->SetDiffuseofBall(-glm::vec3(0.03, 0.03, 0.03));
+		else if (m_event.key.keysym.sym == SDLK_z)
+			m_graphics->SetSpotlightHeight(0.1);
+		else if (m_event.key.keysym.sym == SDLK_x)
+			m_graphics->SetSpotlightHeight(-0.1);
+		else if (event.key.keysym.sym == SDLK_RIGHT)
+			m_graphics->IncreaseEyePosX(1.0);
+		else if (event.key.keysym.sym == SDLK_LEFT)
+			m_graphics->DecreaseEyePosX(1.0);
+		else if (event.key.keysym.sym == SDLK_UP)
+			m_graphics->IncreaseEyePosZ(1.0);
+		else if (event.key.keysym.sym == SDLK_DOWN)
+			m_graphics->DecreaseEyePosZ(1.0);
+		else if (event.key.keysym.sym == SDLK_i)
+			m_graphics->ZoomIn(1.0);
+		else if (event.key.keysym.sym == SDLK_o)
+			m_graphics->ZoomOut(1.0);
+		else if (event.key.keysym.sym == SDLK_f)
+			m_graphics->UseShaderSet("fragmentLighting", true);
+		else if (event.key.keysym.sym == SDLK_v)
+			m_graphics->UseShaderSet("vertexLighting", true);
 	}
 }
 

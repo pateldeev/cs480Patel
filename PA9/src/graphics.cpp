@@ -2,7 +2,7 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_lightingStatus(false), m_ambientLevel(0.1, 0.1, 0.1), m_spotlightLoc(0, 0, 0), m_objCtr(-1) {
+				nullptr), m_lightingStatus(false), m_ambientLevel(0.1, 0.1, 0.1), m_spotlightLoc(0, 0, 0), m_spotLightHeight(6), m_objCtr(-1) {
 }
 
 Graphics::~Graphics(void) {
@@ -102,8 +102,8 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 	m_renderOrder.push_back(m_objects.size() - 1);
 	m_startingLocs.push_back(obj.startingLoc);
 
-	m_objectsDiffuseProducts.push_back(glm::vec3(0.7, 0.7, 0.7));
-	m_objectsSpecularProducts.push_back(glm::vec3(0.8, 0.8, 0.8));
+	m_objectsDiffuseProducts.push_back(glm::vec3(0.8, 0.8, 0.8));
+	m_objectsSpecularProducts.push_back(glm::vec3(0.7, 0.7, 0.7));
 
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
@@ -238,7 +238,7 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 		if (m_shininess == -1) {
 			printf("shininess not found\n");
 			return false;
-		};
+		}
 	}
 
 	//update current shader
@@ -251,11 +251,10 @@ void Graphics::Update(unsigned int dt) {
 
 	//update location and rotation of each object from bullet to openGL
 	for (Object * obj : m_objects) {
-		btRigidBody * body = obj->GetRigidBody();
-		if (body) {
+		if (obj->GetRigidBody()) {
 			btTransform trans;
-			if (body->getMotionState())
-				body->getMotionState()->getWorldTransform(trans);
+			if (obj->GetRigidBody()->getMotionState())
+				obj->GetRigidBody()->getMotionState()->getWorldTransform(trans);
 			else
 				printf("Error - body has not motionstate!\n");
 
@@ -336,17 +335,65 @@ void Graphics::SetAmbientLight(const glm::vec3 & change) {
 	//check bounds
 	if (m_ambientLevel.x < 0)
 		m_ambientLevel.x = 0;
+	else if (m_ambientLevel.x > 1)
+		m_ambientLevel.x = 1;
+
 	if (m_ambientLevel.y < 0)
 		m_ambientLevel.y = 0;
+	else if (m_ambientLevel.y > 1)
+		m_ambientLevel.y = 1;
+
 	if (m_ambientLevel.z < 0)
 		m_ambientLevel.z = 0;
-
-	if (m_ambientLevel.x > 1)
-		m_ambientLevel.x = 1;
-	if (m_ambientLevel.y > 1)
-		m_ambientLevel.y = 1;
-	if (m_ambientLevel.z > 1)
+	else if (m_ambientLevel.z > 1)
 		m_ambientLevel.z = 1;
+}
+
+void Graphics::SetDiffuseofBall(const glm::vec3 & change) {
+	glm::vec3 temp = m_objectsDiffuseProducts[m_objCtr] + change;
+
+	//check bounds
+	if (temp.x < 0)
+		temp.x = 0;
+	else if (temp.x > 1)
+		temp.x = 1;
+
+	if (temp.y < 0)
+		temp.y = 0;
+	else if (temp.y > 1)
+		temp.y = 1;
+
+	if (temp.z < 0)
+		temp.z = 0;
+	else if (temp.z > 1)
+		temp.z = 1;
+
+	m_objectsDiffuseProducts[m_objCtr] = temp;
+}
+
+void Graphics::SetSpecularofBall(const glm::vec3 & change) {
+	glm::vec3 temp = m_objectsSpecularProducts[m_objCtr] + change;
+
+	//check bounds
+	if (temp.x < 0)
+		temp.x = 0;
+	else if (temp.x > 1)
+		temp.x = 1;
+
+	if (temp.y < 0)
+		temp.y = 0;
+	else if (temp.y > 1)
+		temp.y = 1;
+
+	if (temp.z < 0)
+		temp.z = 0;
+	else if (temp.z > 1)
+		temp.z = 1;
+	m_objectsSpecularProducts[m_objCtr] = temp;
+}
+
+void Graphics::SetSpotlightHeight(float change) {
+	m_spotLightHeight += change;
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
@@ -366,59 +413,48 @@ std::string Graphics::ErrorString(const GLenum error) const {
 
 void Graphics::UpdateSpotlightLoc(void) {
 	m_spotlightLoc = m_objects[m_objCtr]->GetTranslation();
-	m_spotlightLoc.y += 8;
+	m_spotlightLoc.y += m_spotLightHeight;
 }
 
-void Graphics::IncreaseEyePosX(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  newEyePos = GetEyePos();
-  newEyePos.x = newEyePos.x + moveAmount;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
-
-}
-
-void Graphics::DecreaseEyePosX(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  newEyePos = GetEyePos();
-  newEyePos.x = newEyePos.x - moveAmount;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+void Graphics::IncreaseEyePosX(float moveAmount) {
+	glm::vec3 newEyePos;
+	newEyePos = GetEyePos();
+	newEyePos.x = newEyePos.x + moveAmount;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 
 }
 
-void Graphics::IncreaseEyePosZ(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  newEyePos = GetEyePos();
-  newEyePos.z = newEyePos.z - moveAmount;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
-
+void Graphics::DecreaseEyePosX(float moveAmount) {
+	glm::vec3 newEyePos;
+	newEyePos = GetEyePos();
+	newEyePos.x = newEyePos.x - moveAmount;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
-void Graphics::DecreaseEyePosZ(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  newEyePos = GetEyePos();
-  newEyePos.z = newEyePos.z + moveAmount;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
-
+void Graphics::IncreaseEyePosZ(float moveAmount) {
+	glm::vec3 newEyePos;
+	newEyePos = GetEyePos();
+	newEyePos.z = newEyePos.z - moveAmount;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
-void Graphics::ZoomIn(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
-  newEyePos = GetEyePos() + moveVector;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
-
+void Graphics::DecreaseEyePosZ(float moveAmount) {
+	glm::vec3 newEyePos;
+	newEyePos = GetEyePos();
+	newEyePos.z = newEyePos.z + moveAmount;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
-void Graphics::ZoomOut(float moveAmount)
-{
-  glm::vec3 newEyePos;
-  glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
-  newEyePos = GetEyePos() - moveVector;
-  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+void Graphics::ZoomIn(float moveAmount) {
+	glm::vec3 newEyePos;
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
+	newEyePos = GetEyePos() + moveVector;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+}
 
+void Graphics::ZoomOut(float moveAmount) {
+	glm::vec3 newEyePos;
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
+	newEyePos = GetEyePos() - moveVector;
+	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }

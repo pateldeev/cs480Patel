@@ -14,12 +14,6 @@ WINDOW_SIZE=1000,2000
 CAMERA_EYEPOS=0.0,50.0,10.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
-
-#Source code for shaders
-SHADER_NAMES=passThroughTexture
-VERTEX_SHADER=shaders/passThroughTexture/vertex.vert
-FRAGMENT_SHADER=shaders/passThroughTexture/fragment.frag
-
 SHADER_NAMES=fragmentLighting
 VERTEX_SHADER=shaders/fragmentLighting/vertex.vert
 FRAGMENT_SHADER=shaders/fragmentLighting/fragment.frag
@@ -28,7 +22,7 @@ SHADER_NAMES=vertexLighting
 VERTEX_SHADER=shaders/vertexLighting/vertex.vert
 FRAGMENT_SHADER=shaders/vertexLighting/fragment.frag
 
-USE_SET=fragmentLighting
+DEFAULT_SET=fragmentLighting
 
 
 #IMGUI menu system

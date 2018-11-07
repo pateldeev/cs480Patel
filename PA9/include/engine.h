@@ -34,6 +34,7 @@ private:
 	long long m_currentTimeMillis;
 	bool m_running;
 
+	bool m_shift;
 	void EventChecker(void);
 	void HandleEvent(const SDL_Event & event);
 

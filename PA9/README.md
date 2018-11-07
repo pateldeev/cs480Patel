@@ -23,6 +23,7 @@ In addition to OpenGL, this project requires installation of the following libar
 
 ## Building and Running - CMake Instructions
 The building of the project is done using CMake.
+
 Quick Usage with defaults
 ```bash
 mkdir build
@@ -31,6 +32,7 @@ cmake ..
 make
 ./PA09
 ```
+
 Full Usage with all variables
 ```bash
 mkdir build
@@ -41,25 +43,34 @@ make
 ```
 
 ## General Comments
-This project implements a basic version of collisions as required. If there are any inconsistencies or anything gets stuck, press 'r' to reset. You can only move the ball (Earth) with the WASD keys. The Cube is a dynamic collision object while the cylinder is a static collision object, as required.
+This project lighting as required. By default, fragment lighting is done. Vertex lighting can be enabled by the 'v' key. However in vertex lighting, the spotlight isn't really visible on the floor as it doesn't actually hit any verticies. You can also change the ambient light of the entire world and the specular and diffuse components of the ball. See the Controls section
 
 ## Collision Shapes
 All collisions are done via basic collision shapes (plane, sphere, cylinder, cube). We tried to add complex shapes, but it resulted in very choppy motion. You can make the version that loads the full triangles meshes into bullet by using the '-DUSE_COMPLEX_BOARD_MESH=ON' CMake flag. However, we need to find a way to make the meshes smoother for this to work in the future.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
-* Keyboard controls
-  * m: toggle (open/close) IMGUI menu window
-  * w/a/s/d: apply impulse to ball in direction specified
-  * left_arrow/right_arrow: move along the x-axis
-  * up_arrow/down_arrow: move along the z-axis
-  * i/o: zoom toward/away from the focus point
-  * r: reset all objects
-  * +/-: adjust ambient lighting
-  * f: change to fragment lighting
-  * v: change to vertex lighting
-* Exiting
-  * ESC: Will properly close all windows and exit program
+* Keyboard Controls
+  * Moving Ball
+    * w/a/s/d: apply impulse to ball in direction specified
+  * Camera Movement 
+    * left_arrow/right_arrow: move along the x-axis
+    * up_arrow/down_arrow: move along the z-axis
+    * i/o: zoom toward/away from the focus point
+  * Lighting
+    * Global
+      * f: change to fragment lighting
+      * v: change to vertex lighting
+      * +/-: adjust ambient lighting
+      * z/x: move spotlight up/down with repect to ball
+    * For Ball only
+      * m/l: adjust diffuse lighting of ball only
+      * shift + m/l: adjust specular lighting of ball only
+   * Other
+      * t: toggle (open/close) IMGUI menu window
+      * r: reset all objects to starting position
+   * Exiting
+      * ESC: Will properly close all windows and exit program
 
 ## Configuration File
 This program makes use of configuration files to initialize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.

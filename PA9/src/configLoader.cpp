@@ -99,7 +99,7 @@ bool ConfigFileParser::getShaderSet(std::string & shaderSetName, std::string & v
 bool ConfigFileParser::getShaderSetActive(std::string & set) {
 	std::string varName;
 	//get shader set name
-	if (!parseLine < std::string > (varName, &set) || varName.compare("USE_SET")) {
+	if (!parseLine < std::string > (varName, &set) || varName.compare("DEFAULT_SET")) {
 		printf("Could not get active shader set from config file \n");
 		return false;
 	}

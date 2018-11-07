@@ -29,7 +29,7 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 
 #else //use plane colliders
 	//bottom floor
-	AddPlane(dynamicsWorld, btVector3(0, 1, 0), btScalar(-1));
+	AddPlane(dynamicsWorld, btVector3(0, 1, 0), btScalar(0));
 
 	//side walls
 	AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(-36));
