@@ -163,7 +163,7 @@ void Engine::EventChecker(void) {
 				CloseMenu();
 			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
 					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS
-					|| m_event.key.keysym.sym == SDLK_MINUS || m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT|| m_event.key.keysym.sym == SDLK_DOWN|| m_event.key.keysym.sym == SDLK_UP|| m_event.key.keysym.sym == SDLK_i|| m_event.key.keysym.sym == SDLK_o) {
+					|| m_event.key.keysym.sym == SDLK_MINUS || m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT|| m_event.key.keysym.sym == SDLK_DOWN|| m_event.key.keysym.sym == SDLK_UP|| m_event.key.keysym.sym == SDLK_i|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v) {
 				HandleEvent(m_event);
 			} else
 				m_menu->HandleEvent(m_event);
@@ -205,6 +205,12 @@ void Engine::HandleEvent(const SDL_Event & event) {
       m_graphics->ZoomIn(1.0);
     } else if (event.key.keysym.sym == SDLK_o) {
       m_graphics->ZoomOut(1.0);
+    } else if(event.key.keysym.sym == SDLK_f) {
+      std::string shaderToUse = "fragmentLighting";
+      m_graphics->UseShaderSet(shaderToUse, true);
+    } else if(event.key.keysym.sym == SDLK_v) {
+      std::string shaderToUse = "vertexLighting";
+      m_graphics->UseShaderSet(shaderToUse, true);
     }
 	}
 }

@@ -51,8 +51,13 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
   * w/a/s/d: apply impulse to ball in direction specified
+  * left_arrow/right_arrow: move along the x-axis
+  * up_arrow/down_arrow: move along the z-axis
+  * i/o: zoom toward/away from the focus point
   * r: reset all objects
   * +/-: adjust ambient lighting
+  * f: change to fragment lighting
+  * v: change to vertex lighting
 * Exiting
   * ESC: Will properly close all windows and exit program
 
