@@ -28,7 +28,7 @@ SHADER_NAMES=vertexLighting
 VERTEX_SHADER=shaders/vertexLighting/vertex.vert
 FRAGMENT_SHADER=shaders/vertexLighting/fragment.frag
 
-USE_SET=vertexLighting
+USE_SET=fragmentLighting
 
 
 #IMGUI menu system

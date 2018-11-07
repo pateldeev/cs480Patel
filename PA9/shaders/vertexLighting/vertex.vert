@@ -17,19 +17,18 @@ uniform vec3 specularP;
 uniform float shininess;
 
 uniform vec3 lightPos;
+uniform vec3 eyePos;
 
 uniform sampler2D sampler;
 
 void main(void){
-    vec3 v_posMV = (viewMatrix * modelMatrix * vec4(v_pos, 1.0)).xyz;;
-    gl_Position = projectionMatrix * vec4(v_posMV, 1.0);
-
-    vec3 lightPostionMV = (viewMatrix * vec4(lightPos, 1.0)).xyz;
+    vec3 v_posWorld = (modelMatrix * vec4(v_pos, 1.0)).xyz;
+    gl_Position = projectionMatrix * viewMatrix * vec4(v_posWorld, 1.0);
 	
-    vec3 L = normalize(lightPostionMV - v_posMV);
-    vec3 E = normalize(-v_posMV);
+    vec3 L = normalize(lightPos - v_posWorld);
+    vec3 E = normalize(eyePos - v_posWorld);
     vec3 H = normalize( L + E );
-    vec3 N = normalize(viewMatrix * modelMatrix * vec4(v_normal, 0.0)).xyz;
+    vec3 N = normalize(mat3(transpose(inverse(modelMatrix))) * v_normal);
 
     vec3 ambient = ambientP;
 

@@ -6,18 +6,18 @@ layout (location = 2) in vec2 v_texture;
 
 smooth out vec2 texture;
 
-smooth out vec3 pos;
-smooth out vec3 normal;
+smooth out vec3 v_posWorld;
+smooth out vec3 v_normalWorld;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
 void main(void){
-    pos = vec3(modelMatrix * vec4(v_pos, 1.0));
-    gl_Position = projectionMatrix * viewMatrix * vec4(pos, 1.0);
+    v_posWorld = vec3(modelMatrix * vec4(v_pos, 1.0));
+    gl_Position = projectionMatrix * viewMatrix * vec4(v_posWorld, 1.0);
 
-    normal = mat3(transpose(inverse(modelMatrix))) * v_normal;  
+    v_normalWorld = mat3(transpose(inverse(modelMatrix))) * v_normal;  
 
     texture = v_texture;
 }

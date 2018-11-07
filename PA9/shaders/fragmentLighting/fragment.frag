@@ -2,8 +2,8 @@
 
 smooth in vec2 texture;
 
-smooth in vec3 pos;
-smooth in vec3 normal;
+smooth in vec3 v_posWorld;
+smooth in vec3 v_normalWorld;
 
 uniform sampler2D sampler;
 
@@ -21,14 +21,15 @@ out vec4 frag_color;
 void main(void){
   vec3 ambient = ambientP;
 
-  vec3 N = normalize(normal);
-  vec3 L = normalize(lightPos - pos);
-  float Kd = max( dot(N,L), 0.0 );
+  vec3 E = normalize(eyePos - v_posWorld);
+  vec3 L = normalize(lightPos - v_posWorld);
+  vec3 H = normalize( L + E );
+  vec3 N = normalize(v_normalWorld);
+  
+  float Kd = max( dot(L,N), 0.0 );
   vec3 diffuse = Kd*diffuseP;
 
-  vec3 viewDir = normalize(eyePos - pos);
-  vec3 reflectDir = reflect(-L, N);     
-  float Ks = pow( max(dot(viewDir, reflectDir), 0.0), shininess );
+  float Ks = pow( max(dot(N, H), 0.0), shininess );
   vec3 specular = Ks * specularP;
 
   vec3 textureColor = texture2D(sampler, texture).xyz;

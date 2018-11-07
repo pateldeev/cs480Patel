@@ -213,7 +213,7 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 		m_cameraPos = m_shaders[i]->GetUniformLocation("eyePos");
 		if (m_cameraPos == -1) {
 			printf("eyePos not found\n");
-			//return false;
+			return false;
 		}
 
 		m_ambientProduct = m_shaders[i]->GetUniformLocation("ambientP");
