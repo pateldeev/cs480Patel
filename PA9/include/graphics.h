@@ -29,6 +29,12 @@ public:
 	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to object being controlled
 	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
 	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
+  void IncreaseEyePosX(float moveAmount);
+  void IncreaseEyePosZ(float moveAmount);
+  void DecreaseEyePosX(float moveAmount);
+  void DecreaseEyePosZ(float moveAmount);
+  void ZoomIn(float moveAmount);
+  void ZoomOut(float moveAmount);
 
 	bool AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
 	bool UseShaderSet(const std::string & setName, bool hasLighting = false);

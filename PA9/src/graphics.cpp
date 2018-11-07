@@ -369,3 +369,56 @@ void Graphics::UpdateSpotlightLoc(void) {
 	m_spotlightLoc.y += 8;
 }
 
+void Graphics::IncreaseEyePosX(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  newEyePos = GetEyePos();
+  newEyePos.x = newEyePos.x + moveAmount;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
+
+void Graphics::DecreaseEyePosX(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  newEyePos = GetEyePos();
+  newEyePos.x = newEyePos.x - moveAmount;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
+
+void Graphics::IncreaseEyePosZ(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  newEyePos = GetEyePos();
+  newEyePos.z = newEyePos.z - moveAmount;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
+
+void Graphics::DecreaseEyePosZ(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  newEyePos = GetEyePos();
+  newEyePos.z = newEyePos.z + moveAmount;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
+
+void Graphics::ZoomIn(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
+  newEyePos = GetEyePos() + moveVector;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
+
+void Graphics::ZoomOut(float moveAmount)
+{
+  glm::vec3 newEyePos;
+  glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
+  newEyePos = GetEyePos() - moveVector;
+  m_camera->UpdatePosition(newEyePos, GetEyeLoc());
+
+}
