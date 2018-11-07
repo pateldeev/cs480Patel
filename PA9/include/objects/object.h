@@ -52,10 +52,11 @@ protected:
 	btRigidBody * mbt_rigidBody;
 	btTriangleMesh * mbt_mesh;
 	btCollisionShape * mbt_shape;
-        //#if DEBUG
-        virtual void DrawDebug() = 0;
-        //#endif
-        
+
+  //#if DEBUG
+	virtual void DrawDebug() = 0;
+	//#endif
+  
 private:
 	glm::mat4 m_model;
 

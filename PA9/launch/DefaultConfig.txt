@@ -28,6 +28,8 @@ SHADER_NAMES=vertexLighting
 VERTEX_SHADER=shaders/vertexLighting/vertex.vert
 FRAGMENT_SHADER=shaders/vertexLighting/fragment.frag
 
+USE_SET=vertexLighting
+
 
 #IMGUI menu system
 ENABLE_MENU=1
@@ -36,10 +38,6 @@ MENU_SIZE=400,600
 
 #For bullet
 WORLD_GRAVITY=0,-20,0
-
-
-#For lighting
-SPOTLIGHT_LOC=10,5,-10
 
 
 #Objects to load
@@ -65,7 +63,7 @@ OBJ_FILE=objFiles/cube/cube.obj
 OBJ_STARTING_LOC=0,6,0
 OBJ_SCALE=3,3,3
 OBJ_ROTATION=0,0,0
-OBJ_MASS=10
+OBJ_MASS=1
 
 OBJ_NAME=Cylinder
 BT_TYPE=CylinderStatic

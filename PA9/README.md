@@ -1,4 +1,4 @@
-# PA9: Lighting with Bullet - UNDER DEVELOPMENT
+# PA9: Lighting with Bullet
 
 ## Group
 This is the main repository for the code. The group members include
@@ -35,7 +35,7 @@ Full Usage with all variables
 ```bash
 mkdir build
 cd build
-cmake .. -DUSE_COMPLEX_BOARD_MESH=OFF
+cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_COMPLEX_BOARD_MESH=OFF
 make
 ./PA09 -l launch/DefaultConfig.txt
 ```
@@ -50,11 +50,9 @@ All collisions are done via basic collision shapes (plane, sphere, cylinder, cub
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard controls
   * m: toggle (open/close) IMGUI menu window
-  * w: add upward impulse to ball
-  * s: add downward impulse to ball
-  * d: add rightward impulse to ball
-  * a: add leftward impulse to ball
+  * w/a/s/d: apply impulse to ball in direction specified
   * r: reset all objects
+  * +/-: adjust ambient lighting
 * Exiting
   * ESC: Will properly close all windows and exit program
 

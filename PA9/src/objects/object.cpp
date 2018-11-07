@@ -79,10 +79,18 @@ void Object::setAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 
 void Object::Update(void) {
 
+#if 0
 	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
 			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
 
 	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
+#else
+    glm::mat4 translate = glm::translate(glm::mat4(1.0), m_translation);
+    glm::mat4 rotate = glm::mat4_cast(glm::quat(m_rotationAngles));
+    glm::mat4 scale = glm::scale(glm::mat4(1.0), m_scale);
+
+    m_model = translate * rotate * scale;
+#endif
 }
 
 void Object::Render(void) {

@@ -2,7 +2,7 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_lightingStatus(false), m_spotlightLoc(0, 0, 0), m_objCtr(-1) {
+				nullptr), m_lightingStatus(false), m_ambientLevel(0.1, 0.1, 0.1), m_spotlightLoc(0, 0, 0), m_objCtr(-1) {
 }
 
 Graphics::~Graphics(void) {
@@ -85,11 +85,8 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	return true;
 }
 
-void Graphics::SetSpotlightLoc(const glm::vec3 & location) {
-	m_spotlightLoc = location;
-}
-
 void Graphics::AddObject(const objectModel & obj, bool control) {
+	//create appropriate type of object
 	if (obj.btType == "SphereDynamic") {
 		m_objects.push_back(new Sphere(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else if (obj.btType == "CubeDynamic") {
@@ -104,6 +101,9 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 	}
 	m_renderOrder.push_back(m_objects.size() - 1);
 	m_startingLocs.push_back(obj.startingLoc);
+
+	m_objectsDiffuseProducts.push_back(glm::vec3(0.7, 0.7, 0.7));
+	m_objectsSpecularProducts.push_back(glm::vec3(0.8, 0.8, 0.8));
 
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
@@ -204,31 +204,31 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 	//find lighting uniforms
 	if (hasLighting) {
 		m_lightingStatus = true;
-		m_lightPos = m_shaders[i]->GetUniformLocation("lightPosition");
+		m_lightPos = m_shaders[i]->GetUniformLocation("lightPos");
 		if (m_lightPos == -1) {
-			printf("lightPosition not found\n");
+			printf("lightPos not found\n");
 			return false;
 		}
 
-		m_lightPos = m_shaders[i]->GetUniformLocation("lightPosition");
-		if (m_lightPos == -1) {
-			printf("lightPosition not found\n");
-			return false;
+		m_cameraPos = m_shaders[i]->GetUniformLocation("eyePos");
+		if (m_cameraPos == -1) {
+			printf("eyePos not found\n");
+			//return false;
 		}
 
-		m_ambientProduct = m_shaders[i]->GetUniformLocation("ambientProduct");
+		m_ambientProduct = m_shaders[i]->GetUniformLocation("ambientP");
 		if (m_ambientProduct == -1) {
 			printf("ambient product not found\n");
 			return false;
 		}
 
-		m_diffuseProduct = m_shaders[i]->GetUniformLocation("diffuseProduct");
+		m_diffuseProduct = m_shaders[i]->GetUniformLocation("diffuseP");
 		if (m_diffuseProduct == -1) {
 			printf("diffuse product not found\n");
 			return false;
 		}
 
-		m_specularProduct = m_shaders[i]->GetUniformLocation("specularProduct");
+		m_specularProduct = m_shaders[i]->GetUniformLocation("specularP");
 		if (m_specularProduct == -1) {
 			printf("specular product not found\n");
 			return false;
@@ -248,31 +248,25 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 
 void Graphics::Update(unsigned int dt) {
 	mbt_dynamicsWorld->stepSimulation(dt / 1000.f, 500);
-	//mbt_dynamicsWorld->stepSimulation(1.f / 60.f, 500);
 
-	for (int j = mbt_dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; --j) {
-		btCollisionObject * obj = mbt_dynamicsWorld->getCollisionObjectArray()[j];
-		btRigidBody * body = btRigidBody::upcast(obj);
-		btTransform trans;
-		if (body && body->getMotionState()) {
-			body->getMotionState()->getWorldTransform(trans);
-		} else {
-			trans = obj->getWorldTransform();
+	//update location and rotation of each object from bullet to openGL
+	for (Object * obj : m_objects) {
+		btRigidBody * body = obj->GetRigidBody();
+		if (body) {
+			btTransform trans;
+			if (body->getMotionState())
+				body->getMotionState()->getWorldTransform(trans);
+			else
+				printf("Error - body has not motionstate!\n");
+
+			obj->SetTranslation(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+			glm::vec3 newRotations;
+			trans.getRotation().getEulerZYX(newRotations.z, newRotations.y, newRotations.x);
+			obj->SetRotationAngles(newRotations);
 		}
 
-		for (Object * obj : m_objects) {
-			if (obj->GetRigidBody() == body) {
-				obj->SetTranslation(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-				glm::vec3 newRotations;
-				trans.getRotation().getEulerZYX(newRotations.z, newRotations.x, newRotations.y);
-				obj->SetRotationAngles(newRotations);
-			}
-		}
-	}
-
-	for (Object * obj : m_objects)
 		obj->Update();
-
+	}
 }
 
 bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -304,15 +298,17 @@ void Graphics::Render(void) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_objects[m_renderOrder[i]]->GetModel()));
 
 		if (m_lightingStatus) {
-			glm::vec3 kA(0, 0, 0), kD(0.5, 0.5, 0.5), kS(0.2, 0.2, 0.2);
-			float shininess = 0;
-			glm::vec3 lightPos = m_spotlightLoc - m_objects[m_renderOrder[i]]->GetTranslation();
+			UpdateSpotlightLoc();
+			glm::vec3 cameraPos = m_camera->GetEyePos();
+			glm::vec3 kD = m_objectsDiffuseProducts[m_renderOrder[i]];
+			glm::vec3 kS = m_objectsSpecularProducts[m_renderOrder[i]];
 
-			glUniform3f(m_lightPos, lightPos.x, lightPos.y, lightPos.z);
-			glUniform3f(m_ambientProduct, kA.x, kA.y, kA.z);
+			glUniform3f(m_lightPos, m_spotlightLoc.x, m_spotlightLoc.y, m_spotlightLoc.z);
+			glUniform3f(m_cameraPos, cameraPos.x, cameraPos.y, cameraPos.z);
+			glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
 			glUniform3f(m_diffuseProduct, kD.x, kD.y, kD.z);
 			glUniform3f(m_specularProduct, kS.x, kS.y, kS.z);
-			glUniform1f(m_shininess, m_shininess);
+			glUniform1f(m_shininess, 32);
 		}
 
 		m_objects[m_renderOrder[i]]->Render();
@@ -334,6 +330,25 @@ glm::vec3 Graphics::GetEyeLoc(void) const {
 	return m_camera->GetFocusPos();
 }
 
+void Graphics::SetAmbientLight(const glm::vec3 & change) {
+	m_ambientLevel += change;
+
+	//check bounds
+	if (m_ambientLevel.x < 0)
+		m_ambientLevel.x = 0;
+	if (m_ambientLevel.y < 0)
+		m_ambientLevel.y = 0;
+	if (m_ambientLevel.z < 0)
+		m_ambientLevel.z = 0;
+
+	if (m_ambientLevel.x > 1)
+		m_ambientLevel.x = 1;
+	if (m_ambientLevel.y > 1)
+		m_ambientLevel.y = 1;
+	if (m_ambientLevel.z > 1)
+		m_ambientLevel.z = 1;
+}
+
 std::string Graphics::ErrorString(const GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
@@ -348,3 +363,9 @@ std::string Graphics::ErrorString(const GLenum error) const {
 	else
 		return "None";
 }
+
+void Graphics::UpdateSpotlightLoc(void) {
+	m_spotlightLoc = m_objects[m_objCtr]->GetTranslation();
+	m_spotlightLoc.y += 8;
+}
+
