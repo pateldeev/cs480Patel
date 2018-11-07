@@ -16,7 +16,10 @@ public:
 
 private:
 	void AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction = 100);
-        void DrawDebug();
+        
+#if DEBUG
+	void DrawDebug(void);
+#endif
 };
 
 #endif /* BOARD_H */

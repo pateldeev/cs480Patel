@@ -9,6 +9,7 @@ Board::~Board(void) {
 }
 
 void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
+
 #if USE_COMPLEX_BOARD_MESH //use mesh
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 	//mbt_shape->setLocalScaling();
@@ -52,13 +53,14 @@ void Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & 
 	dynamicsWorld->addRigidBody(rigidBody);
 }
 
-//#if DEBUG
+#if DEBUG
+
 class GlDrawcallback: public btTriangleCallback {
 public:
 	bool m_wireframe;
 
 	GlDrawcallback() :
-			m_wireframe(true) {
+	m_wireframe(true) {
 	}
 
 	virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex) {
@@ -75,7 +77,7 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * 3, &verts[0], GL_STATIC_DRAW);
 		glGenBuffers(1, &IB);
 		glBindBuffer(GL_ARRAY_BUFFER, IB);
-		unsigned int indices[3] = { 1, 2, 3 };
+		unsigned int indices[3] = {1, 2, 3};
 		glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * 3, &indices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
@@ -88,9 +90,8 @@ public:
 		glDisableVertexAttribArray(0);
 	}
 };
-//#endif
 
-void Board::DrawDebug() {
+void Board::DrawDebug(void) {
 #if USE_COMPLEX_BOARD_MESH
 	btConcaveShape* concaveMesh = (btConcaveShape*)mbt_shape;
 	GlDrawcallback drawCallback;
@@ -101,3 +102,5 @@ void Board::DrawDebug() {
 	concaveMesh->processAllTriangles(&drawCallback, aabbMin, aabbMax);
 #endif
 }
+#endif
+

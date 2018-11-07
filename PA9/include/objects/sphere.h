@@ -12,7 +12,10 @@ public:
 
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
 private:
-        void DrawDebug(); 
+
+#if DEBUG
+        void DrawDebug(void); 
+#endif
 };
 
 #endif /* SPHERE_H */
