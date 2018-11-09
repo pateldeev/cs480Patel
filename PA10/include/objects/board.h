@@ -15,8 +15,10 @@ public:
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
 
 private:
+#if !USE_COMPLEX_BOARD_MESH
 	void AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction = 100);
-        
+#endif
+
 #if DEBUG
 	void DrawDebug(void);
 #endif

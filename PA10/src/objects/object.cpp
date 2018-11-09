@@ -81,15 +81,15 @@ void Object::Update(void) {
 
 #if 0
 	glm::mat4 rotationMat = glm::rotate((m_rotationAngles.x), glm::vec3(1.0, 0.0, 0.0)) * glm::rotate((m_rotationAngles.z), glm::vec3(0.0, 0.0, 1.0))
-			* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
+	* glm::rotate((m_rotationAngles.y), glm::vec3(0.0, 1.0, 0.0));
 
 	m_model = glm::translate(m_translation) * rotationMat * glm::scale(m_scale);
 #else
-    glm::mat4 translate = glm::translate(glm::mat4(1.0), m_translation);
-    glm::mat4 rotate = glm::mat4_cast(glm::quat(m_rotationAngles));
-    glm::mat4 scale = glm::scale(glm::mat4(1.0), m_scale);
+	glm::mat4 translate = glm::translate(glm::mat4(1.0), m_translation);
+	glm::mat4 rotate = glm::mat4_cast(glm::quat(m_rotationAngles));
+	glm::mat4 scale = glm::scale(glm::mat4(1.0), m_scale);
 
-    m_model = translate * rotate * scale;
+	m_model = translate * rotate * scale;
 #endif
 }
 
@@ -111,14 +111,14 @@ void Object::Render(void) {
 
 		glDrawElements(GL_TRIANGLES, m_indices[i].size(), GL_UNSIGNED_INT, 0);
 	}
-        
-        glDisableVertexAttribArray(0);
+
+	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        
-        #if DEBUG
-        DrawDebug();
-        #endif	
+	glEnableVertexAttribArray(2);
+
+#if DEBUG
+	DrawDebug();
+#endif	
 }
 
 glm::mat4 Object::GetModel(void) {
@@ -228,9 +228,9 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 
 					//load mesh into bullet
 					triArray[indexNum] = btVector3(tempVertex.x, tempVertex.y, tempVertex.z);
-					
+
 				}
-                                mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
+				mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
 			}
 
 			IB.resize(textureFiles.size());

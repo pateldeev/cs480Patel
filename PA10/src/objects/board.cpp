@@ -10,6 +10,8 @@ Board::~Board(void) {
 
 void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 
+	const float friction = 100;
+
 #if USE_COMPLEX_BOARD_MESH //use mesh
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 	//mbt_shape->setLocalScaling();
@@ -20,28 +22,27 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
-	//shapeRigidBodyCI.m_friction = 000;
-	//shapeRigidBodyCI.m_rollingFriction = 000;
-	//shapeRigidBodyCI.m_spinningFriction = 000;
+	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
 
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 
 #else //use plane colliders
 	//bottom floor
-	AddPlane(dynamicsWorld, btVector3(0, 1, 0), btScalar(0));
+	AddPlane(dynamicsWorld, btVector3(0, 1, 0), btScalar(0), friction);
 
 	//side walls
-	AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(-36));
-	AddPlane(dynamicsWorld, btVector3(-1, 0, 0), btScalar(-38));
-	AddPlane(dynamicsWorld, btVector3(0, 0, 1), btScalar(-19));
-	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-20));
+	AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(-36), friction);
+	AddPlane(dynamicsWorld, btVector3(-1, 0, 0), btScalar(-38), friction);
+	AddPlane(dynamicsWorld, btVector3(0, 0, 1), btScalar(-19), friction);
+	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-20)), friction;
 
 	//top
 	AddPlane(dynamicsWorld, btVector3(0, -1, 0), btScalar(-15));
 #endif
 }
 
+#if !USE_COMPLEX_BOARD_MESH
 void Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction) {
 	btCollisionShape * shape = new btStaticPlaneShape(normal, offset);
 	btDefaultMotionState * motionState = new btDefaultMotionState();
@@ -52,6 +53,7 @@ void Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & 
 	btRigidBody * rigidBody = new btRigidBody(rigidBodyCI);
 	dynamicsWorld->addRigidBody(rigidBody);
 }
+#endif
 
 #if DEBUG
 
