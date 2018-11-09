@@ -228,8 +228,9 @@ bool Object::loadObjAssimp(const std::string & objFile) {
 
 					//load mesh into bullet
 					triArray[indexNum] = btVector3(tempVertex.x, tempVertex.y, tempVertex.z);
-					mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
+					
 				}
+                                mbt_mesh->addTriangle(triArray[0], triArray[1], triArray[2]);
 			}
 
 			IB.resize(textureFiles.size());
