@@ -71,11 +71,24 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 
-	//add objects from configuration file
-	objectModel obj;
-	while (m_configFile.getObject(obj)) {
-		m_graphics->AddObject(obj, obj.name == "Ball");
+	//get lighting info
+	glm::vec3 ambientLevel;
+	float shininess;
+	std::vector < glm::vec3 > spotlightLocs;
+	if (!m_configFile.getLightingInfo(ambientLevel, shininess, spotlightLocs)) {
+		printf("Could not get lighting info from configuration file \n");
+		return false;
 	}
+	m_graphics->InitializeLighting(ambientLevel, shininess);
+
+	//add objects from configuration file
+	std::vector < objectModel > objects;
+	if (!m_configFile.getObjects(objects)) {
+		printf("Could not get objects from configuration file \n");
+		return false;
+	}
+	for (const objectModel & obj : objects)
+		m_graphics->AddObject(obj, obj.name == "Ball");
 
 	//Start the menu if necessary
 	if (menu)

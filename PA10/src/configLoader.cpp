@@ -137,56 +137,105 @@ bool ConfigFileParser::getWorldGravity(glm::vec3 & gravity) {
 	return true;
 }
 
-bool ConfigFileParser::getObject(objectModel & obj) {
-	if (m_fileBuffer.eof() || m_fileBuffer.peek() != 'O')
-		return false; //return false if there is no object to parse
-
+bool ConfigFileParser::getLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs) {
+	spotlightLocs.clear();
 	std::string varName;
 	float values[3];
 
-	//get name
-	if (!parseLine < std::string > (varName, &obj.name) || varName.compare("OBJ_NAME")) {
-		printf("Could not get object name from config file \n");
+	//get ambient level
+	if (!parseLine<float, 3>(varName, values) || varName.compare("AMBIENT_LEVEL")) {
+		printf("Could not get ambient level from config file \n");
+		return false;
+	}
+	ambientLevel = glm::vec3(values[0], values[1], values[2]);
+
+	//get shininess
+	if (!parseLine<float>(varName, &shininess) || varName.compare("SHININESS")) {
+		printf("Could not get specular shininess level from config file \n");
 		return false;
 	}
 
-	//get type
-	if (!parseLine < std::string > (varName, &obj.btType) || varName.compare("BT_TYPE")) {
-		printf("Could not get object type from config file \n");
-		return false;
+	//get spotlight locations
+	while (!m_fileBuffer.eof() && m_fileBuffer.peek() == 'S') {
+		//get location
+		if (!parseLine<float, 3>(varName, values) || varName.compare("SPOTLIGHT")) {
+			printf("Could not get spolight location from config file \n");
+			return false;
+		}
+		spotlightLocs.push_back(glm::vec3(values[0], values[1], values[2]));
 	}
 
-	//get obj file name
-	if (!parseLine < std::string > (varName, &obj.objFile) || varName.compare("OBJ_FILE")) {
-		printf("Could not get object name from config file \n");
-		return false;
+	return true;
+}
+
+bool ConfigFileParser::getObjects(std::vector<objectModel> & objects) {
+	objects.clear();
+	std::string varName;
+	float values[3];
+	objectModel obj;
+
+	while (!m_fileBuffer.eof() && m_fileBuffer.peek() == 'O') {
+		//get name
+		if (!parseLine < std::string > (varName, &obj.name) || varName.compare("OBJ_NAME")) {
+			printf("Could not get object name from config file \n");
+			return false;
+		}
+
+		//get type
+		if (!parseLine < std::string > (varName, &obj.btType) || varName.compare("BT_TYPE")) {
+			printf("Could not get object type from config file \n");
+			return false;
+		}
+
+		//get obj file name
+		if (!parseLine < std::string > (varName, &obj.objFile) || varName.compare("OBJ_FILE")) {
+			printf("Could not get object name from config file \n");
+			return false;
+		}
+
+		//get starting location
+		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_STARTING_LOC")) {
+			printf("Could not get object starting location from config file \n");
+			return false;
+		}
+		obj.startingLoc = glm::vec3(values[0], values[1], values[2]);
+
+		//get scale
+		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_SCALE")) {
+			printf("Could not get object scale from config file \n");
+			return false;
+		}
+		obj.scale = glm::vec3(values[0], values[1], values[2]);
+
+		//get rotation
+		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_ROTATION")) {
+			printf("Could not get object rotation from config file \n");
+			return false;
+		}
+		obj.rotation = glm::vec3(values[0], values[1], values[2]);
+
+		//get mass
+		if (!parseLine<unsigned int>(varName, &obj.mass) || varName.compare("OBJ_MASS")) {
+			printf("Could not get bullet object mass from config file \n");
+			return false;
+		}
+
+		//get diffuse product for lighting
+		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_DIFFUSE")) {
+			printf("Could not get diffuse products from config file \n");
+			return false;
+		}
+		obj.diffuseProduct = glm::vec3(values[0], values[1], values[2]);
+
+		//get specular product for lighting
+		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_SPECULAR")) {
+			printf("Could not get specular products from config file \n");
+			return false;
+		}
+		obj.specularProduct = glm::vec3(values[0], values[1], values[2]);
+
+		objects.push_back(obj);
 	}
 
-	//get starting location
-	if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_STARTING_LOC")) {
-		printf("Could not get object starting location from config file \n");
-		return false;
-	}
-	obj.startingLoc = glm::vec3(values[0], values[1], values[2]);
-
-	//get scale
-	if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_SCALE")) {
-		printf("Could not get object scale from config file \n");
-		return false;
-	}
-	obj.scale = glm::vec3(values[0], values[1], values[2]);
-
-	//get rotation
-	if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_ROTATION")) {
-		printf("Could not get object rotation from config file \n");
-		return false;
-	}
-	obj.rotation = glm::vec3(values[0], values[1], values[2]);
-
-	//get mass
-	if (!parseLine<unsigned int>(varName, &obj.mass) || varName.compare("OBJ_MASS")) {
-		printf("Could not get bullet object mass from config file \n");
-		return false;
-	}
 	return true;
 }

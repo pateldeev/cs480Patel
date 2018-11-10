@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include <sstream>
+#include <vector>
 
 //holds data related to each object
 struct objectModel {
@@ -14,6 +15,8 @@ struct objectModel {
 	glm::vec3 scale;
 	glm::vec3 rotation;
 	unsigned int mass;
+	glm::vec3 diffuseProduct;
+	glm::vec3 specularProduct;
 };
 
 //class to parse configuration file of paramters
@@ -32,10 +35,12 @@ public:
 	bool getShaderSetActive(std::string & set);
 
 	bool getMenuState(bool & menu, glm::uvec2 & size);
-	
+
 	bool getWorldGravity(glm::vec3 & gravity);
 
-	bool getObject(objectModel & obj);
+	bool getLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs);
+
+	bool getObjects(std::vector<objectModel> & objects);
 
 private:
 	std::stringstream m_fileBuffer;
@@ -73,6 +78,5 @@ private:
 		return true;
 	}
 };
-
 
 #endif /* CONFIGLOADER_HPP */

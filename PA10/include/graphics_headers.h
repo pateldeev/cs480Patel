@@ -21,7 +21,7 @@
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 
-struct Vertex {
+typedef struct Vertex{
 	glm::vec3 m_vertex;
 	glm::vec3 m_normal;
 	glm::vec2 m_texture;
@@ -29,8 +29,6 @@ struct Vertex {
 	Vertex(const glm::vec3 & vertex, const glm::vec3 & normal, const glm::vec2 & texture) :
 			m_vertex(vertex), m_normal(normal), m_texture(texture) {
 	}
-};
-
-#include <iostream>
+} Vertex;
 
 #endif /* GRAPHICS_HEADERS_H */

@@ -133,18 +133,24 @@ void Object::SetTranslation(const glm::vec3 & translation) {
 	m_translation = translation;
 }
 
-void Object::ResetBt(const glm::vec3 & loc) {
+void Object::ResetBt(const glm::vec3 & loc, const glm::vec3 & rotation) {
 	if (mbt_rigidBody) {
-		btTransform currentTransform;
-		mbt_rigidBody->getMotionState()->getWorldTransform(currentTransform);
+		//update translation and rotation
+		btTransform transform;
+		btMotionState * motionState = mbt_rigidBody->getMotionState();
+		motionState->getWorldTransform(transform);
+		transform.setOrigin(btVector3(loc.x, loc.y, loc.z));
+		transform.setRotation(btQuaternion(rotation.z, rotation.y, rotation.x));
+		motionState->setWorldTransform(transform);
+		mbt_rigidBody->setMotionState(motionState);
 
-		btVector3 trans = btVector3(loc.x, loc.y, loc.z) - currentTransform.getOrigin();
-		mbt_rigidBody->translate(trans);
-
+		//clear any forces/movments
 		mbt_rigidBody->clearForces();
 		mbt_rigidBody->setLinearVelocity(btVector3(0, 0, 0));
 		mbt_rigidBody->setAngularVelocity(btVector3(0, 0, 0));
 	}
+	SetTranslation(loc);
+	SetRotationAngles(rotation);
 }
 
 glm::vec3 Object::GetRotationAngles(void) const {
@@ -247,7 +253,7 @@ void Object::loadTextures(const std::string & objFile, const std::vector<aiStrin
 	Magick::Image * img;
 	std::string fileNameStart = "";
 
-//get leading information on filename
+	//get leading information on filename
 	std::size_t tempPos = objFile.find_last_of('/');
 	if (tempPos != std::string::npos)
 		fileNameStart = objFile.substr(0, tempPos + 1);

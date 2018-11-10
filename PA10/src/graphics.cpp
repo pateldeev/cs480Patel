@@ -2,7 +2,8 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_lightingStatus(false), m_ambientLevel(0.1, 0.1, 0.1), m_spotlightLoc(0, 0, 0), m_spotLightHeight(6), m_objCtr(-1) {
+				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_objCtr(-1) {
+	m_spotlightLocs.resize(1);
 }
 
 Graphics::~Graphics(void) {
@@ -85,6 +86,13 @@ bool Graphics::InitializeBt(const glm::vec3 & gravity) {
 	return true;
 }
 
+bool Graphics::InitializeLighting(const glm::vec3 & ambientLevel, const float shininess) {
+	m_ambientLevel = ambientLevel;
+	m_shininessConst = shininess;
+
+	return true;
+}
+
 void Graphics::AddObject(const objectModel & obj, bool control) {
 	//create appropriate type of object
 	if (obj.btType == "SphereDynamic") {
@@ -99,23 +107,26 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 		printf("Unknown bt object type: %s", obj.btType.c_str());
 		return;
 	}
+
+	//store object properties
 	m_renderOrder.push_back(m_objects.size() - 1);
 	m_startingLocs.push_back(obj.startingLoc);
+	m_startingRotations.push_back(obj.rotation);
+	m_objectsDiffuseProducts.push_back(obj.diffuseProduct);
+	m_objectsSpecularProducts.push_back(obj.specularProduct);
 
-	m_objectsDiffuseProducts.push_back(glm::vec3(0.8, 0.8, 0.8));
-	m_objectsSpecularProducts.push_back(glm::vec3(0.7, 0.7, 0.7));
-
+	//enable bullet on object
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
-	if (control)
+	if (control) {
 		m_objCtr = m_objects.size() - 1;
+		m_spotlightLocs[0] = obj.startingLoc;
+	}
 }
 
 void Graphics::ResetObjects(void) {
-	for (unsigned int i = 0; i < m_objects.size(); ++i) {
-		m_objects[i]->ResetBt(m_startingLocs[i]);
-		m_objects[i]->SetTranslation(m_startingLocs[i]);
-	}
+	for (unsigned int i = 0; i < m_objects.size(); ++i)
+		m_objects[i]->ResetBt(m_startingLocs[i], m_startingRotations[i]);
 }
 
 void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
@@ -296,21 +307,22 @@ void Graphics::Render(void) {
 	for (unsigned int i = 0; i < m_renderOrder.size(); ++i) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_objects[m_renderOrder[i]]->GetModel()));
 
+		//add lighting varibles/uniforms to shaders if needed
 		if (m_lightingStatus) {
-			UpdateSpotlightLoc();
+			UpdateBallSpotlight();
 			glm::vec3 cameraPos = m_camera->GetEyePos();
 			glm::vec3 kD = m_objectsDiffuseProducts[m_renderOrder[i]];
 			glm::vec3 kS = m_objectsSpecularProducts[m_renderOrder[i]];
 
-			glUniform3f(m_lightPos, m_spotlightLoc.x, m_spotlightLoc.y, m_spotlightLoc.z);
+			glUniform3f(m_lightPos, m_spotlightLocs[0].x, m_spotlightLocs[0].y, m_spotlightLocs[0].z);
 			glUniform3f(m_cameraPos, cameraPos.x, cameraPos.y, cameraPos.z);
 			glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
 			glUniform3f(m_diffuseProduct, kD.x, kD.y, kD.z);
 			glUniform3f(m_specularProduct, kS.x, kS.y, kS.z);
-			glUniform1f(m_shininess, 32);
+			glUniform1f(m_shininess, m_shininessConst);
 		}
 
-		m_objects[m_renderOrder[i]]->Render();
+		m_objects[m_renderOrder[i]]->Render(); //render object
 	}
 
 	//Get any errors from OpenGL
@@ -411,50 +423,46 @@ std::string Graphics::ErrorString(const GLenum error) const {
 		return "None";
 }
 
-void Graphics::UpdateSpotlightLoc(void) {
-	m_spotlightLoc = m_objects[m_objCtr]->GetTranslation();
-	m_spotlightLoc.y += m_spotLightHeight;
+void Graphics::UpdateBallSpotlight(void) {
+	m_spotlightLocs[0] = m_objects[m_objCtr]->GetTranslation();
+	m_spotlightLocs[0].y += m_spotLightHeight;
 }
 
 void Graphics::IncreaseEyePosX(float moveAmount) {
-	glm::vec3 newEyePos;
-	newEyePos = GetEyePos();
-	newEyePos.x = newEyePos.x + moveAmount;
+	glm::vec3 newEyePos = GetEyePos();
+	newEyePos.x += moveAmount;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 
 }
 
 void Graphics::DecreaseEyePosX(float moveAmount) {
-	glm::vec3 newEyePos;
-	newEyePos = GetEyePos();
-	newEyePos.x = newEyePos.x - moveAmount;
+	glm::vec3 newEyePos = GetEyePos();
+	newEyePos.x -= moveAmount;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
 void Graphics::IncreaseEyePosZ(float moveAmount) {
-	glm::vec3 newEyePos;
-	newEyePos = GetEyePos();
-	newEyePos.z = newEyePos.z - moveAmount;
+	glm::vec3 newEyePos = GetEyePos();
+	newEyePos.z -= moveAmount;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
 void Graphics::DecreaseEyePosZ(float moveAmount) {
-	glm::vec3 newEyePos;
-	newEyePos = GetEyePos();
-	newEyePos.z = newEyePos.z + moveAmount;
+	glm::vec3 newEyePos = GetEyePos();
+	newEyePos.z += moveAmount;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
 void Graphics::ZoomIn(float moveAmount) {
-	glm::vec3 newEyePos;
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
-	newEyePos = GetEyePos() + moveVector;
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	newEyePos += moveVector;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
 void Graphics::ZoomOut(float moveAmount) {
-	glm::vec3 newEyePos;
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - GetEyePos());
-	newEyePos = GetEyePos() - moveVector;
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	newEyePos -= -moveVector;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
