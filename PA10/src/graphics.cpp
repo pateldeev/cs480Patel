@@ -314,7 +314,12 @@ void Graphics::Render(void) {
 			glm::vec3 kD = m_objectsDiffuseProducts[m_renderOrder[i]];
 			glm::vec3 kS = m_objectsSpecularProducts[m_renderOrder[i]];
 
-			glUniform3f(m_lightPos, m_spotlightLocs[0].x, m_spotlightLocs[0].y, m_spotlightLocs[0].z);
+		    glm::vec3 pointLightPositions[] = {
+		    		m_spotlightLocs.at(0), m_spotlightLocs.at(1), m_spotlightLocs.at(2)
+		    };
+			
+			//glUniform3f(m_lightPos, m_spotlightLocs[0].x, m_spotlightLocs[0].y, m_spotlightLocs[0].z);
+	        glUniform3fv(m_lightPos, 3, glm::value_ptr(pointLightPositions[0]));
 			glUniform3f(m_cameraPos, cameraPos.x, cameraPos.y, cameraPos.z);
 			glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
 			glUniform3f(m_diffuseProduct, kD.x, kD.y, kD.z);
@@ -406,6 +411,11 @@ void Graphics::SetSpecularofBall(const glm::vec3 & change) {
 
 void Graphics::SetSpotlightHeight(float change) {
 	m_spotLightHeight += change;
+}
+
+void Graphics::AddSpotLight(const glm::vec3 & location){
+	m_spotlightLocs.push_back(location);
+	m_spotlightLocs.back().y += m_spotLightHeight;
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {

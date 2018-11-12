@@ -57,6 +57,8 @@ public:
 	void SetDiffuseofBall(const glm::vec3 & change);
 	void SetSpecularofBall(const glm::vec3 & change);
 	void SetSpotlightHeight(float change);
+	
+	void AddSpotLight(const glm::vec3 & location);
 
 private:
 	std::string ErrorString(const GLenum error) const;

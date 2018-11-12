@@ -80,6 +80,8 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 	m_graphics->InitializeLighting(ambientLevel, shininess);
+	for(const glm::vec3 & loc : spotlightLocs)
+		m_graphics->AddSpotLight(loc);
 
 	//add objects from configuration file
 	std::vector < objectModel > objects;

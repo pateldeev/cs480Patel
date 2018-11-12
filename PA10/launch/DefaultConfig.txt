@@ -32,11 +32,11 @@ MENU_SIZE=400,600
 #For bullet
 WORLD_GRAVITY=0,-20,0
 
-#For lighting - add any number of fixed spotlights in addition to one that follows ball
-AMBIENT_LEVEL=0.1,0.1,0.1
+#For lighting - add 2 spotlights in addition to one that follows ball
+AMBIENT_LEVEL=0.5,0.5,0.5
 SHININESS=32
-SPOTLIGHT=0,0,0
-SPOTLIGHT=-10,5,-10
+SPOTLIGHT=15,0,15
+SPOTLIGHT=-20,0,10
 
 
 #Objects to load
