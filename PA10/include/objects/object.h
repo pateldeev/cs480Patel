@@ -79,5 +79,6 @@ private:
 #include "objects/cube.h"
 #include "objects/cylinder.h"
 #include "objects/sphere.h"
+#include "objects/complex.h"
 
 #endif /* OBJECT_H */

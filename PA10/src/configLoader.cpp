@@ -181,6 +181,13 @@ bool ConfigFileParser::getObjects(std::vector<objectModel> & objects) {
 			return false;
 		}
 
+		//get scale for all objects
+		float scaleFactor;
+		if (!parseLine < float > (varName, &scaleFactor) || varName.compare("SCALE_FACTOR")) {
+			printf("Could not get object scale from config file \n");
+			return false;
+		}
+
 		//get type
 		if (!parseLine < std::string > (varName, &obj.btType) || varName.compare("BT_TYPE")) {
 			printf("Could not get object type from config file \n");
@@ -199,13 +206,15 @@ bool ConfigFileParser::getObjects(std::vector<objectModel> & objects) {
 			return false;
 		}
 		obj.startingLoc = glm::vec3(values[0], values[1], values[2]);
-
+		obj.startingLoc *= scaleFactor;
+		
 		//get scale
 		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_SCALE")) {
 			printf("Could not get object scale from config file \n");
 			return false;
 		}
 		obj.scale = glm::vec3(values[0], values[1], values[2]);
+		obj.scale *= scaleFactor;
 
 		//get rotation
 		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_ROTATION")) {

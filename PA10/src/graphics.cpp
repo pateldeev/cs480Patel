@@ -99,10 +99,12 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 		m_objects.push_back(new Sphere(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else if (obj.btType == "CubeDynamic") {
 		m_objects.push_back(new Cube(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
-	} else if (obj.btType == "MeshStatic") {
+	} else if (obj.btType == "Board") {
 		m_objects.push_back(new Board(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else if (obj.btType == "CylinderStatic") {
 		m_objects.push_back(new Cylinder(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
+	} else if (obj.btType == "ComplexStatic") {
+		m_objects.push_back(new Complex(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else {
 		printf("Unknown bt object type: %s", obj.btType.c_str());
 		return;
@@ -314,12 +316,10 @@ void Graphics::Render(void) {
 			glm::vec3 kD = m_objectsDiffuseProducts[m_renderOrder[i]];
 			glm::vec3 kS = m_objectsSpecularProducts[m_renderOrder[i]];
 
-		    glm::vec3 pointLightPositions[] = {
-		    		m_spotlightLocs.at(0), m_spotlightLocs.at(1), m_spotlightLocs.at(2)
-		    };
-			
+			glm::vec3 pointLightPositions[] = { m_spotlightLocs.at(0), m_spotlightLocs.at(1), m_spotlightLocs.at(2) };
+
 			//glUniform3f(m_lightPos, m_spotlightLocs[0].x, m_spotlightLocs[0].y, m_spotlightLocs[0].z);
-	        glUniform3fv(m_lightPos, 3, glm::value_ptr(pointLightPositions[0]));
+			glUniform3fv(m_lightPos, 3, glm::value_ptr(pointLightPositions[0]));
 			glUniform3f(m_cameraPos, cameraPos.x, cameraPos.y, cameraPos.z);
 			glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
 			glUniform3f(m_diffuseProduct, kD.x, kD.y, kD.z);
@@ -413,7 +413,7 @@ void Graphics::SetSpotlightHeight(float change) {
 	m_spotLightHeight += change;
 }
 
-void Graphics::AddSpotLight(const glm::vec3 & location){
+void Graphics::AddSpotLight(const glm::vec3 & location) {
 	m_spotlightLocs.push_back(location);
 	m_spotlightLocs.back().y += m_spotLightHeight;
 }
