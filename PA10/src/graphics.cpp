@@ -473,6 +473,6 @@ void Graphics::ZoomIn(float moveAmount) {
 void Graphics::ZoomOut(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
 	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
-	newEyePos -= -moveVector;
+	newEyePos -= moveVector;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }

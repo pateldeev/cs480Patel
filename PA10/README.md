@@ -30,23 +30,20 @@ mkdir build
 cd build
 cmake ..
 make
-./PA09
+./Pinball
 ```
 
 Full Usage with all variables
 ```bash
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_COMPLEX_BOARD_MESH=OFF
+cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_COMPLEX_BOARD_MESH=On
 make
-./PA09 -l launch/DefaultConfig.txt
+./Pinball -l launch/DefaultConfig.txt
 ```
 
 ## General Comments
 This project lighting as required. By default, fragment lighting is done. Vertex lighting can be enabled by the 'v' key. However in vertex lighting, the spotlight isn't really visible on the floor as it doesn't actually hit any verticies. You can also change the ambient light of the entire world and the specular and diffuse components of the ball. See the Controls section
-
-## Collision Shapes
-All collisions are done via basic collision shapes (plane, sphere, cylinder, cube). We tried to add complex shapes, but it resulted in very choppy motion. You can make the version that loads the full triangles meshes into bullet by using the '-DUSE_COMPLEX_BOARD_MESH=ON' CMake flag. However, we need to find a way to make the meshes smoother for this to work in the future.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
