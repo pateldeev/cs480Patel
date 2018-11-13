@@ -80,7 +80,7 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 	m_graphics->InitializeLighting(ambientLevel, shininess);
-	for(const glm::vec3 & loc : spotlightLocs)
+	for (const glm::vec3 & loc : spotlightLocs)
 		m_graphics->AddSpotLight(loc);
 
 	//add objects from configuration file
@@ -90,7 +90,13 @@ bool Engine::Initialize(void) {
 		return false;
 	}
 	for (const objectModel & obj : objects)
-		m_graphics->AddObject(obj, obj.name == "Ball");
+		m_graphics->AddObject(obj);
+
+	//check if all main objects are loaded
+	if (!m_graphics->VerifyObjects()) {
+		printf("Not all objects were loaded. Check configuration file!");
+		return false;
+	}
 
 	//Start the menu if necessary
 	if (menu)
@@ -188,7 +194,7 @@ void Engine::EventChecker(void) {
 					|| m_event.key.keysym.sym == SDLK_DOWN || m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i
 					|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v
 					|| m_event.key.keysym.sym == SDLK_m || m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z
-					|| m_event.key.keysym.sym == SDLK_x)
+					|| m_event.key.keysym.sym == SDLK_x || m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h)
 				HandleEvent(m_event);
 			else
 				m_menu->HandleEvent(m_event);
@@ -213,7 +219,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_d)
 			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
 		else if (event.key.keysym.sym == SDLK_r)
-			m_graphics->ResetObjects();
+			m_graphics->ResetBall();
 		else if (event.key.keysym.sym == SDLK_EQUALS)
 			m_graphics->SetAmbientLight(glm::vec3(0.03, 0.03, 0.03));
 		else if (event.key.keysym.sym == SDLK_MINUS)
@@ -242,6 +248,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->UseShaderSet("fragmentLighting");
 		else if (event.key.keysym.sym == SDLK_v)
 			m_graphics->UseShaderSet("vertexLighting");
+		else if (event.key.keysym.sym == SDLK_h)
+			m_graphics->MovePaddleR();
 	}
 }
 

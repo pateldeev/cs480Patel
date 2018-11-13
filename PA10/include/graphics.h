@@ -25,14 +25,17 @@ public:
 
 	void Update(unsigned int dt);
 
-	void AddObject(const objectModel & obj, bool control = false);
-	void ResetObjects(void);
+	void AddObject(const objectModel & obj);
+	bool VerifyObjects(void) const; //function to verify all pinball objects are in place
+	void ResetBall(void);
 
-	//to control impulse of objects
-	void ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply impulse to object being controlled
-	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to object being controlled
-	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
-	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to object being controlled
+	//to control impulse of ball
+	void ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply impulse to ball
+	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to ball
+	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
+	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
+	
+	void MovePaddleR(void);
 
 	//for movement for camera
 	void IncreaseEyePosX(float moveAmount);
@@ -90,7 +93,9 @@ private:
 	void UpdateBallSpotlight(void); //update spotlight to be above following object
 
 	std::vector<Object *> m_objects;
-	int m_objCtr; //index of object being controlled by user input
+	int m_ball; //index of object being controlled by user input
+	int m_paddleR; //index of right paddles object
+	int m_paddleL; //index of left paddles object
 	std::vector<unsigned int> m_renderOrder;
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
 	std::vector<glm::vec3> m_startingRotations; //starting locations of objects

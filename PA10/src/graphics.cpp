@@ -2,7 +2,8 @@
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
-				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_objCtr(-1) {
+				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
+				-1), m_paddleL(-1) {
 	m_spotlightLocs.resize(1);
 }
 
@@ -93,7 +94,7 @@ bool Graphics::InitializeLighting(const glm::vec3 & ambientLevel, const float sh
 	return true;
 }
 
-void Graphics::AddObject(const objectModel & obj, bool control) {
+void Graphics::AddObject(const objectModel & obj) {
 	//create appropriate type of object
 	if (obj.btType == "SphereDynamic") {
 		m_objects.push_back(new Sphere(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
@@ -103,7 +104,9 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 		m_objects.push_back(new Board(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else if (obj.btType == "CylinderStatic") {
 		m_objects.push_back(new Cylinder(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
-	} else if (obj.btType == "ComplexStatic") {
+	} else if (obj.btType == "Paddle") {
+		m_objects.push_back(new Paddle(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
+	} else if (obj.btType == "Complex") {
 		m_objects.push_back(new Complex(obj.objFile, obj.startingLoc, obj.rotation, obj.scale));
 	} else {
 		printf("Unknown bt object type: %s", obj.btType.c_str());
@@ -120,31 +123,57 @@ void Graphics::AddObject(const objectModel & obj, bool control) {
 	//enable bullet on object
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
-	if (control) {
-		m_objCtr = m_objects.size() - 1;
+	if (obj.name == "Ball") {
+		m_ball = m_objects.size() - 1;
 		m_spotlightLocs[0] = obj.startingLoc;
+	} else if (obj.name == "Paddle_Right") {
+		m_paddleR = m_objects.size() - 1;
+	} else if (obj.name == "Paddle_Left") {
+		m_paddleL = m_objects.size() - 1;
 	}
 }
 
-void Graphics::ResetObjects(void) {
-	for (unsigned int i = 0; i < m_objects.size(); ++i)
-		m_objects[i]->ResetBt(m_startingLocs[i], m_startingRotations[i]);
+bool Graphics::VerifyObjects(void) const {
+	//check if ball is present
+	if (m_ball < 0) {
+		printf("No Ball object found!");
+		return false;
+	}
+	//check if paddles are present
+	if (m_paddleR < 0) {
+		printf("No Paddle_Right object found!");
+		return false;
+	}
+	if (m_paddleL < 0) {
+		printf("No Paddle_Left object found!");
+		return false;
+	}
+
+	return true;
+}
+
+void Graphics::ResetBall(void) {
+	m_objects[m_ball]->ResetBt(m_startingLocs[m_ball], m_startingRotations[m_ball]);
 }
 
 void Graphics::ApplyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin) {
-	m_objects[m_objCtr]->applyImpulse(impulse, spin);
-}
-
-void Graphics::SetLinearVelocity(const glm::vec3 & vel, bool accumulate) {
-	m_objects[m_objCtr]->setLinearVelocity(vel, accumulate);
-}
-
-void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
-	m_objects[m_objCtr]->setAngularVelocity(vel, accumulate);
+	m_objects[m_ball]->applyImpulse(impulse, spin);
 }
 
 void Graphics::ApplyForce(const glm::vec3 & force, const glm::vec3 & spin) {
-	m_objects[m_objCtr]->applyForce(force, spin);
+	m_objects[m_ball]->applyForce(force, spin);
+}
+
+void Graphics::SetLinearVelocity(const glm::vec3 & vel, bool accumulate) {
+	m_objects[m_ball]->setLinearVelocity(vel, accumulate);
+}
+
+void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
+	m_objects[m_ball]->setAngularVelocity(vel, accumulate);
+}
+
+void Graphics::MovePaddleR(void) {
+	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
 }
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -367,7 +396,7 @@ void Graphics::SetAmbientLight(const glm::vec3 & change) {
 }
 
 void Graphics::SetDiffuseofBall(const glm::vec3 & change) {
-	glm::vec3 temp = m_objectsDiffuseProducts[m_objCtr] + change;
+	glm::vec3 temp = m_objectsDiffuseProducts[m_ball] + change;
 
 	//check bounds
 	if (temp.x < 0)
@@ -385,11 +414,11 @@ void Graphics::SetDiffuseofBall(const glm::vec3 & change) {
 	else if (temp.z > 1)
 		temp.z = 1;
 
-	m_objectsDiffuseProducts[m_objCtr] = temp;
+	m_objectsDiffuseProducts[m_ball] = temp;
 }
 
 void Graphics::SetSpecularofBall(const glm::vec3 & change) {
-	glm::vec3 temp = m_objectsSpecularProducts[m_objCtr] + change;
+	glm::vec3 temp = m_objectsSpecularProducts[m_ball] + change;
 
 	//check bounds
 	if (temp.x < 0)
@@ -406,7 +435,7 @@ void Graphics::SetSpecularofBall(const glm::vec3 & change) {
 		temp.z = 0;
 	else if (temp.z > 1)
 		temp.z = 1;
-	m_objectsSpecularProducts[m_objCtr] = temp;
+	m_objectsSpecularProducts[m_ball] = temp;
 }
 
 void Graphics::SetSpotlightHeight(float change) {
@@ -434,7 +463,7 @@ std::string Graphics::ErrorString(const GLenum error) const {
 }
 
 void Graphics::UpdateBallSpotlight(void) {
-	m_spotlightLocs[0] = m_objects[m_objCtr]->GetTranslation();
+	m_spotlightLocs[0] = m_objects[m_ball]->GetTranslation();
 	m_spotlightLocs[0].y += m_spotLightHeight;
 }
 

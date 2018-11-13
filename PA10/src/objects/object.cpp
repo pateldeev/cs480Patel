@@ -55,6 +55,13 @@ void Object::applyForce(const glm::vec3 & force, const glm::vec3 & spin) {
 		printf("Object is not a bullet object. Cannot apply force!\n");
 }
 
+void Object::applyTorque(const glm::vec3 & torque) {
+	if (mbt_rigidBody)
+		mbt_rigidBody->applyTorque(btVector3(torque.x, torque.y, torque.z));
+	else
+		printf("Object is not a bullet object. Cannot apply torque!\n");
+}
+
 void Object::setLinearVelocity(const glm::vec3 & vel, bool accumulate) {
 	btVector3 newVel(vel.x, vel.y, vel.z);
 	if (accumulate)
@@ -140,7 +147,7 @@ void Object::ResetBt(const glm::vec3 & loc, const glm::vec3 & rotation) {
 		btMotionState * motionState = mbt_rigidBody->getMotionState();
 		motionState->getWorldTransform(transform);
 		transform.setOrigin(btVector3(loc.x, loc.y, loc.z));
-		transform.setRotation(btQuaternion(rotation.z, rotation.y, rotation.x));
+		transform.setRotation(btQuaternion(rotation.y, rotation.z, rotation.x)); //yzx //zyx
 		motionState->setWorldTransform(transform);
 		mbt_rigidBody->setMotionState(motionState);
 

@@ -9,6 +9,8 @@ Sphere::~Sphere(void) {
 }
 
 void Sphere::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
+	const float friction = 1;
+
 	mbt_shape = new btSphereShape(btScalar((m_scale.x + m_scale.y + m_scale.z) / 3));
 
 	btQuaternion startRotations;
@@ -20,6 +22,8 @@ void Sphere::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 	mbt_shape->calculateLocalInertia(mass, inertia);
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, mbt_shape, inertia);
+	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
+
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 

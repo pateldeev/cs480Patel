@@ -9,8 +9,7 @@ Complex::~Complex(void) {
 }
 
 void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
-
-	const float friction = 100;
+	const float friction = 1;
 
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 
@@ -19,15 +18,16 @@ void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mas
 	btTransform startTransform(startRotations, btVector3(m_translation.x, m_translation.y, m_translation.z));
 	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
 
-	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(0), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
+	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(mass), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
 	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
 
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
+
+	mbt_rigidBody->setSleepingThresholds(0, 0);
 }
 
 #if DEBUG
-
 class GlDrawcallback: public btTriangleCallback {
 public:
 	bool m_wireframe;

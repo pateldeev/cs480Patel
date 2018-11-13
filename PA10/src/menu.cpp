@@ -45,7 +45,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	ImGui::SetNextWindowSize(ImVec2((m_menuSize.y) > 25 ? m_menuSize.y - 25 : 0, (m_menuSize.x) > 25 ? m_menuSize.x - 25 : 0));
 	ImGui::Begin("Menu");
 
-	ImGui::Text("Use this menu to move the camera around or follow a planet.");
+	ImGui::Text("Use this section of the menu to move the camera around.");
 	ImGui::Text("\n");
 
 	ImGui::InputFloat3("Camera Position", mn_eyeLoc);
@@ -55,7 +55,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
 	ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
 	ImGui::Text("\n");
-	if (ImGui::Button("Update")) {
+	if (ImGui::Button("Update Location")) {
 		updated = true;
 		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);

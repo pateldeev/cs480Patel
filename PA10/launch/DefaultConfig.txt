@@ -53,7 +53,7 @@ OBJ_SPECULAR=0.8,0.8,0.8
 
 OBJ_NAME=Rails
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/rails/rails.obj
 OBJ_STARTING_LOC=0,0,0
 OBJ_SCALE=1,1,1
@@ -66,7 +66,7 @@ OBJ_NAME=Ball
 SCALE_FACTOR=1
 BT_TYPE=SphereDynamic
 OBJ_FILE=objFiles/ball/earth.obj
-OBJ_STARTING_LOC=10,5,-10
+OBJ_STARTING_LOC=10,2,-10
 OBJ_SCALE=0.75,0.75,0.75
 OBJ_ROTATION=0,0,0
 OBJ_MASS=10
@@ -112,7 +112,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Top_Bumper_1
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/top_bumper/top_bumper.obj
 OBJ_STARTING_LOC=-0.81129,0.13094,-2.89411
 OBJ_SCALE=0.167,0.398,0.167
@@ -124,7 +124,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Top_Bumper_2
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/top_bumper/top_bumper.obj
 OBJ_STARTING_LOC=-0.31784,0.13094,-2.89411
 OBJ_SCALE=0.167,0.398,0.167
@@ -136,7 +136,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Top_Bumper_3
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/top_bumper/top_bumper.obj
 OBJ_STARTING_LOC=0.21947,0.13094,-2.89411
 OBJ_SCALE=0.167,0.398,0.167
@@ -148,7 +148,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Top_Bumper_4
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/top_bumper/top_bumper.obj
 OBJ_STARTING_LOC=0.73173,0.13094,-2.89411
 OBJ_SCALE=0.167,0.398,0.167
@@ -160,7 +160,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Traingle_Bumper_Right
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/triangle_bumper/triangle_bumper.obj
 OBJ_STARTING_LOC=1.13165,0,2.28189
 OBJ_SCALE=0.348,0.348,0.348
@@ -172,7 +172,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Traingle_Bumper_Left
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/triangle_bumper/triangle_bumper.obj
 OBJ_STARTING_LOC=-1.16434,0,2.28189
 OBJ_SCALE=0.348,0.348,0.348
@@ -184,7 +184,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Paddle_Right
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Paddle
 OBJ_FILE=objFiles/paddle/paddle.obj
 OBJ_STARTING_LOC=0.72922,0,3.08728
 OBJ_SCALE=0.352,0.352,0.352
@@ -196,7 +196,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Paddle_Left
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Paddle
 OBJ_FILE=objFiles/paddle/paddle.obj
 OBJ_STARTING_LOC=-0.74254,0,3.08728
 OBJ_SCALE=0.352,0.352,0.352
@@ -208,7 +208,7 @@ OBJ_SPECULAR=0.7,0.7,0.7
 
 OBJ_NAME=Plunger
 SCALE_FACTOR=6
-BT_TYPE=ComplexStatic
+BT_TYPE=Complex
 OBJ_FILE=objFiles/plunger/plunger.obj
 OBJ_STARTING_LOC=2.42852,0.15722,4.23607
 OBJ_SCALE=0.207,0.207,0.207

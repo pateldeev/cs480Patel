@@ -9,8 +9,9 @@ Cylinder::~Cylinder(void) {
 }
 
 void Cylinder::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
-	float width = 2 * ((m_scale.x + m_scale.y + m_scale.z) / 3);
-	float radius = (m_scale.x + m_scale.y + m_scale.z) / 3;
+	const float width = 2 * ((m_scale.x + m_scale.y + m_scale.z) / 3);
+	const float radius = (m_scale.x + m_scale.y + m_scale.z) / 3;
+	const float friction = 1;
 
 	mbt_shape = new btCylinderShape(btVector3(radius, width, radius));
 
@@ -23,6 +24,8 @@ void Cylinder::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int ma
 	mbt_shape->calculateLocalInertia(0, inertia);
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(0, shapeMotionState, mbt_shape, inertia);
+	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
+
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 }
