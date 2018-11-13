@@ -9,7 +9,7 @@ Complex::~Complex(void) {
 }
 
 void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
-	const float friction = 1;
+	const float friction = 0.5;
 
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 

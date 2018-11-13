@@ -34,8 +34,9 @@ public:
 	void ApplyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1)); //apply force to ball
 	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
 	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
-	
+
 	void MovePaddleR(void);
+	void SetResetFlagPaddleR(bool flag);
 
 	//for movement for camera
 	void IncreaseEyePosX(float moveAmount);
@@ -60,7 +61,7 @@ public:
 	void SetDiffuseofBall(const glm::vec3 & change);
 	void SetSpecularofBall(const glm::vec3 & change);
 	void SetSpotlightHeight(float change);
-	
+
 	void AddSpotLight(const glm::vec3 & location);
 
 private:

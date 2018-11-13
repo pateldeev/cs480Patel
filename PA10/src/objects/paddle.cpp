@@ -1,4 +1,5 @@
 #include "objects/paddle.h"
+#include <iostream>
 
 Paddle::Paddle(const std::string & objFile, const glm::vec3 & translation, const glm::vec3 & rotationAngles, const glm::vec3 & scale) :
 		Object(objFile, translation, rotationAngles, scale) {
@@ -51,10 +52,31 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 #endif
 }
 
-void Paddle::MoveUpR(void){
+void Paddle::MoveUpR(void) {
 	glm::vec3 rotation = GetRotationAngles();
-	rotation.y -= 0.15;
-	ResetBt(GetTranslation(), rotation);
+	if (rotation.y > 0.32) {
+		std::cout << "Rotation.y = " << rotation.y << std::endl;
+		rotation.y -= 0.15;
+		ResetBt(GetTranslation(), rotation);
+	}
+	SetResetFlag(false);
+}
+
+void Paddle::ResetPaddleR(void) {
+	glm::vec3 rotation = GetRotationAngles();
+	if (rotation.y < 1.37) {
+		std::cout << "Rotation.y = " << rotation.y << std::endl;
+		rotation.y += 0.15;
+		ResetBt(GetTranslation(), rotation);
+	}
+}
+
+void Paddle::SetResetFlag(bool flag) {
+	m_resetFlag = flag;
+}
+
+bool Paddle::GetResetFlag(void) const{
+	return m_resetFlag;
 }
 
 #if DEBUG
@@ -69,7 +91,7 @@ public:
 	virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex) {
 		(void) triangleIndex;
 		(void) partId;
-		//this thing needs a speedy shader that just assigns the color 
+		//this thing needs a speedy shader that just assigns the color
 		GLuint IB, VB;
 		glGenBuffers(1, &VB);
 		glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -104,4 +126,3 @@ void Paddle::DrawDebug(void) {
 	concaveMesh->processAllTriangles(&drawCallback, aabbMin, aabbMax);
 }
 #endif
-

@@ -147,7 +147,9 @@ void Object::ResetBt(const glm::vec3 & loc, const glm::vec3 & rotation) {
 		btMotionState * motionState = mbt_rigidBody->getMotionState();
 		motionState->getWorldTransform(transform);
 		transform.setOrigin(btVector3(loc.x, loc.y, loc.z));
-		transform.setRotation(btQuaternion(rotation.y, rotation.z, rotation.x)); //yzx //zyx
+		btQuaternion rot(transform.getRotation());
+		rot.setEulerZYX(rotation.z, rotation.y, rotation.x);
+		transform.setRotation(rot);
 		motionState->setWorldTransform(transform);
 		mbt_rigidBody->setMotionState(motionState);
 

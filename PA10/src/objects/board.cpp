@@ -10,7 +10,7 @@ Board::~Board(void) {
 
 void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 
-	const float friction = 1;
+	const float friction = 0.5;
 
 #if USE_COMPLEX_BOARD_MESH //use mesh
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));

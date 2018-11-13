@@ -9,7 +9,7 @@ Sphere::~Sphere(void) {
 }
 
 void Sphere::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
-	const float friction = 1;
+	const float friction = 0.5;
 
 	mbt_shape = new btSphereShape(btScalar((m_scale.x + m_scale.y + m_scale.z) / 3));
 

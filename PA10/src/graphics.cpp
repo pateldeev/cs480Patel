@@ -176,6 +176,10 @@ void Graphics::MovePaddleR(void) {
 	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
 }
 
+void Graphics::SetResetFlagPaddleR(bool flag) {
+	static_cast<Paddle *>(m_objects[m_paddleR])->SetResetFlag(flag);
+}
+
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
 	//Set up the shader
 	m_shaders.push_back(new Shader());
@@ -289,7 +293,33 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 }
 
 void Graphics::Update(unsigned int dt) {
-	mbt_dynamicsWorld->stepSimulation(dt / 1000.f, 500);
+	mbt_dynamicsWorld->stepSimulation(dt / 1000.f, 1000, btScalar(1.) / btScalar(100.));
+
+	if (static_cast<Paddle *>(m_objects[m_paddleR])->GetResetFlag())
+		static_cast<Paddle *>(m_objects[m_paddleR])->ResetPaddleR();
+
+	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
+	for (int i = 0; i < numManifolds; ++i) {
+		btPersistentManifold * contactManifold = mbt_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject * obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+		const btCollisionObject * obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j < numContacts; j++) {
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance() < 0.f) {
+				if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleR]->GetRigidBody() == obB)
+						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleR]->GetRigidBody() == obA)) {
+					ApplyImpulse(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0));
+				}
+
+				if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleL]->GetRigidBody() == obB)
+						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleL]->GetRigidBody() == obA)) {
+					ApplyImpulse(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0));
+				}
+			}
+		}
+	}
 
 	//update location and rotation of each object from bullet to openGL
 	for (Object * obj : m_objects) {
@@ -305,7 +335,6 @@ void Graphics::Update(unsigned int dt) {
 			trans.getRotation().getEulerZYX(newRotations.z, newRotations.y, newRotations.x);
 			obj->SetRotationAngles(newRotations);
 		}
-
 		obj->Update();
 	}
 }
@@ -316,25 +345,25 @@ bool Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus
 }
 
 void Graphics::Render(void) {
-	//Clear the screen
+//Clear the screen
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Start the correct program
+//Start the correct program
 	if (m_currentShader < 0)
 		printf("No shader has been enabled!\n");
 	m_shaders.at(m_currentShader)->Enable();
 
-	//Send in the projection and view to the shader
+//Send in the projection and view to the shader
 	glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-	//update render order based on distance
+//update render order based on distance
 	glm::vec3 cameraPos = m_camera->GetEyePos();
 	std::sort(std::begin(m_renderOrder), std::end(m_renderOrder), [this, &cameraPos](unsigned int a, unsigned int b) {
 		return m_objects[a]->GetDistanceFromPoint(cameraPos) > m_objects[b]->GetDistanceFromPoint(cameraPos);});
 
-	//Render each object
+//Render each object
 	for (unsigned int i = 0; i < m_renderOrder.size(); ++i) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_objects[m_renderOrder[i]]->GetModel()));
 
@@ -347,7 +376,6 @@ void Graphics::Render(void) {
 
 			glm::vec3 pointLightPositions[] = { m_spotlightLocs.at(0), m_spotlightLocs.at(1), m_spotlightLocs.at(2) };
 
-			//glUniform3f(m_lightPos, m_spotlightLocs[0].x, m_spotlightLocs[0].y, m_spotlightLocs[0].z);
 			glUniform3fv(m_lightPos, 3, glm::value_ptr(pointLightPositions[0]));
 			glUniform3f(m_cameraPos, cameraPos.x, cameraPos.y, cameraPos.z);
 			glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
@@ -359,7 +387,7 @@ void Graphics::Render(void) {
 		m_objects[m_renderOrder[i]]->Render(); //render object
 	}
 
-	//Get any errors from OpenGL
+//Get any errors from OpenGL
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		std::string val = ErrorString(error);
@@ -378,7 +406,7 @@ glm::vec3 Graphics::GetEyeLoc(void) const {
 void Graphics::SetAmbientLight(const glm::vec3 & change) {
 	m_ambientLevel += change;
 
-	//check bounds
+//check bounds
 	if (m_ambientLevel.x < 0)
 		m_ambientLevel.x = 0;
 	else if (m_ambientLevel.x > 1)
@@ -398,7 +426,7 @@ void Graphics::SetAmbientLight(const glm::vec3 & change) {
 void Graphics::SetDiffuseofBall(const glm::vec3 & change) {
 	glm::vec3 temp = m_objectsDiffuseProducts[m_ball] + change;
 
-	//check bounds
+//check bounds
 	if (temp.x < 0)
 		temp.x = 0;
 	else if (temp.x > 1)
@@ -420,7 +448,7 @@ void Graphics::SetDiffuseofBall(const glm::vec3 & change) {
 void Graphics::SetSpecularofBall(const glm::vec3 & change) {
 	glm::vec3 temp = m_objectsSpecularProducts[m_ball] + change;
 
-	//check bounds
+//check bounds
 	if (temp.x < 0)
 		temp.x = 0;
 	else if (temp.x > 1)
