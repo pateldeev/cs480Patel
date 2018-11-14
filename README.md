@@ -33,6 +33,6 @@ This uses the Bullet physics engine to create simple object collisons on a board
 ## PA9: Lighting with Bullet
 This uses the Bullet physics engine to create simple object collisons with lighting (per vertex and per fragment) on a board.To run this project ```cd PA9``` then follow the instructions in the README.md.
 
-## PA10: Pinball - UNDER DEVELOPMENT
+## PA10: Pinball
 This project is a fully functional pinball game. To run this project ```cd PA10``` then follow the instructions in the README.md.
 

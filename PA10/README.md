@@ -1,4 +1,4 @@
-# PA10: Pinball - UNDER DEVELOPMENT
+# PA10: Pinball
 
 ## Group
 This is the main repository for the code. The group members include
@@ -43,16 +43,19 @@ make
 ```
 
 ## General Comments
-This project lighting as required. By default, fragment lighting is done. Vertex lighting can be enabled by the 'v' key. However in vertex lighting, the spotlight isn't really visible on the floor as it doesn't actually hit any verticies. You can also change the ambient light of the entire world and the specular and diffuse components of the ball. See the Controls section
+This is a fully functional pinball game. The you are given 3 lives and score 100 points for hitting the cylindirical bumpers and 25 points for hitting the rectangular bumpers at the top. You can launch the ball by pressing 'b'.
+
+## Extra Credit
+For extra credit, we had an extra spotlight that follows the ball around as it moves. This spotlight is in addition to the other two spotlights.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard Controls
-  * Starting Game
-    * b: shoot the ball
-  * Moving Ball
-    * w/a/s/d: apply impulse to ball in direction specified
-  * Camera Movement
+  * Game Contorls
+    * b: launch ball and begin game
+    * g/h: move left/right bumpers
+    * r: reset everything - (in the rare instance of something getting stuck)
+  * Camera Movement 
     * left_arrow/right_arrow: move along the x-axis
     * up_arrow/down_arrow: move along the z-axis
     * i/o: zoom toward/away from the focus point
@@ -67,9 +70,11 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
       * shift + m/l: adjust specular lighting of ball only
    * Other
       * t: toggle (open/close) IMGUI menu window
-      * r: reset all objects to starting position
    * Exiting
       * ESC: Will properly close all windows and exit program
+
+## Scoring and Gameplay
+The player has 3 lives before the game must be restarted. The number of lives and points scored can be seen in the terimnal window.
 
 ## Configuration File
 This program makes use of configuration files to initialize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.

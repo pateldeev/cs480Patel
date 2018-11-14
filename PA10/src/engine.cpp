@@ -188,14 +188,12 @@ void Engine::EventChecker(void) {
 			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
 					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
-			else if (m_event.key.keysym.sym == SDLK_w || m_event.key.keysym.sym == SDLK_s || m_event.key.keysym.sym == SDLK_d
-					|| m_event.key.keysym.sym == SDLK_a || m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS
-					|| m_event.key.keysym.sym == SDLK_MINUS || m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT
-					|| m_event.key.keysym.sym == SDLK_DOWN || m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i
-					|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v
-					|| m_event.key.keysym.sym == SDLK_m || m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z
-					|| m_event.key.keysym.sym == SDLK_x || m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h
-					|| m_event.key.keysym.sym == SDLK_b)
+			else if (m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS || m_event.key.keysym.sym == SDLK_MINUS
+					|| m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT || m_event.key.keysym.sym == SDLK_DOWN
+					|| m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i || m_event.key.keysym.sym == SDLK_o
+					|| m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v || m_event.key.keysym.sym == SDLK_m
+					|| m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z || m_event.key.keysym.sym == SDLK_x
+					|| m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h || m_event.key.keysym.sym == SDLK_b)
 				HandleEvent(m_event);
 			else
 				m_menu->HandleEvent(m_event);
@@ -211,14 +209,6 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_running = false;
 		else if (event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis())
 			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
-		else if (event.key.keysym.sym == SDLK_w)
-			m_graphics->ApplyImpulse(glm::vec3(0, 0, -impulse), glm::vec3(0, 0, 0));
-		else if (event.key.keysym.sym == SDLK_s)
-			m_graphics->ApplyImpulse(glm::vec3(0, 0, impulse), glm::vec3(0, 0, 0));
-		else if (event.key.keysym.sym == SDLK_a)
-			m_graphics->ApplyImpulse(glm::vec3(-impulse, 0, 0), glm::vec3(0, 0, 0));
-		else if (event.key.keysym.sym == SDLK_d)
-			m_graphics->ApplyImpulse(glm::vec3(impulse, 0, 0), glm::vec3(0, 0, 0));
 		else if (event.key.keysym.sym == SDLK_r)
 			m_graphics->ResetBall();
 		else if (event.key.keysym.sym == SDLK_EQUALS)
