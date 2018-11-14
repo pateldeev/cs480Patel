@@ -32,7 +32,7 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 }
 
-bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives) {
+bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives, int score) {
 
 	bool updated = false;
 
@@ -62,7 +62,8 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	}
 
   m_lives = lives;
-  ImGui::Text("Lives: %d", m_lives);
+  m_score = score;
+  ImGui::Text("Lives: %d \t\tScore: %d", m_lives, m_score);
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();

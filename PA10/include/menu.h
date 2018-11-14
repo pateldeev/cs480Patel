@@ -18,7 +18,7 @@ public:
 	~Menu(void);
 
 	bool Initialize(const SDL_GLContext & gl_context);
-	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives); //returns if menu has been undated
+	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives, int score); //returns if menu has been undated
 
 	void HandleEvent(SDL_Event event);
 
@@ -42,6 +42,7 @@ private:
 	float mn_eyeFocus[3];
 
   int m_lives;
+  int m_score;
 
 	void UpdateMenuParams(void);
 

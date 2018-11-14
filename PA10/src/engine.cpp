@@ -135,7 +135,7 @@ void Engine::Run(void) {
 
 		//update menu and change variables if necessary
 		if (m_running != false) {
-			if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos(), m_graphics->GetLives())) {
+			if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos(), m_graphics->GetLives(), m_graphics->GetScore())) {
 				if (!m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus())) {
 					printf("Error updating parameters from menu update. Shutting down /n");
 					m_running = false;
