@@ -126,6 +126,10 @@ void Engine::Run(void) {
 		m_graphics->Update(m_DT);
 		m_graphics->Render();
 
+    //End the game if lives == 0
+    if(m_graphics->GetLives() < 1)
+      m_running = false;
+
 		// Swap to the Window
 		m_window->Swap();
 
