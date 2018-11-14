@@ -14,7 +14,7 @@ Menu::~Menu(void) {
 
 bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
-	m_window = SDL_CreateWindow("Movement_Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	m_window = SDL_CreateWindow("Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	const char * glsl_version = "#version 330";
 
@@ -61,9 +61,9 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
 
-  m_lives = lives;
-  m_score = score;
-  ImGui::Text("Lives: %d \t\tScore: %d", m_lives, m_score);
+	m_lives = lives;
+	m_score = score;
+	ImGui::Text("Lives: %d \t\tScore: %d", m_lives, m_score);
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();

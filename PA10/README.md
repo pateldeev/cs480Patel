@@ -43,7 +43,7 @@ make
 ```
 
 ## General Comments
-This is a fully functional pinball game. The you are given 3 lives and score 100 points for hitting the cylindirical bumpers and 25 points for hitting the rectangular bumpers at the top. You can launch the ball by pressing 'b'.
+This is a fully functional pinball game. You are given 3 lives and score 100 points for hitting the cylindirical bumpers and 25 points for hitting the rectangular bumpers at the top. You can launch the ball by pressing 'b'.
 
 ## Extra Credit
 For extra credit, we had an extra spotlight that follows the ball around as it moves. This spotlight is in addition to the other two spotlights.
@@ -74,13 +74,13 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
       * ESC: Will properly close all windows and exit program
 
 ## Scoring and Gameplay
-The player has 3 lives before the game must be restarted. The number of lives and points scored can be seen in the terimnal window.
+The player has 3 lives before the game ends. The number of lives and points scored can be seen in the terimnal window as well as IMGUI menu.
 
 ## Configuration File
 This program makes use of configuration files to initialize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.
 
 ## IMGUI Menu System
-There is a menu system that runs in a separate window. It keeps track of the camera location and focus point. <br>
+There is a menu system that runs in a separate window. It keeps track of the camera location and focus point. It also keeps track of the score and number of lives <br>
 
 ## Shaders
 The GLSL source code for the various vertex and fragment shaders are located under the "shaders/" directory. <br>
