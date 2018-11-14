@@ -37,7 +37,10 @@ public:
 
 	void MovePaddleR(void);
 	void SetResetFlagPaddleR(bool flag);
+	void MovePaddleL(void);
+	void SetResetFlagPaddleL(bool flag);
 
+	
 	//for movement for camera
 	void IncreaseEyePosX(float moveAmount);
 	void IncreaseEyePosZ(float moveAmount);
@@ -97,7 +100,9 @@ private:
 	int m_ball; //index of object being controlled by user input
 	int m_paddleR; //index of right paddles object
 	int m_paddleL; //index of left paddles object
+	int m_board; //index of board object
 	std::vector<unsigned int> m_renderOrder;
+	std::vector<int> m_objectScores;
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
 	std::vector<glm::vec3> m_startingRotations; //starting locations of objects
 	std::vector<glm::vec3> m_objectsDiffuseProducts;

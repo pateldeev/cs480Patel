@@ -3,7 +3,7 @@
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
-				-1), m_paddleL(-1) {
+				-1), m_paddleL(-1), m_board(-1) {
 	m_spotlightLocs.resize(1);
 }
 
@@ -120,6 +120,14 @@ void Graphics::AddObject(const objectModel & obj) {
 	m_objectsDiffuseProducts.push_back(obj.diffuseProduct);
 	m_objectsSpecularProducts.push_back(obj.specularProduct);
 
+	//store score of object
+	if (obj.name == "Cylinder_Bumper_1" || obj.name == "Cylinder_Bumper_2" || obj.name == "Cylinder_Bumper_3")
+		m_objectScores.push_back(100);
+	else if (obj.name == "Top_Bumper_1" || obj.name == "Top_Bumper_2" || obj.name == "Top_Bumper_3" || obj.name == "Top_Bumper_4")
+		m_objectScores.push_back(25);
+	else
+		m_objectScores.push_back(0);
+
 	//enable bullet on object
 	m_objects.back()->EnableBt(mbt_dynamicsWorld, obj.mass);
 
@@ -130,6 +138,8 @@ void Graphics::AddObject(const objectModel & obj) {
 		m_paddleR = m_objects.size() - 1;
 	} else if (obj.name == "Paddle_Left") {
 		m_paddleL = m_objects.size() - 1;
+	} else if (obj.name == "Board") {
+		m_board = m_objects.size() - 1;
 	}
 }
 
@@ -146,6 +156,12 @@ bool Graphics::VerifyObjects(void) const {
 	}
 	if (m_paddleL < 0) {
 		printf("No Paddle_Left object found!");
+		return false;
+	}
+
+	//check if board is present
+	if (m_board < 0) {
+		printf("No Board object found!");
 		return false;
 	}
 
@@ -178,6 +194,14 @@ void Graphics::MovePaddleR(void) {
 
 void Graphics::SetResetFlagPaddleR(bool flag) {
 	static_cast<Paddle *>(m_objects[m_paddleR])->SetResetFlag(flag);
+}
+
+void Graphics::MovePaddleL(void) {
+	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL();
+}
+
+void Graphics::SetResetFlagPaddleL(bool flag) {
+	static_cast<Paddle *>(m_objects[m_paddleL])->SetResetFlag(flag);
 }
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -297,6 +321,8 @@ void Graphics::Update(unsigned int dt) {
 
 	if (static_cast<Paddle *>(m_objects[m_paddleR])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleR])->ResetPaddleR();
+	if (static_cast<Paddle *>(m_objects[m_paddleL])->GetResetFlag())
+		static_cast<Paddle *>(m_objects[m_paddleL])->ResetPaddleL();
 
 	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; ++i) {
@@ -310,13 +336,14 @@ void Graphics::Update(unsigned int dt) {
 			if (pt.getDistance() < 0.f) {
 				if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleR]->GetRigidBody() == obB)
 						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleR]->GetRigidBody() == obA)) {
-					ApplyImpulse(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0));
+					m_objects[m_ball]->scaleVelocities(1.3);
+				} else if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleL]->GetRigidBody() == obB)
+						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleL]->GetRigidBody() == obA)) {
+					m_objects[m_ball]->scaleVelocities(1.3);
+				} else if (m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_ball]->GetRigidBody() == obB) {
+					m_objects[m_ball]->scaleVelocities(1.05);
 				}
 
-				if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleL]->GetRigidBody() == obB)
-						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleL]->GetRigidBody() == obA)) {
-					ApplyImpulse(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0));
-				}
 			}
 		}
 	}

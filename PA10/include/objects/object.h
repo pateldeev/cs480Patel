@@ -25,6 +25,7 @@ public:
 	void applyTorque(const glm::vec3 & torque);
 	void setLinearVelocity(const glm::vec3 & vel, bool accumulate = false);
 	void setAngularVelocity(const glm::vec3 & vel, bool accumulate = false);
+	void scaleVelocities(float scale);
 
 	void Update(void);
 	void Render(void);

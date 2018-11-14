@@ -29,24 +29,18 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 
 	mbt_rigidBody->setSleepingThresholds(0, 0);
 #else
-
 	const float width = 3*2 * ((m_scale.x + m_scale.y + m_scale.z) / 3);
 	const float radius = 0.5*((m_scale.x + m_scale.y + m_scale.z) / 3);
 	const float friction = 1;
-
 	mbt_shape = new btCylinderShape(btVector3(radius, width, radius));
-
 	btQuaternion startRotations;
 	startRotations.setEulerZYX(m_rotationAngles.z, m_rotationAngles.y, m_rotationAngles.x);
 	btTransform startTransform(startRotations, btVector3(m_translation.x, m_translation.y, m_translation.z));
 	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
-
 	btVector3 inertia(0, 0, 0);
 	mbt_shape->calculateLocalInertia(0, inertia);
-
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(0, shapeMotionState, mbt_shape, inertia);
 	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
-
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 #endif
@@ -55,8 +49,8 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 void Paddle::MoveUpR(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > 0.32) {
-		std::cout << "Rotation.y = " << rotation.y << std::endl;
-		rotation.y -= 0.15;
+		// std::cout << "Rotation.y = " << rotation.y << std::endl;
+		rotation.y -= 0.21;
 		ResetBt(GetTranslation(), rotation);
 	}
 	SetResetFlag(false);
@@ -65,17 +59,41 @@ void Paddle::MoveUpR(void) {
 void Paddle::ResetPaddleR(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y < 1.37) {
-		std::cout << "Rotation.y = " << rotation.y << std::endl;
-		rotation.y += 0.15;
+		// std::cout << "Rotation.y = " << rotation.y << std::endl;
+		rotation.y += 0.21;
 		ResetBt(GetTranslation(), rotation);
 	}
+	// else
+	//   std::cout << "Rotation.y = " << rotation.y << std::endl;
+}
+
+void Paddle::MoveUpL(void) {
+	glm::vec3 rotation = GetRotationAngles();
+	if (rotation.y > -1.122) {
+		rotation.y -= 0.21;
+		ResetBt(GetTranslation(), rotation);
+	}
+	// else
+	//   std::cout << "Rotation.y = " << rotation.y << std::endl;
+	SetResetFlag(false);
+}
+
+void Paddle::ResetPaddleL(void) {
+	glm::vec3 rotation = GetRotationAngles();
+	if (rotation.y < -0.072) {
+		// std::cout << "Rotation.y = " << rotation.y << std::endl;
+		rotation.y += 0.21;
+		ResetBt(GetTranslation(), rotation);
+	}
+	// else
+	// rotation.y = -0.072;
 }
 
 void Paddle::SetResetFlag(bool flag) {
 	m_resetFlag = flag;
 }
 
-bool Paddle::GetResetFlag(void) const{
+bool Paddle::GetResetFlag(void) const {
 	return m_resetFlag;
 }
 

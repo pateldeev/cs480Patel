@@ -250,9 +250,13 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->UseShaderSet("vertexLighting");
 		else if (event.key.keysym.sym == SDLK_h)
 			m_graphics->MovePaddleR();
+		if (event.key.keysym.sym == SDLK_g)
+			m_graphics->MovePaddleL();
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_h)
 			m_graphics->SetResetFlagPaddleR(true);
+		if (event.key.keysym.sym == SDLK_g)
+			m_graphics->SetResetFlagPaddleL(true);
 	}
 }
 

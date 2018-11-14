@@ -70,7 +70,7 @@ void Object::setLinearVelocity(const glm::vec3 & vel, bool accumulate) {
 	if (mbt_rigidBody)
 		mbt_rigidBody->setLinearVelocity(newVel);
 	else
-		printf("Object is not a bullet object. Cannot apply impulse!\n");
+		printf("Object is not a bullet object. Cannot set velocity!\n");
 }
 
 void Object::setAngularVelocity(const glm::vec3 & vel, bool accumulate) {
@@ -81,7 +81,30 @@ void Object::setAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 	if (mbt_rigidBody)
 		mbt_rigidBody->setAngularVelocity(newVel);
 	else
-		printf("Object is not a bullet object. Cannot apply impulse!\n");
+		printf("Object is not a bullet object. Cannot set velocity!\n");
+}
+
+void ::Object::scaleVelocities(float scale) {
+	if (mbt_rigidBody) {
+		btVector3 linearVel = scale * mbt_rigidBody->getLinearVelocity();
+		btVector3 angularVel = scale * mbt_rigidBody->getAngularVelocity();
+
+		const int maxVel = 65;
+
+		if (linearVel.length() > maxVel) {
+			linearVel = linearVel.normalize() * maxVel;
+		}
+
+		if (angularVel.length() > maxVel) {
+			angularVel = angularVel.normalize() * maxVel;
+		}
+
+		mbt_rigidBody->setLinearVelocity(linearVel);
+		mbt_rigidBody->setAngularVelocity(angularVel);
+
+	} else {
+		printf("Object is not a bullet object. Cannot scale velocity!\n");
+	}
 }
 
 void Object::Update(void) {
@@ -262,7 +285,7 @@ void Object::loadTextures(const std::string & objFile, const std::vector<aiStrin
 	Magick::Image * img;
 	std::string fileNameStart = "";
 
-	//get leading information on filename
+//get leading information on filename
 	std::size_t tempPos = objFile.find_last_of('/');
 	if (tempPos != std::string::npos)
 		fileNameStart = objFile.substr(0, tempPos + 1);
@@ -273,7 +296,7 @@ void Object::loadTextures(const std::string & objFile, const std::vector<aiStrin
 		img->flip();
 		img->write(&blob, "RGBA");
 
-		//store textures on GPU
+//store textures on GPU
 		glGenTextures(1, &tempTexture);
 		glBindTexture(GL_TEXTURE_2D, tempTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->columns(), img->rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, blob.data());

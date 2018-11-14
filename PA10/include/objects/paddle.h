@@ -15,13 +15,15 @@ public:
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
 
 	void MoveUpR(void);
-  	void ResetPaddleR(void);
-  	void SetResetFlag(bool flag);
+	void MoveUpL(void);
+	void ResetPaddleR(void);
+	void ResetPaddleL(void);
+	void SetResetFlag(bool flag);
 
-  	bool GetResetFlag(void) const;
+	bool GetResetFlag(void) const;
 
 private:
- 	bool m_resetFlag;
+	bool m_resetFlag;
 
 #if DEBUG
 	void DrawDebug(void);
