@@ -40,7 +40,7 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	//AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(11.25), friction);
 	
 	//bottom wall
-	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-22.7), friction);
+	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-22.75), friction);
 	
 	//top wall
 	AddPlane(dynamicsWorld, btVector3(0, 0, 1), btScalar(-22.5), friction);

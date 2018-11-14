@@ -70,7 +70,7 @@ public:
 	int GetScore(void) const;
 	int GetNumLives(void) const;
 	void StartLife(void);
-  int GetLives(void);
+	int GetLives(void);
 
 private:
 	std::string ErrorString(const GLenum error) const;
@@ -109,6 +109,7 @@ private:
 	std::vector<unsigned int> m_renderOrder;
 	std::vector<int> m_objectScores;
 	int m_score; //total score
+	btRigidBody * m_scoreLastObj; //last object that was hit for points
 	int m_lives;
 
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
@@ -122,6 +123,9 @@ private:
 	btCollisionDispatcher * mbt_dispatcher;
 	btSequentialImpulseConstraintSolver * mbt_solver;
 	btDiscreteDynamicsWorld * mbt_dynamicsWorld;
+
+	void UpdateScore(void);
+	void UpdateLives(void);
 };
 
 #endif /* GRAPHICS_H */

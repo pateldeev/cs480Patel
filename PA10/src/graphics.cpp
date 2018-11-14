@@ -4,7 +4,7 @@
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
-				-1), m_paddleL(-1), m_board(-1), m_score(0), m_lives(3) {
+				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(3) {
 	m_spotlightLocs.resize(1);
 }
 
@@ -319,48 +319,15 @@ bool Graphics::UseShaderSet(const std::string & setName, bool hasLighting) {
 void Graphics::Update(unsigned int dt) {
 	mbt_dynamicsWorld->stepSimulation(dt / 1000.f, 1000, btScalar(1.) / btScalar(100.));
 
+	//update paddle locations
 	if (static_cast<Paddle *>(m_objects[m_paddleR])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleR])->ResetPaddleR();
 	if (static_cast<Paddle *>(m_objects[m_paddleL])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleL])->ResetPaddleL();
 
-#if 1
-	//check if ball is out of play: below paddles
-	if (m_objects[m_ball]->GetTranslation().z - 2.75 > m_objects[m_paddleL]->GetTranslation().z && m_objects[m_ball]->GetTranslation().x <= 10.25) {
-		m_lives -= 1;
-		ResetBall();
-	}
-	for (int i = 0; i < 50; i++)
-		std::cout << std::endl;
-	std::cout << "Lives Remaining: " << m_lives << std::endl;
-#else
-	auto x = m_objects[m_ball]->GetTranslation();
-	std::cout << std::endl << x.x << "," << x.y << "," << x.z;
-#endif
+	UpdateLives();
 
-	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
-	for (int i = 0; i < numManifolds; ++i) {
-		btPersistentManifold * contactManifold = mbt_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-		const btCollisionObject * obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
-		const btCollisionObject * obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-
-		int numContacts = contactManifold->getNumContacts();
-		for (int j = 0; j < numContacts; j++) {
-			btManifoldPoint& pt = contactManifold->getContactPoint(j);
-			if (pt.getDistance() < 0.f) {
-				if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleR]->GetRigidBody() == obB)
-						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleR]->GetRigidBody() == obA)) {
-					m_objects[m_ball]->scaleVelocities(1.3);
-				} else if ((m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_paddleL]->GetRigidBody() == obB)
-						|| (m_objects[m_ball]->GetRigidBody() == obB && m_objects[m_paddleL]->GetRigidBody() == obA)) {
-					m_objects[m_ball]->scaleVelocities(1.3);
-				} else if (m_objects[m_ball]->GetRigidBody() == obA && m_objects[m_ball]->GetRigidBody() == obB) {
-					m_objects[m_ball]->scaleVelocities(1.05);
-				}
-
-			}
-		}
-	}
+	UpdateScore();
 
 	//update location and rotation of each object from bullet to openGL
 	for (Object * obj : m_objects) {
@@ -587,6 +554,68 @@ void Graphics::ZoomOut(float moveAmount) {
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
 
-int Graphics::GetLives(void){
-  return m_lives;
+int Graphics::GetLives(void) {
+	return m_lives;
+}
+
+void Graphics::UpdateScore(void) {
+	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
+
+	for (int i = 0; i < numManifolds; ++i) {
+		btPersistentManifold * contactManifold = mbt_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject * obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+		const btCollisionObject * obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j < numContacts; j++) {
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance() < 0.f) {
+
+				const btCollisionObject * other = nullptr;
+				if (m_objects[m_ball]->GetRigidBody() == obA)
+					other = obB;
+				else if (m_objects[m_ball]->GetRigidBody() == obB)
+					other = obA;
+
+				//one of collision objects is ball
+				if (other) {
+					//collsion occured with paddle
+					if (other == m_objects[m_paddleR]->GetRigidBody() || other == m_objects[m_paddleL]->GetRigidBody()) {
+						m_objects[m_ball]->scaleVelocities(1.3);
+					} else {
+						int indexOfOther = -1;
+						for (unsigned int i = 0; i < m_objects.size(); ++i) {
+							if (other == m_objects[i]->GetRigidBody()) {
+								indexOfOther = i;
+								break;
+							}
+						}
+
+						//collsion occured between ball and other non plane object
+						if (indexOfOther > -1) {
+							int score = m_objectScores[indexOfOther];
+							if (score && m_scoreLastObj != other) {
+								m_objects[m_ball]->scaleVelocities(1.25);
+								m_scoreLastObj = m_objects[indexOfOther]->GetRigidBody();
+								m_score += score;
+							}
+						}
+
+					}
+				}
+
+			}
+		}
+	}
+}
+
+void Graphics::UpdateLives(void) {
+//check if ball is out of play: below paddles
+	if (m_objects[m_ball]->GetTranslation().z - 2.75 > m_objects[m_paddleL]->GetTranslation().z && m_objects[m_ball]->GetTranslation().x <= 10.25) {
+		m_lives -= 1;
+		ResetBall();
+	}
+	for (int i = 0; i < 50; i++)
+		std::cout << std::endl;
+	std::cout << "Lives Remaining: " << m_lives << std::endl;
 }

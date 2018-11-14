@@ -126,10 +126,11 @@ void Engine::Run(void) {
 		m_graphics->Update(m_DT);
 		m_graphics->Render();
 
-    //End the game if lives == 0
-    if(m_graphics->GetLives() < 1)
-      m_running = false;
-
+		//End the game if lives == 0
+		if (m_graphics->GetLives() < 1) {
+			printf("\n Game Over: You Scored: %d points! \n", m_graphics->GetScore());
+			m_running = false;
+		}
 		// Swap to the Window
 		m_window->Swap();
 
