@@ -4,7 +4,7 @@
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
-				-1), m_paddleL(-1), m_board(-1) {
+				-1), m_paddleL(-1), m_board(-1), m_score(0), m_lives(3) {
 	m_spotlightLocs.resize(1);
   m_lives = 3;
 }
@@ -38,7 +38,6 @@ Graphics::~Graphics(void) {
 bool Graphics::Initialize(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & focusPos) {
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
-	// std::cout << glewGetString(GLEW_VERSION) << endl;
 	glewExperimental = GL_TRUE;
 
 	auto status = glewInit();
@@ -326,12 +325,19 @@ void Graphics::Update(unsigned int dt) {
 	if (static_cast<Paddle *>(m_objects[m_paddleL])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleL])->ResetPaddleL();
 
-    if ((m_objects[m_ball])->GetTranslation().z - 2 > (m_objects[m_paddleL])->GetTranslation().z) {
-      m_lives -= 1;
-      ResetBall();
-    }
-    for (int i = 0; i < 50; i++) std::cout << std::endl;
-    std::cout << "Lives: " << m_lives << std::endl;
+#if 1
+	//check if ball is out of play: below paddles
+	if (m_objects[m_ball]->GetTranslation().z - 2 > m_objects[m_paddleL]->GetTranslation().z && m_objects[m_ball]->GetTranslation().x <= 10.25) {
+		m_lives -= 1;
+		ResetBall();
+	}
+	for (int i = 0; i < 50; i++)
+	std::cout << std::endl;
+	std::cout << "Lives Remaining: " << m_lives << std::endl;
+#else
+	auto x = m_objects[m_ball]->GetTranslation();
+	std::cout << std::endl << x.x << "," << x.y << "," << x.z;
+#endif
 
 	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; ++i) {
@@ -509,6 +515,18 @@ void Graphics::SetSpotlightHeight(float change) {
 void Graphics::AddSpotLight(const glm::vec3 & location) {
 	m_spotlightLocs.push_back(location);
 	m_spotlightLocs.back().y += m_spotLightHeight;
+}
+
+int Graphics::GetScore(void) const {
+	return m_score;
+}
+int Graphics::GetNumLives(void) const {
+	return m_lives;
+}
+
+void Graphics::StartLife(void) {
+	if (m_objects[m_ball]->GetTranslation().x > 10.25 && m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05)
+		ApplyImpulse(glm::vec3(0, 0, -150));
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {

@@ -1,5 +1,4 @@
 #include "objects/paddle.h"
-#include <iostream>
 
 Paddle::Paddle(const std::string & objFile, const glm::vec3 & translation, const glm::vec3 & rotationAngles, const glm::vec3 & scale) :
 		Object(objFile, translation, rotationAngles, scale) {
@@ -49,7 +48,6 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 void Paddle::MoveUpR(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > 0.32) {
-		// std::cout << "Rotation.y = " << rotation.y << std::endl;
 		rotation.y -= 0.21;
 		ResetBt(GetTranslation(), rotation);
 	}
@@ -59,12 +57,9 @@ void Paddle::MoveUpR(void) {
 void Paddle::ResetPaddleR(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y < 1.37) {
-		// std::cout << "Rotation.y = " << rotation.y << std::endl;
 		rotation.y += 0.21;
 		ResetBt(GetTranslation(), rotation);
 	}
-	// else
-	//   std::cout << "Rotation.y = " << rotation.y << std::endl;
 }
 
 void Paddle::MoveUpL(void) {
@@ -73,8 +68,6 @@ void Paddle::MoveUpL(void) {
 		rotation.y -= 0.21;
 		ResetBt(GetTranslation(), rotation);
 	}
-	// else
-	//   std::cout << "Rotation.y = " << rotation.y << std::endl;
 	SetResetFlag(false);
 }
 
