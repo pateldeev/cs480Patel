@@ -19,7 +19,7 @@ void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mas
 	btDefaultMotionState * shapeMotionState = new btDefaultMotionState(startTransform);
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(mass), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
-	//shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
+	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
 
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);

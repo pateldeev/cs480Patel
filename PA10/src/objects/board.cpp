@@ -29,19 +29,19 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 
 	//cover
 	AddPlane(dynamicsWorld, btVector3(0, -1, 0), btScalar(-1.75), friction);
-	
+
 	//diagonal top right plane to prevent ball from getting stuck in railing
 	AddPlane(dynamicsWorld, btVector3(-1, 0, 1), btScalar(-std::sqrt(12*12+20*20)), friction);
 
 	//left wall
 	AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(-11), friction);
-	
+
 	//right wall
 	//AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(11.25), friction);
-	
+
 	//bottom wall
 	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-22.75), friction);
-	
+
 	//top wall
 	AddPlane(dynamicsWorld, btVector3(0, 0, 1), btScalar(-22.5), friction);
 
