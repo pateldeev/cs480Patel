@@ -27,8 +27,23 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 
-	//Add top
+	//cover
 	AddPlane(dynamicsWorld, btVector3(0, -1, 0), btScalar(-1.75), friction);
+	
+	//diagonal top right plane to prevent ball from getting stuck in railing
+	AddPlane(dynamicsWorld, btVector3(-1, 0, 1), btScalar(-std::sqrt(12*12+20*20)), friction);
+
+	//left wall
+	AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(-11), friction);
+	
+	//right wall
+	//AddPlane(dynamicsWorld, btVector3(1, 0, 0), btScalar(11.25), friction);
+	
+	//bottom wall
+	AddPlane(dynamicsWorld, btVector3(0, 0, -1), btScalar(-22.5), friction);
+	
+	//top wall
+	AddPlane(dynamicsWorld, btVector3(0, 0, 1), btScalar(-22.5), friction);
 
 #else //use plane colliders
 	//bottom floor
@@ -45,7 +60,7 @@ void Board::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass)
 #endif
 }
 
-void Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction) {
+btRigidBody * Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction) {
 	btCollisionShape * shape = new btStaticPlaneShape(normal, offset);
 	btDefaultMotionState * motionState = new btDefaultMotionState();
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(btScalar(0), motionState, shape, btVector3(0, 0, 0));
@@ -54,6 +69,7 @@ void Board::AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & 
 
 	btRigidBody * rigidBody = new btRigidBody(rigidBodyCI);
 	dynamicsWorld->addRigidBody(rigidBody);
+	return rigidBody;
 }
 
 #if DEBUG

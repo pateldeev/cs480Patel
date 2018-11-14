@@ -194,7 +194,8 @@ void Engine::EventChecker(void) {
 					|| m_event.key.keysym.sym == SDLK_DOWN || m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i
 					|| m_event.key.keysym.sym == SDLK_o || m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v
 					|| m_event.key.keysym.sym == SDLK_m || m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z
-					|| m_event.key.keysym.sym == SDLK_x || m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h)
+					|| m_event.key.keysym.sym == SDLK_x || m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h
+					|| m_event.key.keysym.sym == SDLK_b)
 				HandleEvent(m_event);
 			else
 				m_menu->HandleEvent(m_event);
@@ -250,8 +251,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->UseShaderSet("vertexLighting");
 		else if (event.key.keysym.sym == SDLK_h)
 			m_graphics->MovePaddleR();
-		if (event.key.keysym.sym == SDLK_g)
+		else if (event.key.keysym.sym == SDLK_g)
 			m_graphics->MovePaddleL();
+		else if (event.key.keysym.sym == SDLK_b)
+			m_graphics->StartLife();
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_h)
 			m_graphics->SetResetFlagPaddleR(true);

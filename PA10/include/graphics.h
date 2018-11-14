@@ -40,7 +40,6 @@ public:
 	void MovePaddleL(void);
 	void SetResetFlagPaddleL(bool flag);
 
-	
 	//for movement for camera
 	void IncreaseEyePosX(float moveAmount);
 	void IncreaseEyePosZ(float moveAmount);
@@ -66,6 +65,11 @@ public:
 	void SetSpotlightHeight(float change);
 
 	void AddSpotLight(const glm::vec3 & location);
+	
+	//for lives and scoring
+	int GetScore(void) const;
+	int GetNumLives(void) const;
+	void StartLife(void);
 
 private:
 	std::string ErrorString(const GLenum error) const;
@@ -103,6 +107,9 @@ private:
 	int m_board; //index of board object
 	std::vector<unsigned int> m_renderOrder;
 	std::vector<int> m_objectScores;
+	int m_score; //total score 
+	int m_lives;
+
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
 	std::vector<glm::vec3> m_startingRotations; //starting locations of objects
 	std::vector<glm::vec3> m_objectsDiffuseProducts;
