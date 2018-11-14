@@ -1,10 +1,12 @@
 #include "graphics.h"
+#include <iostream>
 
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
 				-1), m_paddleL(-1), m_board(-1) {
 	m_spotlightLocs.resize(1);
+  m_lives = 3;
 }
 
 Graphics::~Graphics(void) {
@@ -323,6 +325,13 @@ void Graphics::Update(unsigned int dt) {
 		static_cast<Paddle *>(m_objects[m_paddleR])->ResetPaddleR();
 	if (static_cast<Paddle *>(m_objects[m_paddleL])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleL])->ResetPaddleL();
+
+    if ((m_objects[m_ball])->GetTranslation().z - 2 > (m_objects[m_paddleL])->GetTranslation().z) {
+      m_lives -= 1;
+      ResetBall();
+    }
+    for (int i = 0; i < 50; i++) std::cout << std::endl;
+    std::cout << "Lives: " << m_lives << std::endl;
 
 	int numManifolds = mbt_dynamicsWorld->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; ++i) {

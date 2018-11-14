@@ -40,7 +40,7 @@ public:
 	void MovePaddleL(void);
 	void SetResetFlagPaddleL(bool flag);
 
-	
+
 	//for movement for camera
 	void IncreaseEyePosX(float moveAmount);
 	void IncreaseEyePosZ(float moveAmount);
@@ -76,6 +76,8 @@ private:
 	std::vector<Shader *> m_shaders;
 	std::vector<std::string> m_shaderNames;
 	int m_currentShader;
+
+  int m_lives;
 
 	GLint m_projectionMatrix;
 	GLint m_viewMatrix;
