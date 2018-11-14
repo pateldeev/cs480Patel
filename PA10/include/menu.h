@@ -18,7 +18,7 @@ public:
 	~Menu(void);
 
 	bool Initialize(const SDL_GLContext & gl_context);
-	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc); //returns if menu has been undated
+	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives); //returns if menu has been undated
 
 	void HandleEvent(SDL_Event event);
 
@@ -33,13 +33,15 @@ private:
 
 	glm::vec3 m_eyeLoc;
 	glm::vec3 m_eyeFocus;
-	
+
 	glm::uvec2 m_menuSize;
 	glm::uvec2 m_menuTL; //top left point of window
 
 	//variables bound to menu system
 	float mn_eyeLoc[3];
 	float mn_eyeFocus[3];
+
+  int m_lives;
 
 	void UpdateMenuParams(void);
 

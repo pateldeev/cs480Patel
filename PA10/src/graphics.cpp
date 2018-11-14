@@ -586,3 +586,7 @@ void Graphics::ZoomOut(float moveAmount) {
 	newEyePos -= moveVector;
 	m_camera->UpdatePosition(newEyePos, GetEyeLoc());
 }
+
+int Graphics::GetLives(void){
+  return m_lives;
+}

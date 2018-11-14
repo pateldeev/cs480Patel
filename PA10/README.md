@@ -48,9 +48,11 @@ This project lighting as required. By default, fragment lighting is done. Vertex
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard Controls
+  * Starting Game
+    * b: shoot the ball
   * Moving Ball
     * w/a/s/d: apply impulse to ball in direction specified
-  * Camera Movement 
+  * Camera Movement
     * left_arrow/right_arrow: move along the x-axis
     * up_arrow/down_arrow: move along the z-axis
     * i/o: zoom toward/away from the focus point
