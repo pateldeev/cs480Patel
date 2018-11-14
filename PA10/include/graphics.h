@@ -81,6 +81,8 @@ private:
 	std::vector<std::string> m_shaderNames;
 	int m_currentShader;
 
+  int m_lives;
+
 	GLint m_projectionMatrix;
 	GLint m_viewMatrix;
 	GLint m_modelMatrix;

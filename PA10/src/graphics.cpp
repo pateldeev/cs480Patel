@@ -6,6 +6,7 @@ Graphics::Graphics(void) :
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
 				-1), m_paddleL(-1), m_board(-1), m_score(0), m_lives(3) {
 	m_spotlightLocs.resize(1);
+  m_lives = 3;
 }
 
 Graphics::~Graphics(void) {
