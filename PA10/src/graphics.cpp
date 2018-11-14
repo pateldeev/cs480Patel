@@ -326,7 +326,7 @@ void Graphics::Update(unsigned int dt) {
 
 #if 1
 	//check if ball is out of play: below paddles
-	if (m_objects[m_ball]->GetTranslation().z - 2 > m_objects[m_paddleL]->GetTranslation().z && m_objects[m_ball]->GetTranslation().x <= 10.25) {
+	if (m_objects[m_ball]->GetTranslation().z - 2.75 > m_objects[m_paddleL]->GetTranslation().z && m_objects[m_ball]->GetTranslation().x <= 10.25) {
 		m_lives -= 1;
 		ResetBall();
 	}
