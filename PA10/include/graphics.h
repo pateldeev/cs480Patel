@@ -70,6 +70,7 @@ public:
 	int GetScore(void) const;
 	int GetNumLives(void) const;
 	void StartLife(void);
+  int GetLives(void);
 
 private:
 	std::string ErrorString(const GLenum error) const;
@@ -107,7 +108,7 @@ private:
 	int m_board; //index of board object
 	std::vector<unsigned int> m_renderOrder;
 	std::vector<int> m_objectScores;
-	int m_score; //total score 
+	int m_score; //total score
 	int m_lives;
 
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects

@@ -32,7 +32,7 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 }
 
-bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc) {
+bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives) {
 
 	bool updated = false;
 
@@ -60,6 +60,9 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
+
+  m_lives = lives;
+  ImGui::Text("Lives: %d", m_lives);
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
