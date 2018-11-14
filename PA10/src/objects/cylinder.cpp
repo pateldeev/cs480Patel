@@ -10,7 +10,7 @@ Cylinder::~Cylinder(void) {
 
 void Cylinder::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
 	const float width = 2 * ((m_scale.x + m_scale.y + m_scale.z) / 3);
-	const float radius = (m_scale.x + m_scale.y + m_scale.z) / 3;
+	const float radius = (m_scale.x + m_scale.y + m_scale.z) / 2;
 	const float friction = 1;
 
 	mbt_shape = new btCylinderShape(btVector3(radius, width, radius));
