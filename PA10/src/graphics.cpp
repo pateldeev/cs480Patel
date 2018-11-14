@@ -6,7 +6,6 @@ Graphics::Graphics(void) :
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
 				-1), m_paddleL(-1), m_board(-1), m_score(0), m_lives(3) {
 	m_spotlightLocs.resize(1);
-  m_lives = 3;
 }
 
 Graphics::~Graphics(void) {
@@ -332,7 +331,7 @@ void Graphics::Update(unsigned int dt) {
 		ResetBall();
 	}
 	for (int i = 0; i < 50; i++)
-	std::cout << std::endl;
+		std::cout << std::endl;
 	std::cout << "Lives Remaining: " << m_lives << std::endl;
 #else
 	auto x = m_objects[m_ball]->GetTranslation();

@@ -65,7 +65,7 @@ public:
 	void SetSpotlightHeight(float change);
 
 	void AddSpotLight(const glm::vec3 & location);
-	
+
 	//for lives and scoring
 	int GetScore(void) const;
 	int GetNumLives(void) const;
@@ -80,8 +80,6 @@ private:
 	std::vector<Shader *> m_shaders;
 	std::vector<std::string> m_shaderNames;
 	int m_currentShader;
-
-  int m_lives;
 
 	GLint m_projectionMatrix;
 	GLint m_viewMatrix;
