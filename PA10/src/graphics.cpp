@@ -188,16 +188,16 @@ void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 	m_objects[m_ball]->setAngularVelocity(vel, accumulate);
 }
 
-void Graphics::MovePaddleR(void) {
-	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
+void Graphics::MovePaddleR(float dt) {
+	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR(dt);
 }
 
 void Graphics::SetResetFlagPaddleR(bool flag) {
 	static_cast<Paddle *>(m_objects[m_paddleR])->SetResetFlag(flag);
 }
 
-void Graphics::MovePaddleL(void) {
-	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL();
+void Graphics::MovePaddleL(float dt) {
+	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL(dt);
 }
 
 void Graphics::SetResetFlagPaddleL(bool flag) {

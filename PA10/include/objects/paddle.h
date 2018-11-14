@@ -14,8 +14,8 @@ public:
 
 	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
 
-	void MoveUpR(void);
-	void MoveUpL(void);
+	void MoveUpR(float dt);
+	void MoveUpL(float dt);
 	void ResetPaddleR(void);
 	void ResetPaddleL(void);
 	void SetResetFlag(bool flag);

@@ -35,9 +35,9 @@ public:
 	void SetLinearVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
 	void SetAngularVelocity(const glm::vec3 & vel, bool accumulate = false); //apply velocity to ball
 
-	void MovePaddleR(void);
+	void MovePaddleR(float dt);
 	void SetResetFlagPaddleR(bool flag);
-	void MovePaddleL(void);
+	void MovePaddleL(float dt);
 	void SetResetFlagPaddleL(bool flag);
 
 	//for movement for camera

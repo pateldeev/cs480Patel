@@ -245,9 +245,9 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_v)
 			m_graphics->UseShaderSet("vertexLighting");
 		else if (event.key.keysym.sym == SDLK_h)
-			m_graphics->MovePaddleR();
+			m_graphics->MovePaddleR(m_DT);
 		else if (event.key.keysym.sym == SDLK_g)
-			m_graphics->MovePaddleL();
+			m_graphics->MovePaddleL(m_DT);
 		else if (event.key.keysym.sym == SDLK_b)
 			m_graphics->StartLife();
 	} else if (event.type == SDL_KEYUP) {
