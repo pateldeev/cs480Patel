@@ -6,7 +6,7 @@ Graphics::Graphics(void) :
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
 				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(3) {
 	m_spotlightLocs.resize(1);
-}
+	srand (time(NULL));}
 
 Graphics::~Graphics(void) {
 	//remove the rigidbodies from the dynamics world and delete them
@@ -325,6 +325,11 @@ void Graphics::Update(unsigned int dt) {
 	if (static_cast<Paddle *>(m_objects[m_paddleL])->GetResetFlag())
 		static_cast<Paddle *>(m_objects[m_paddleL])->ResetPaddleL();
 
+	if (m_objects[m_ball]->GetTranslation().x <= 10.25 && m_objects[m_ball]->GetRigidBody()->getAngularVelocity().length() <= 0.05
+			&& m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05) {
+		ApplyImpulse(glm::vec3(20, 0, 20));
+	}
+
 	UpdateLives();
 
 	UpdateScore();
@@ -491,8 +496,11 @@ int Graphics::GetNumLives(void) const {
 }
 
 void Graphics::StartLife(void) {
-	if (m_objects[m_ball]->GetTranslation().x > 10.25 && m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05)
-		ApplyImpulse(glm::vec3(0, 0, -150));
+	if (m_objects[m_ball]->GetTranslation().x > 10.25 && m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05) {
+		float impulse = -(145 + (rand() % 15));
+		ApplyImpulse(glm::vec3(0, 0, impulse));
+	}
+
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
@@ -582,6 +590,7 @@ void Graphics::UpdateScore(void) {
 					//collsion occured with paddle
 					if (other == m_objects[m_paddleR]->GetRigidBody() || other == m_objects[m_paddleL]->GetRigidBody()) {
 						m_objects[m_ball]->scaleVelocities(1.3);
+						m_scoreLastObj = nullptr;
 					} else {
 						int indexOfOther = -1;
 						for (unsigned int i = 0; i < m_objects.size(); ++i) {

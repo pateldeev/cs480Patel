@@ -100,7 +100,7 @@ void ::Object::scaleVelocities(float scale) {
 		}
 
 		mbt_rigidBody->setLinearVelocity(linearVel);
-		mbt_rigidBody->setAngularVelocity(angularVel);
+		//mbt_rigidBody->setAngularVelocity(angularVel);
 
 	} else {
 		printf("Object is not a bullet object. Cannot scale velocity!\n");
