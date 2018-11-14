@@ -46,7 +46,8 @@ make
 This is a fully functional pinball game. You are given 3 lives and score 100 points for hitting the cylindirical bumpers and 25 points for hitting the rectangular bumpers at the top. You can launch the ball by pressing 'b'.
 
 ## Extra Credit
-For extra credit, we had an extra spotlight that follows the ball around as it moves. This spotlight is in addition to the other two spotlights.
+* Extra spotlight that follows the ball (in addition to two other fixed spotlights on the board). Can be controlled via z/x keys.
+* Top 10 scoreboard. Can be seen at bottom of IMGUI menu.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
