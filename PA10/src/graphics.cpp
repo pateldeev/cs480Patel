@@ -4,7 +4,7 @@
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
-				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(1) {
+				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(3) {
 	m_spotlightLocs.resize(1);
 	srand (time(NULL));}
 
