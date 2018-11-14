@@ -15,6 +15,8 @@ struct objectModel {
 	glm::vec3 scale;
 	glm::vec3 rotation;
 	unsigned int mass;
+	float friction;
+	float restitution;
 	glm::vec3 diffuseProduct;
 	glm::vec3 specularProduct;
 };

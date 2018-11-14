@@ -229,6 +229,18 @@ bool ConfigFileParser::getObjects(std::vector<objectModel> & objects) {
 			return false;
 		}
 
+		//get friction
+		if (!parseLine<float>(varName, &obj.friction) || varName.compare("OBJ_FRICTION")) {
+			printf("Could not get bullet object friction from config file \n");
+			return false;
+		}
+
+		//get restituion
+		if (!parseLine<float>(varName, &obj.restitution) || varName.compare("OBJ_RESTITUION")) {
+			printf("Could not get bullet object restituion from config file \n");
+			return false;
+		}
+
 		//get diffuse product for lighting
 		if (!parseLine<float, 3>(varName, values) || varName.compare("OBJ_DIFFUSE")) {
 			printf("Could not get diffuse products from config file \n");

@@ -18,7 +18,7 @@ public:
 			const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	virtual ~Object(void);
 
-	virtual void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) = 0;
+	virtual void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass, float restitution, float friction) = 0;
 
 	void applyImpulse(const glm::vec3 & impulse, const glm::vec3 & spin = glm::vec3(1, 1, 1));
 	void applyForce(const glm::vec3 & force, const glm::vec3 & spin = glm::vec3(1, 1, 1));

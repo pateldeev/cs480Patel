@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "window.h"
 #include "graphics.h"
+#include "scoreboard.h"
 
 #include "configLoader.hpp"
 
@@ -21,6 +22,7 @@ public:
 private:
 	Window * m_window;
 	Graphics * m_graphics;
+	Scoreboard m_scoreboard;
 
 	SDL_Event m_event;
 

@@ -12,7 +12,7 @@ Menu::~Menu(void) {
 	SDL_DestroyWindow (m_window);
 }
 
-bool Menu::Initialize(const SDL_GLContext & gl_context) {
+bool Menu::Initialize(const SDL_GLContext & gl_context, const Scoreboard * scoreboard) {
 
 	m_window = SDL_CreateWindow("Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
@@ -27,6 +27,15 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 	// Setup style
 	ImGui::StyleColorsDark();
+
+	//load top ten
+	std::string name;
+	unsigned int score;
+	for (unsigned int i = 0; i < 10; ++i) {
+		scoreboard->GetScore(i, name, score);
+		name += " : ";
+		m_topTen[i] = name + std::to_string(score);
+	}
 
 	return true;
 
@@ -61,10 +70,16 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
 
-	m_lives = lives;
-	m_score = score;
-	ImGui::Text("Lives: %d \t\tScore: %d", m_lives, m_score);
+	ImGui::Text("\n");
+	ImGui::Text("Lives Remaining: %d \t\t CurrentScore: %d", lives, score);
 
+	ImGui::Text("\n");
+	ImGui::Text("\n");
+	ImGui::Text("Top 10 Scoreboard");
+	for (unsigned int i = 0; i < 10; ++i)
+		ImGui::Text("  %d.) %s \n", i+1, m_topTen[i].c_str());
+
+	ImGui::Text("\n");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <assert.h>
+#include <iostream>
 
 Engine::Engine(const std::string & launchFile) :
 		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
@@ -128,8 +129,28 @@ void Engine::Run(void) {
 
 		//End the game if lives == 0
 		if (m_graphics->GetLives() < 1) {
-			printf("\n Game Over: You Scored: %d points! \n", m_graphics->GetScore());
+			int score = m_graphics->GetScore();
+
+			delete m_window;
+			delete m_graphics;
+			delete m_menu;
+			m_window = nullptr;
+			m_graphics = nullptr;
+			m_menu = nullptr;
+
+			std::cout << std::endl << "Game Over: You Scored: " << score << " points!";
+			std::cout << std::endl << "Please Center your name: ";
+			std::string name;
+			std::cin >> name;
+			unsigned int rank = m_scoreboard.AddScore(name, score) + 1;
+
+			if (rank <= 10)
+				std::cout << std::endl << "You made it into the top 10. You are now: " << rank << std::endl;
+			else
+				std::cout << std::endl << "You are ranked: " << rank << ". This is not enough for the top 10! Better luck next time" << std::endl;
+
 			m_running = false;
+			break;
 		}
 		// Swap to the Window
 		m_window->Swap();
@@ -150,7 +171,6 @@ void Engine::Run(void) {
 		if (duration < minFrameTime)
 			SDL_Delay(minFrameTime - duration);
 	}
-
 }
 
 unsigned int Engine::getDT(void) {
@@ -260,7 +280,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
 	m_menu = new Menu(eyePos, eyeLoc, m_menuSize);
-	if (!m_menu->Initialize(m_window->GetContext())) {
+	if (!m_menu->Initialize(m_window->GetContext(), &m_scoreboard)) {
 		printf("The imgui menu failed to initialize. Running without it. \n");
 		delete m_menu;
 		m_menu = nullptr;

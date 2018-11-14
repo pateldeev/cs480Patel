@@ -8,9 +8,7 @@ Complex::~Complex(void) {
 
 }
 
-void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
-	const float friction = 0.25;
-
+void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass, float restitution, float friction) {
 	mbt_shape = new btScaledBvhTriangleMeshShape(new btBvhTriangleMeshShape(mbt_mesh, true, true), btVector3(m_scale.x, m_scale.y, m_scale.z));
 
 	btQuaternion startRotations;
@@ -20,6 +18,8 @@ void Complex::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mas
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(btScalar(mass), shapeMotionState, mbt_shape, btVector3(0, 0, 0));
 	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
+	shapeRigidBodyCI.m_restitution = restitution;
+
 
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);

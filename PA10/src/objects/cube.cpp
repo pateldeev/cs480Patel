@@ -8,7 +8,7 @@ Cube::~Cube(void) {
 
 }
 
-void Cube::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) {
+void Cube::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass, float restitution, float friction) {
 	mbt_shape = new btBoxShape(btVector3(m_scale.x, m_scale.y, m_scale.z));
 
 	btQuaternion startRotations;
@@ -20,6 +20,9 @@ void Cube::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass) 
 	mbt_shape->calculateLocalInertia(mass, inertia);
 
 	btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, mbt_shape, inertia);
+	shapeRigidBodyCI.m_friction = shapeRigidBodyCI.m_rollingFriction = shapeRigidBodyCI.m_spinningFriction = friction;
+	shapeRigidBodyCI.m_restitution = restitution;
+
 	mbt_rigidBody = new btRigidBody(shapeRigidBodyCI);
 	dynamicsWorld->addRigidBody(mbt_rigidBody);
 

@@ -12,10 +12,16 @@ public:
 			const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Board(void);
 
-	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
+	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass, float restitution, float friction) override final;
+
+	//side wall for allowing entrance to starting position
+	void AddRightWall(btDiscreteDynamicsWorld * dynamicsWorld);
+	void RemoveRightWall(btDiscreteDynamicsWorld * dynamicsWorld);
 
 private:
-	btRigidBody * AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction = 100);
+	btRigidBody * AddPlane(btDiscreteDynamicsWorld * dynamicsWorld, const btVector3 & normal, const btScalar & offset, const float friction = 0);
+
+	btRigidBody * m_rightWall;
 
 #if DEBUG
 	void DrawDebug(void);

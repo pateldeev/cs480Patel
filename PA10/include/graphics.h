@@ -125,7 +125,7 @@ private:
 	btDiscreteDynamicsWorld * mbt_dynamicsWorld;
 
 	void UpdateScore(void);
-	void UpdateLives(void);
+	void UpdateLivesAndBall(void);
 };
 
 #endif /* GRAPHICS_H */

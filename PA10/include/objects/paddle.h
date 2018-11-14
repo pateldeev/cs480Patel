@@ -12,7 +12,7 @@ public:
 			const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Paddle(void);
 
-	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass = 0) override final;
+	void EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass, float restitution, float friction) override final;
 
 	void MoveUpR(void);
 	void MoveUpL(void);
