@@ -189,7 +189,7 @@ void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 }
 
 void Graphics::MovePaddleR(float dt) {
-	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR(dt);
+	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
 }
 
 void Graphics::SetResetFlagPaddleR(bool flag) {
@@ -197,7 +197,7 @@ void Graphics::SetResetFlagPaddleR(bool flag) {
 }
 
 void Graphics::MovePaddleL(float dt) {
-	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL(dt);
+	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL();
 }
 
 void Graphics::SetResetFlagPaddleL(bool flag) {
@@ -497,7 +497,7 @@ int Graphics::GetNumLives(void) const {
 
 void Graphics::StartLife(void) {
 	if (m_objects[m_ball]->GetTranslation().x > 10.25 && m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05) {
-		float impulse = -(145 + (rand() % 15));
+		float impulse = -(150 + (rand() % 15));
 		ApplyImpulse(glm::vec3(0, 0, impulse));
 	}
 

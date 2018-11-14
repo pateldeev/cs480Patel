@@ -45,17 +45,12 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 #endif
 }
 
-void Paddle::MoveUpR(float dt) {
+void Paddle::MoveUpR(void) {
 	glm::vec3 rotation = GetRotationAngles();
-
 	if (rotation.y > 0.32) {
-		rotation.y -= 0.21 * (dt * 0.4);
-    if (rotation.y < 0.32)
-      rotation.y = 0.32;
-	}else
-    rotation.y = 0.32;
-
-  ResetBt(GetTranslation(), rotation);
+		rotation.y -= 0.21;
+		ResetBt(GetTranslation(), rotation);
+	}
 	SetResetFlag(false);
 }
 
@@ -63,35 +58,26 @@ void Paddle::ResetPaddleR(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y < 1.37) {
 		rotation.y += 0.21;
-    if (rotation.y > 1.37)
-      rotation.y = 1.37;
-	}else
-    rotation.y = 1.37;
-  ResetBt(GetTranslation(), rotation);
+		ResetBt(GetTranslation(), rotation);
+	}
 }
 
-void Paddle::MoveUpL(float dt) {
+void Paddle::MoveUpL(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > -1.122) {
-		rotation.y -= 0.21 * (dt * 0.4);
-    if (rotation.y < -1.122)
-      rotation.y = -1.122;
-	}else
-    rotation.y = -1.122;
-
-  ResetBt(GetTranslation(), rotation);
+		rotation.y -= 0.21;
+		ResetBt(GetTranslation(), rotation);
+	}
 	SetResetFlag(false);
 }
 
 void Paddle::ResetPaddleL(void) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y < -0.072) {
+		// std::cout << "Rotation.y = " << rotation.y << std::endl;
 		rotation.y += 0.21;
-    if (rotation.y > -0.072)
-      rotation.y = -0.072;
-	}else
-    rotation.y = -0.072;
-  ResetBt(GetTranslation(), rotation);
+		ResetBt(GetTranslation(), rotation);
+	}
 	// else
 	// rotation.y = -0.072;
 }
