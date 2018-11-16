@@ -47,9 +47,9 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 void Paddle::MoveUpR(float dt) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > 0.32) {
-		rotation.y -= 0.21 * (dt * 0.5);
-    if (rotation.y < 0.32)
-      rotation.y = 0.32;
+		rotation.y -= 0.21 * (dt * 0.3);
+		if (rotation.y < 0.32)
+			rotation.y = 0.32;
 		ResetBt(GetTranslation(), rotation);
 	}
 	SetResetFlag(false);
@@ -66,9 +66,9 @@ void Paddle::ResetPaddleR(void) {
 void Paddle::MoveUpL(float dt) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > -1.122) {
-		rotation.y -= 0.21 * (dt * 0.5);
-    if (rotation.y < -1.122)
-      rotation.y = -1.122;
+		rotation.y -= 0.21 * (dt * 0.3);
+		if (rotation.y < -1.122)
+			rotation.y = -1.122;
 		ResetBt(GetTranslation(), rotation);
 	}
 	SetResetFlag(false);

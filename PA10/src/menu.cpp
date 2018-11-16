@@ -71,13 +71,15 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	}
 
 	ImGui::Text("\n");
-	ImGui::Text("Lives Remaining: %d \t\t CurrentScore: %d", lives, score);
+	ImGui::Text("Lives Remaining: %d \n\nCurrentScore: %d", lives, score);
 
 	ImGui::Text("\n");
+	ImGui::Text("Note: If anything is stuck, or you want to restart the game, press 'r'");
+
 	ImGui::Text("\n");
 	ImGui::Text("Top 10 Scoreboard");
 	for (unsigned int i = 0; i < 10; ++i)
-		ImGui::Text("  %d.) %s \n", i+1, m_topTen[i].c_str());
+		ImGui::Text("  %d.) %s \n", i + 1, m_topTen[i].c_str());
 
 	ImGui::Text("\n");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
