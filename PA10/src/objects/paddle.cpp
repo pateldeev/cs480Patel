@@ -29,7 +29,7 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 #else
 	const float width = 3*2 * ((m_scale.x + m_scale.y + m_scale.z) / 3);
 	const float radius = 0.5*((m_scale.x + m_scale.y + m_scale.z) / 3);
-	
+
 	mbt_shape = new btCylinderShape(btVector3(radius, width, radius));
 	btQuaternion startRotations;
 	startRotations.setEulerZYX(m_rotationAngles.z, m_rotationAngles.y, m_rotationAngles.x);
@@ -44,10 +44,12 @@ void Paddle::EnableBt(btDiscreteDynamicsWorld * dynamicsWorld, unsigned int mass
 #endif
 }
 
-void Paddle::MoveUpR(void) {
+void Paddle::MoveUpR(float dt) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > 0.32) {
-		rotation.y -= 0.21;
+		rotation.y -= 0.21 * (dt * 0.5);
+    if (rotation.y < 0.32)
+      rotation.y = 0.32;
 		ResetBt(GetTranslation(), rotation);
 	}
 	SetResetFlag(false);
@@ -61,10 +63,12 @@ void Paddle::ResetPaddleR(void) {
 	}
 }
 
-void Paddle::MoveUpL(void) {
+void Paddle::MoveUpL(float dt) {
 	glm::vec3 rotation = GetRotationAngles();
 	if (rotation.y > -1.122) {
-		rotation.y -= 0.21;
+		rotation.y -= 0.21 * (dt * 0.5);
+    if (rotation.y < -1.122)
+      rotation.y = -1.122;
 		ResetBt(GetTranslation(), rotation);
 	}
 	SetResetFlag(false);

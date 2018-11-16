@@ -190,7 +190,7 @@ void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 }
 
 void Graphics::MovePaddleR(float dt) {
-	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
+	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR(dt);
 	m_paddleRMoving = true;
 }
 
@@ -200,7 +200,7 @@ void Graphics::SetResetFlagPaddleR(bool flag) {
 }
 
 void Graphics::MovePaddleL(float dt) {
-	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL();
+	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL(dt);
 	m_paddleLMoving = true;
 }
 
