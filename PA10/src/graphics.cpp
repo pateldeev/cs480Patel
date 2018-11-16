@@ -644,7 +644,7 @@ void Graphics::UpdateLivesAndBall(void) {
 		//move ball if it is stuck somehwere
 		if (m_objects[m_ball]->GetRigidBody()->getAngularVelocity().length() <= 0.05
 				&& m_objects[m_ball]->GetRigidBody()->getLinearVelocity().length() <= 0.05)
-			ApplyImpulse(glm::vec3(20, 0, 20));
+			ApplyImpulse(glm::vec3(-20, 0, -20));
 
 		//check if ball is out of play: below paddles - if so, reduce number of lives
 		if (m_objects[m_ball]->GetTranslation().z - 2.85 > m_objects[m_paddleL]->GetTranslation().z) {
