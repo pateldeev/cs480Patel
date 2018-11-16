@@ -1,10 +1,10 @@
 Slayer 10000
 Person 1250
+[A 1200
 Not_Me 1125
 Other 600
+hhfsdaf 550
 N/A 525
 Bob 525
 Me 300
 Random 250
-John 150
-IDK 125

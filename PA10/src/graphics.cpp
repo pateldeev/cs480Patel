@@ -4,7 +4,7 @@
 Graphics::Graphics(void) :
 		m_camera(nullptr), m_currentShader(-1), mbt_broadphase(nullptr), mbt_collisionConfig(nullptr), mbt_dispatcher(nullptr), mbt_solver(nullptr), mbt_dynamicsWorld(
 				nullptr), m_lightingStatus(false), m_ambientLevel(0.0, 0.0, 0.0), m_shininessConst(0), m_spotLightHeight(6), m_ball(-1), m_paddleR(
-				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(3) {
+				-1), m_paddleL(-1), m_board(-1), m_score(0), m_scoreLastObj(nullptr), m_lives(3), m_paddleRMoving(false), m_paddleLMoving(false) {
 	m_spotlightLocs.resize(1);
 	srand (time(NULL));}
 
@@ -191,18 +191,22 @@ void Graphics::SetAngularVelocity(const glm::vec3 & vel, bool accumulate) {
 
 void Graphics::MovePaddleR(float dt) {
 	static_cast<Paddle *>(m_objects[m_paddleR])->MoveUpR();
+	m_paddleRMoving = true;
 }
 
 void Graphics::SetResetFlagPaddleR(bool flag) {
 	static_cast<Paddle *>(m_objects[m_paddleR])->SetResetFlag(flag);
+	m_paddleRMoving = false;
 }
 
 void Graphics::MovePaddleL(float dt) {
 	static_cast<Paddle *>(m_objects[m_paddleL])->MoveUpL();
+	m_paddleLMoving = true;
 }
 
 void Graphics::SetResetFlagPaddleL(bool flag) {
 	static_cast<Paddle *>(m_objects[m_paddleL])->SetResetFlag(flag);
+	m_paddleLMoving = false;
 }
 
 bool Graphics::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -583,9 +587,25 @@ void Graphics::UpdateScore(void) {
 
 				//one of collision objects is ball
 				if (other) {
-					//collsion occured with paddle
-					if (other == m_objects[m_paddleR]->GetRigidBody() || other == m_objects[m_paddleL]->GetRigidBody()) {
-						m_objects[m_ball]->scaleVelocities(1.2);
+
+					if (other == m_objects[m_paddleR]->GetRigidBody()) {
+						if (m_paddleRMoving) {
+							btVector3 vel = m_objects[m_ball]->GetRigidBody()->getLinearVelocity();
+							if (-vel.getZ() > vel.length() * .6)
+								m_objects[m_ball]->scaleVelocities(3.0);
+							else
+								m_objects[m_ball]->scaleVelocities(1.3);
+						}
+						m_scoreLastObj = nullptr;
+					} else if (other == m_objects[m_paddleL]->GetRigidBody()) {
+						if (m_paddleLMoving) {
+							m_objects[m_ball]->scaleVelocities(3.0);
+							btVector3 vel = m_objects[m_ball]->GetRigidBody()->getLinearVelocity();
+							if (-vel.getZ() > vel.length() * .6)
+								m_objects[m_ball]->scaleVelocities(3.0);
+							else
+								m_objects[m_ball]->scaleVelocities(1.3);
+						}
 						m_scoreLastObj = nullptr;
 					} else {
 						int indexOfOther = -1;
@@ -619,7 +639,6 @@ void Graphics::UpdateLivesAndBall(void) {
 	if (m_objects[m_ball]->GetTranslation().x <= 10.25) {
 
 		//add wall to prevent ball from going back into starting zone
-
 		static_cast<Board *>(m_objects[m_board])->AddRightWall(mbt_dynamicsWorld);
 
 		//move ball if it is stuck somehwere
@@ -634,6 +653,14 @@ void Graphics::UpdateLivesAndBall(void) {
 		}
 	}
 
+	//ensure ball isn't going too fast
+	const int maxVel = 100;
+	btVector3 vel = m_objects[m_ball]->GetRigidBody()->getLinearVelocity();
+	if (vel.length() > 20) {
+		m_scoreLastObj = nullptr;
+		if (vel.length() > maxVel)
+			m_objects[m_ball]->GetRigidBody()->setLinearVelocity(maxVel * vel.normalized());
+	}
 	for (int i = 0; i < 20; ++i)
 		std::cout << std::endl;
 	std::cout << "Lives Remaining: " << m_lives << std::endl;

@@ -36,7 +36,7 @@ private:
 	long long m_currentTimeMillis;
 	bool m_running;
 
-	bool m_shift;
+	bool m_shift; //keeps track of shift being pressed
 	void EventChecker(void);
 	void HandleEvent(const SDL_Event & event);
 

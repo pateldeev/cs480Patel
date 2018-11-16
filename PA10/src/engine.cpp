@@ -111,7 +111,7 @@ void Engine::Run(void) {
 	m_running = true;
 
 	std::chrono::high_resolution_clock::time_point t1, t2;
-	const float FPS = 120; //FPS cap, should obviously add a way to change this later
+	const float FPS = 500; //FPS cap, should obviously add a way to change this later
 	const float minFrameTime = 1.0f / FPS * 1000;
 	float duration;
 
@@ -271,10 +271,11 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_b)
 			m_graphics->StartLife();
 	} else if (event.type == SDL_KEYUP) {
-		if (event.key.keysym.sym == SDLK_h)
-			m_graphics->SetResetFlagPaddleR(true);
 		if (event.key.keysym.sym == SDLK_g)
 			m_graphics->SetResetFlagPaddleL(true);
+		else if (event.key.keysym.sym == SDLK_h)
+			m_graphics->SetResetFlagPaddleR(true);
+
 	}
 }
 

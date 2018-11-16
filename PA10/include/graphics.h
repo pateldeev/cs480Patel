@@ -112,6 +112,10 @@ private:
 	btRigidBody * m_scoreLastObj; //last object that was hit for points
 	int m_lives;
 
+	//keeps track of whether of not paddles are being moved by user
+	bool m_paddleRMoving;
+	bool m_paddleLMoving;
+	
 	std::vector<glm::vec3> m_startingLocs; //starting location of objects
 	std::vector<glm::vec3> m_startingRotations; //starting locations of objects
 	std::vector<glm::vec3> m_objectsDiffuseProducts;
