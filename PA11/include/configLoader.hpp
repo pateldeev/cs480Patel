@@ -28,28 +28,33 @@ public:
 	ConfigFileParser(const std::string & configFile);
 	~ConfigFileParser(void);
 
-	bool getWindowInfo(std::string & windowName, glm::uvec2 & size);
+	//ConfigFileParser is not meant to be copied or moved
+	ConfigFileParser(const ConfigFileParser &) = delete;
+	ConfigFileParser(const ConfigFileParser &&) = delete;
+	ConfigFileParser& operator=(const ConfigFileParser &) = delete;
 
-	bool getCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
+	bool GetWindowInfo(std::string & windowName, glm::uvec2 & size);
 
-	bool getShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
+	bool GetCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
 
-	bool getShaderSetActive(std::string & set);
+	bool GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
 
-	bool getMenuState(bool & menu, glm::uvec2 & size);
+	bool GetShaderSetActive(std::string & set);
 
-	bool getWorldGravity(glm::vec3 & gravity);
+	bool GetMenuState(bool & menu, glm::uvec2 & size);
 
-	bool getLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs);
+	bool GetWorldGravity(glm::vec3 & gravity);
 
-	bool getObjects(std::vector<objectModel> & objects);
+	bool GetLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs);
+
+	bool GetObjects(std::vector<objectModel> & objects);
 
 private:
 	std::stringstream m_fileBuffer;
 
 	//internal function to get variable name and value in a line. Returns false if file is at end and line could not be read 
 	template<typename T, unsigned int NUMVALUES = 1, char SEPERATOR = ','>
-	inline bool parseLine(std::string & variableName, T * variableValue) {
+	inline bool ParseLine(std::string & variableName, T * variableValue) {
 		if (m_fileBuffer.eof())
 			return false;
 

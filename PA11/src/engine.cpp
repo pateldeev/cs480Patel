@@ -5,70 +5,74 @@
 #include <iostream>
 
 Engine::Engine(const std::string & launchFile) :
-		m_window(nullptr), m_graphics(nullptr), m_menu(nullptr), m_menuLastTime(0), m_configFile(launchFile), m_DT(0), m_currentTimeMillis(
-				Engine::GetCurrentTimeMillis()), m_running(false), m_shift(false) {
+		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(
+				0), m_currentTimeMillis(Engine::GetCurrentTimeMillis()), m_running(false) {
 	std::srand(time(nullptr));
 }
 
 Engine::~Engine(void) {
-	delete m_window;
-	delete m_graphics;
 	delete m_menu;
+	delete m_graphics;
+	delete m_window;
 }
 
 bool Engine::Initialize(void) {
 
+	//get window parameters and start the window
 	std::string windowName;
 	glm::uvec2 windowSize;
-	if (!m_configFile.getWindowInfo(windowName, windowSize)) {
-		printf("Could not get window information from configuration file \n");
+	if (!m_configFile.GetWindowInfo(windowName, windowSize)) {
+		std::cerr << std::endl << "Could not get window information from configuration file!" << std::endl;
 		return false;
 	}
-	//start the window
 	m_window = new Window();
 	if (!m_window->Initialize(windowName, windowSize.x, windowSize.y)) {
-		printf("The window failed to initialize.\n");
+		std::cerr << std::endl << "The window failed to initialize!" << std::endl;
 		return false;
 	}
 
+	//get camera information for configuration file
 	glm::vec3 eyePos, eyeLoc;
-	if (!m_configFile.getCameraInfo(eyePos, eyeLoc)) {
-		printf("Could not get camera information from configuration file \n");
+	if (!m_configFile.GetCameraInfo(eyePos, eyeLoc)) {
+		std::cerr << std::endl << "Could not get camera information from configuration file!" << std::endl;
 		return false;
 	}
+
 	//start the graphics
 	m_graphics = new Graphics();
 	if (!m_graphics->Initialize(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc)) {
-		printf("The graphics failed to initialize.\n");
+		std::cerr << std::endl << "The graphics failed to initialize!" << std::endl;
 		return false;
 	}
 
-	//add shader sets
+	//add shader sets and set active one
 	std::string shaderSetName, shaderSrcVert, shaderSrcFrag;
-	while (m_configFile.getShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
+	while (m_configFile.GetShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag)) {
 		m_graphics->AddShaderSet(shaderSetName, shaderSrcVert, shaderSrcFrag);
 	}
-	if (!m_configFile.getShaderSetActive(shaderSetName)) {
-		printf("Could not get active shader set from configuration file \n");
+	if (!m_configFile.GetShaderSetActive(shaderSetName)) {
+		std::cerr << std::endl << "Could not get active shader set from configuration file!" << std::endl;
+		return false;
+	} else if (!m_graphics->UseShaderSet(shaderSetName)) {
+		std::cerr << std::endl << "Could not set active shader in graphics!" << std::endl;
 		return false;
 	}
-	m_graphics->UseShaderSet(shaderSetName);
 
 	//check if menu needs to be initialized
 	bool menu;
-	if (!m_configFile.getMenuState(menu, m_menuSize)) {
-		printf("Could not get menu information from configuration file \n");
+	if (!m_configFile.GetMenuState(menu, m_menuSize)) {
+		std::cerr << std::endl << "Could not get menu information from configuration file!" << std::endl;
 		return false;
 	}
 
 	//start bullet
 	glm::vec3 gravity;
-	if (!m_configFile.getWorldGravity(gravity)) {
-		printf("Could not get gravity information from configuration file \n");
+	if (!m_configFile.GetWorldGravity(gravity)) {
+		std::cerr << std::endl << "Could not get gravity information from configuration file!" << std::endl;
 		return false;
 	}
 	if (!m_graphics->InitializeBt(gravity)) {
-		printf("The graphics failed to initialize bullet.\n");
+		std::cerr << std::endl << "The graphics failed to initialize bullet!" << std::endl;
 		return false;
 	}
 
@@ -76,8 +80,8 @@ bool Engine::Initialize(void) {
 	glm::vec3 ambientLevel;
 	float shininess;
 	std::vector < glm::vec3 > spotlightLocs;
-	if (!m_configFile.getLightingInfo(ambientLevel, shininess, spotlightLocs)) {
-		printf("Could not get lighting info from configuration file \n");
+	if (!m_configFile.GetLightingInfo(ambientLevel, shininess, spotlightLocs)) {
+		std::cerr << std::endl << "Could not get lighting info from configuration file!" << std::endl;
 		return false;
 	}
 	m_graphics->InitializeLighting(ambientLevel, shininess);
@@ -86,8 +90,8 @@ bool Engine::Initialize(void) {
 
 	//add objects from configuration file
 	std::vector < objectModel > objects;
-	if (!m_configFile.getObjects(objects)) {
-		printf("Could not get objects from configuration file \n");
+	if (!m_configFile.GetObjects(objects)) {
+		std::cerr << std::endl << "Could not get objects from configuration file!" << std::endl;
 		return false;
 	}
 	for (const objectModel & obj : objects)
@@ -95,7 +99,7 @@ bool Engine::Initialize(void) {
 
 	//check if all main objects are loaded
 	if (!m_graphics->VerifyObjects()) {
-		printf("Not all objects were loaded. Check configuration file!");
+		std::cerr << std::endl << "Not all objects were loaded. Check configuration file!" << std::endl;
 		return false;
 	}
 
@@ -122,33 +126,23 @@ void Engine::Run(void) {
 
 		EventChecker(); // Check for events input
 
-		m_DT = getDT();
+		m_dt = GetDT();
 		// Update and render the graphics
-		m_graphics->Update(m_DT);
+		m_graphics->Update(m_dt);
 		m_graphics->Render();
 
 		//End the game if lives == 0
 		if (m_graphics->GetLives() < 1) {
 			int score = m_graphics->GetScore();
 
-			delete m_window;
-			delete m_graphics;
 			delete m_menu;
+			delete m_graphics;
+			delete m_window;
 			m_window = nullptr;
 			m_graphics = nullptr;
 			m_menu = nullptr;
 
-			std::cout << std::endl << "Game Over: You Scored: " << score << " points!";
-			std::cout << std::endl << "Please Center your name: ";
-			std::string name;
-			std::cin >> name;
-			unsigned int rank = m_scoreboard.AddScore(name, score) + 1;
-
-			if (rank <= 10)
-				std::cout << std::endl << "You made it into the top 10. You are now: " << rank << std::endl;
-			else
-				std::cout << std::endl << "You are ranked: " << rank << ". This is not enough for the top 10! Better luck next time" << std::endl;
-
+			std::cout << std::endl << "Game Over: You Scored: " << score << " points!" << std::endl;
 			m_running = false;
 			break;
 		}
@@ -173,7 +167,7 @@ void Engine::Run(void) {
 	}
 }
 
-unsigned int Engine::getDT(void) {
+unsigned int Engine::GetDT(void) {
 	long long TimeNowMillis = Engine::GetCurrentTimeMillis();
 	assert(TimeNowMillis >= m_currentTimeMillis);
 	unsigned int DeltaTimeMillis = (unsigned int) (TimeNowMillis - m_currentTimeMillis);
@@ -186,42 +180,44 @@ long long Engine::GetCurrentTimeMillis() {
 }
 
 void Engine::EventChecker(void) {
-	while (SDL_PollEvent (&m_event)) {
+	SDL_Event event;
 
-		if (m_event.type == SDL_QUIT) { //only works in no-menu mode
+	while (SDL_PollEvent(&event)) {
+
+		if (event.type == SDL_QUIT) { //only works in no-menu mode
 			m_running = false;
 		}
 
-		if (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_ESCAPE) {
+		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
 			m_running = false;
 		}
 
 		//keep track of shift key being pressed/released
-		if (m_event.type == SDL_KEYDOWN && (m_event.key.keysym.sym == SDLK_RSHIFT || m_event.key.keysym.sym == SDLK_LSHIFT))
+		if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
 			m_shift = true;
-		else if (m_event.type == SDL_KEYUP && (m_event.key.keysym.sym == SDLK_RSHIFT || m_event.key.keysym.sym == SDLK_LSHIFT))
+		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
 			m_shift = false;
 
 		//handle event based on correct window location
-		if (m_event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
-			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
+		if (event.window.windowID == SDL_GetWindowID(m_window->GetWindow())) {
+			if (event.window.event == SDL_WINDOWEVENT_CLOSE) { //quits if main window is closed
 				m_running = false;
 			} else {
-				HandleEvent(m_event);
+				HandleEvent(event);
 			}
-		} else if (m_menu && m_event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
-			if (m_event.window.event == SDL_WINDOWEVENT_CLOSE
-					|| (m_event.type == SDL_KEYDOWN && m_event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
+		} else if (m_menu && event.window.windowID == SDL_GetWindowID(m_menu->GetWindow())) {
+			if (event.window.event == SDL_WINDOWEVENT_CLOSE
+					|| (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
-			else if (m_event.key.keysym.sym == SDLK_r || m_event.key.keysym.sym == SDLK_EQUALS || m_event.key.keysym.sym == SDLK_MINUS
-					|| m_event.key.keysym.sym == SDLK_RIGHT || m_event.key.keysym.sym == SDLK_LEFT || m_event.key.keysym.sym == SDLK_DOWN
-					|| m_event.key.keysym.sym == SDLK_UP || m_event.key.keysym.sym == SDLK_i || m_event.key.keysym.sym == SDLK_o
-					|| m_event.key.keysym.sym == SDLK_f || m_event.key.keysym.sym == SDLK_v || m_event.key.keysym.sym == SDLK_m
-					|| m_event.key.keysym.sym == SDLK_l || m_event.key.keysym.sym == SDLK_z || m_event.key.keysym.sym == SDLK_x
-					|| m_event.key.keysym.sym == SDLK_g || m_event.key.keysym.sym == SDLK_h || m_event.key.keysym.sym == SDLK_b)
-				HandleEvent(m_event);
+			else if (event.key.keysym.sym == SDLK_r || event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS
+					|| event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_DOWN
+					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_i || event.key.keysym.sym == SDLK_o
+					|| event.key.keysym.sym == SDLK_f || event.key.keysym.sym == SDLK_v || event.key.keysym.sym == SDLK_m
+					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_x
+					|| event.key.keysym.sym == SDLK_g || event.key.keysym.sym == SDLK_h || event.key.keysym.sym == SDLK_b)
+				HandleEvent(event);
 			else
-				m_menu->HandleEvent(m_event);
+				m_menu->HandleEvent(event);
 		}
 	}
 }
@@ -244,9 +240,9 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			(m_shift) ? m_graphics->SetSpecularofBall(glm::vec3(0.03, 0.03, 0.03)) : m_graphics->SetDiffuseofBall(glm::vec3(0.03, 0.03, 0.03));
 		else if (event.key.keysym.sym == SDLK_l)
 			(m_shift) ? m_graphics->SetSpecularofBall(-glm::vec3(0.03, 0.03, 0.03)) : m_graphics->SetDiffuseofBall(-glm::vec3(0.03, 0.03, 0.03));
-		else if (m_event.key.keysym.sym == SDLK_z)
+		else if (event.key.keysym.sym == SDLK_z)
 			m_graphics->SetSpotlightHeight(0.1);
-		else if (m_event.key.keysym.sym == SDLK_x)
+		else if (event.key.keysym.sym == SDLK_x)
 			m_graphics->SetSpotlightHeight(-0.1);
 		else if (event.key.keysym.sym == SDLK_RIGHT)
 			m_graphics->IncreaseEyePosX(1.0);
@@ -265,9 +261,9 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_v)
 			m_graphics->UseShaderSet("vertexLighting");
 		else if (event.key.keysym.sym == SDLK_h)
-			m_graphics->MovePaddleR(m_DT);
+			m_graphics->MovePaddleR(m_dt);
 		else if (event.key.keysym.sym == SDLK_g)
-			m_graphics->MovePaddleL(m_DT);
+			m_graphics->MovePaddleL(m_dt);
 		else if (event.key.keysym.sym == SDLK_b)
 			m_graphics->StartLife();
 	} else if (event.type == SDL_KEYUP) {
@@ -281,8 +277,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
 	m_menu = new Menu(eyePos, eyeLoc, m_menuSize);
-	if (!m_menu->Initialize(m_window->GetContext(), &m_scoreboard)) {
-		printf("The imgui menu failed to initialize. Running without it. \n");
+	if (!m_menu->Initialize(m_window->GetContext())) {
+		std::cerr << std::endl << "The imgui menu failed to initialize. Running without it!" << std::endl;
 		delete m_menu;
 		m_menu = nullptr;
 		return false;

@@ -5,45 +5,27 @@
 //function to parse command line arguments and get name of launch file
 bool GetLaunchFile(int argc, char * argv[], std::string & launchFile);
 
-//initializes engine with give parameter values
-Engine * StartEngine(const std::string & launchFile);
-
 int main(int argc, char * argv[]) {
 
 	std::string launchFile;
 
 	if (!GetLaunchFile(argc, argv, launchFile)) {
 		std::cerr << "Error getting paramter values " << std::endl;
-		return 0;
+		return -1;
 	}
 
-	Engine * engine = StartEngine(launchFile);
+	Engine engine(launchFile);
+	
+	if (!engine.Initialize()) {
+			std::cerr << std::endl << "The engine failed to initialize." << std::endl;
+			return -1;
+		}
 
-	if (!engine) {
-		std::cerr << "Error starting engine! " << std::endl;
-		return 0;
-	}
-
-	engine->Run();
-
-	delete engine;
-	engine = nullptr;
-
+	std::cout << std::endl << "Running Engine! " << std::endl;
+	engine.Run();
+	std::cout << std::endl << "Engine Done Running. Now exiting! " << std::endl;
+	
 	return 0;
-}
-
-//initializes engine with give parameter values
-Engine * StartEngine(const std::string & launchFile) {
-
-	// Start engine
-	Engine * engine = new Engine(launchFile);
-	if (!engine->Initialize()) {
-		std::cout << std::endl << "The engine failed to start." << std::endl;
-		delete engine;
-		engine = nullptr;
-	}
-
-	return engine;
 }
 
 bool GetLaunchFile(int argc, char * argv[], std::string & launchFile) {

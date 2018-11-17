@@ -10,7 +10,6 @@
 #include <GL/glew.h>    // Initialize with gl3wInit()
 
 #include "graphics.h"
-#include "scoreboard.h"
 #include <iostream>
 
 class Menu {
@@ -19,7 +18,12 @@ public:
 	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize);
 	~Menu(void);
 
-	bool Initialize(const SDL_GLContext & gl_context, const Scoreboard * scoreboard);
+	//Menu is not meant to be copied or moved
+	Menu(const Menu &) = delete;
+	Menu(const Menu &&) = delete;
+	Menu& operator=(const Menu &) = delete;
+
+	bool Initialize(const SDL_GLContext & gl_context);
 	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives, int score); //returns if menu has been undated
 
 	void HandleEvent(SDL_Event event);
@@ -31,6 +35,8 @@ public:
 	void UpdateEyeParams(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus);
 
 private:
+	void UpdateMenuParams(void);
+
 	SDL_Window * m_window;
 
 	glm::vec3 m_eyeLoc;
@@ -42,11 +48,6 @@ private:
 	//variables bound to menu system
 	float mn_eyeLoc[3];
 	float mn_eyeFocus[3];
-
-	std::string m_topTen[10];
-
-	void UpdateMenuParams(void);
-
 };
 
 #endif /* MENU_H */

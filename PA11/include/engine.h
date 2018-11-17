@@ -4,45 +4,46 @@
 #include "menu.h"
 #include "window.h"
 #include "graphics.h"
-#include "scoreboard.h"
-
 #include "configLoader.hpp"
 
 class Engine {
 public:
 	Engine(const std::string & launchFile);
 	~Engine(void);
+	
+	//Engine is not meant to be copied or moved
+	Engine(const Engine &) = delete;
+	Engine(const Engine &&) = delete;
+	Engine& operator=(const Engine &) = delete;
+	
 	bool Initialize(void);
+	
 	void Run(void);
-
-	unsigned int getDT(void);
-
+	
+	unsigned int GetDT(void);
 	static long long GetCurrentTimeMillis(void);
 
 private:
+
+	void EventChecker(void);
+	void HandleEvent(const SDL_Event & event);
+	
+	bool StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc);
+	bool CloseMenu(void);
+	
 	Window * m_window;
 	Graphics * m_graphics;
-	Scoreboard m_scoreboard;
-
-	SDL_Event m_event;
+	ConfigFileParser m_configFile; //used to get parameters from
+	
+	bool m_shift; //keeps track of shift being pressed
 
 	Menu * m_menu;
 	glm::uvec2 m_menuSize;
 	long long m_menuLastTime; // last time when menu was created or destoryed
 
-	ConfigFileParser m_configFile; //used to get parameters from
-
-	unsigned int m_DT;
+	unsigned int m_dt;
 	long long m_currentTimeMillis;
 	bool m_running;
-
-	bool m_shift; //keeps track of shift being pressed
-	void EventChecker(void);
-	void HandleEvent(const SDL_Event & event);
-
-	bool StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc);
-	bool CloseMenu(void);
-
 };
 
 #endif // ENGINE_H

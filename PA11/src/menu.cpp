@@ -12,7 +12,7 @@ Menu::~Menu(void) {
 	SDL_DestroyWindow (m_window);
 }
 
-bool Menu::Initialize(const SDL_GLContext & gl_context, const Scoreboard * scoreboard) {
+bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 	m_window = SDL_CreateWindow("Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
@@ -27,15 +27,6 @@ bool Menu::Initialize(const SDL_GLContext & gl_context, const Scoreboard * score
 
 	// Setup style
 	ImGui::StyleColorsDark();
-
-	//load top ten
-	std::string name;
-	unsigned int score;
-	for (unsigned int i = 0; i < 10; ++i) {
-		scoreboard->GetScore(i, name, score);
-		name += " : ";
-		m_topTen[i] = name + std::to_string(score);
-	}
 
 	return true;
 
@@ -75,11 +66,6 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 
 	ImGui::Text("\n");
 	ImGui::Text("Note: If anything is stuck, or you want to restart the game, press 'r'");
-
-	ImGui::Text("\n");
-	ImGui::Text("Top 10 Scoreboard");
-	for (unsigned int i = 0; i < 10; ++i)
-		ImGui::Text("  %d.) %s \n", i + 1, m_topTen[i].c_str());
 
 	ImGui::Text("\n");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
