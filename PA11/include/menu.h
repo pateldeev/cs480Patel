@@ -15,16 +15,15 @@
 class Menu {
 
 public:
-	Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize);
+	Menu(const SDL_GLContext & gl_context, const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize);
 	~Menu(void);
 
 	//Menu is not meant to be copied or moved
 	Menu(const Menu &) = delete;
-	Menu(const Menu &&) = delete;
+	Menu(Menu &&) = delete;
 	Menu& operator=(const Menu &) = delete;
 
-	bool Initialize(const SDL_GLContext & gl_context);
-	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives, int score); //returns if menu has been undated
+	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc); //returns true if menu has been undated
 
 	void HandleEvent(SDL_Event event);
 

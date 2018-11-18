@@ -14,17 +14,19 @@ int main(int argc, char * argv[]) {
 		return -1;
 	}
 
-	Engine engine(launchFile);
-	
-	if (!engine.Initialize()) {
-			std::cerr << std::endl << "The engine failed to initialize." << std::endl;
-			return -1;
-		}
+	try {
+		Engine engine(launchFile);
+		std::cout << std::endl << "Running Engine! " << std::endl;
+		engine.Run();
+		std::cout << std::endl << "Engine Done Running. Now exiting! " << std::endl;
+	} catch (std::string & err) {
+		std::cerr << std::endl << "The engine crashed: " << err << std::endl;
+		return -1;
+	} catch (...) {
+		std::cerr << std::endl << "The engine crashed! Error is unknown " << std::endl;
+		return -1;
+	}
 
-	std::cout << std::endl << "Running Engine! " << std::endl;
-	engine.Run();
-	std::cout << std::endl << "Engine Done Running. Now exiting! " << std::endl;
-	
 	return 0;
 }
 

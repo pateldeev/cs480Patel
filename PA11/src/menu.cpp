@@ -1,23 +1,12 @@
 #include "menu.h"
 
-Menu::Menu(const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize) :
+Menu::Menu(const SDL_GLContext & gl_context, const glm::vec3 & eyeLoc, const glm::vec3 & eyeFocus, const glm::uvec2 & menuSize) :
 		m_window(nullptr), m_eyeLoc(eyeLoc), m_eyeFocus(eyeFocus), m_menuSize(menuSize), m_menuTL(50, 50) {
 	UpdateMenuParams();
-}
-
-Menu::~Menu(void) {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-	SDL_DestroyWindow (m_window);
-}
-
-bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 	m_window = SDL_CreateWindow("Menu", m_menuTL.y, m_menuTL.x, m_menuSize.y, m_menuSize.x, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	const char * glsl_version = "#version 330";
-
 	// Setup Dear ImGui binding
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -27,12 +16,16 @@ bool Menu::Initialize(const SDL_GLContext & gl_context) {
 
 	// Setup style
 	ImGui::StyleColorsDark();
-
-	return true;
-
 }
 
-bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, int lives, int score) {
+Menu::~Menu(void) {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+	SDL_DestroyWindow (m_window);
+}
+
+bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc) {
 
 	bool updated = false;
 
@@ -60,12 +53,6 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 		m_eyeLoc = glm::vec3(mn_eyeLoc[0], mn_eyeLoc[1], mn_eyeLoc[2]);
 		m_eyeFocus = glm::vec3(mn_eyeFocus[0], mn_eyeFocus[1], mn_eyeFocus[2]);
 	}
-
-	ImGui::Text("\n");
-	ImGui::Text("Lives Remaining: %d \n\nCurrentScore: %d", lives, score);
-
-	ImGui::Text("\n");
-	ImGui::Text("Note: If anything is stuck, or you want to restart the game, press 'r'");
 
 	ImGui::Text("\n");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

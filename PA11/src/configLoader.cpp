@@ -5,10 +5,8 @@
 ConfigFileParser::ConfigFileParser(const std::string & configFile) {
 	std::ifstream inputFile(configFile);
 
-	if (!inputFile.is_open()) {
-		printf("Could not open configuration file: %s \n", configFile.c_str());
-		return;
-	}
+	if (!inputFile.is_open())
+		throw(std::string("Could not open configuration file: ") + configFile);
 
 	m_fileBuffer << inputFile.rdbuf(); //load file data into buffer
 	inputFile.close();
@@ -24,239 +22,145 @@ ConfigFileParser::~ConfigFileParser(void) {
 
 }
 
-bool ConfigFileParser::GetWindowInfo(std::string & windowName, glm::uvec2 & size) {
+void ConfigFileParser::GetWindowInfo(std::string & windowName, glm::uvec2 & size) {
 	std::string varName;
-	if (!ParseLine < std::string > (varName, &windowName) || varName.compare("WINDOW_NAME")) {
-		printf("Could not get window name from config file \n");
-		return false;
-	}
+	if (!ParseLine < std::string > (varName, &windowName) || varName.compare("WINDOW_NAME"))
+		throw std::string("Could not get window name from config file!");
 
 	bool fullscreen;
-	if (!ParseLine<bool>(varName, &fullscreen) || varName.compare("WINDOW_FULLSCREEN")) {
-		printf("Could not get window fullscreen state from config file \n");
-		return false;
-	}
+	if (!ParseLine<bool>(varName, &fullscreen) || varName.compare("WINDOW_FULLSCREEN"))
+		throw std::string("Could not get window fullscreen state from config file");
 
 	//get window size
 	unsigned int winSize[2];
-	if (!ParseLine<unsigned int, 2>(varName, winSize) || varName.compare("WINDOW_SIZE")) {
-		printf("Could not get window size from config file \n");
-		return false;
-	}
+	if (!ParseLine<unsigned int, 2>(varName, winSize) || varName.compare("WINDOW_SIZE"))
+		throw std::string("Could not get window size from config file");
 
 	size = (fullscreen) ? glm::uvec2(0, 0) : glm::uvec2(winSize[0], winSize[1]); //set windowsize to 0 if in fullscreen
-
-	return true;
 }
 
-bool ConfigFileParser::GetCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc) {
+void ConfigFileParser::GetCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc) {
 	std::string varName;
 	float values[3];
 
 	//get eye position
-	if (!ParseLine<float, 3>(varName, values) || varName.compare("CAMERA_EYEPOS")) {
-		printf("Could not get eye position from config file \n");
-		return false;
-	}
+	if (!ParseLine<float, 3>(varName, values) || varName.compare("CAMERA_EYEPOS"))
+		std::string("Could not get eye position from config file");
 	eyePos = glm::vec3(values[0], values[1], values[2]);
 
 	//get eye focus
-	if (!ParseLine<float, 3>(varName, values) || varName.compare("CAMERA_FOCUSPOS")) {
-		printf("Could not get eye focus position from config file \n");
-		return false;
-	}
+	if (!ParseLine<float, 3>(varName, values) || varName.compare("CAMERA_FOCUSPOS"))
+		throw std::string("Could not get eye focus position from config file");
 	eyeLoc = glm::vec3(values[0], values[1], values[2]);
-
-	return true;
 }
 
-bool ConfigFileParser::GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile) {
-	if (m_fileBuffer.eof() || m_fileBuffer.peek() != 'S')
-		return false; //return false if there is no shader set to parse
-
+void ConfigFileParser::GetMenuState(bool & menu, glm::uvec2 & size) {
 	std::string varName;
-
-	//get shader set name
-	if (!ParseLine < std::string > (varName, &shaderSetName) || varName.compare("SHADER_NAMES")) {
-		printf("Could not get shader set name from config file \n");
-		return false;
-	}
-
-	//get vertex shader name
-	if (!ParseLine < std::string > (varName, &vertexShaderFile) || varName.compare("VERTEX_SHADER")) {
-		printf("Could not get vertex shader file from config file \n");
-		return false;
-	}
-
-	//get fragment shader name
-	if (!ParseLine < std::string > (varName, &fragmentShaderFile) || varName.compare("FRAGMENT_SHADER")) {
-		printf("Could not get fragment shader file from config file \n");
-		return false;
-	}
-	return true;
-}
-
-bool ConfigFileParser::GetShaderSetActive(std::string & set) {
-	std::string varName;
-	//get shader set name
-	if (!ParseLine < std::string > (varName, &set) || varName.compare("DEFAULT_SET")) {
-		printf("Could not get active shader set from config file \n");
-		return false;
-	}
-	return true;
-}
-
-bool ConfigFileParser::GetMenuState(bool & menu, glm::uvec2 & size) {
-	std::string varName;
-	if (!ParseLine<bool>(varName, &menu) || varName.compare("ENABLE_MENU")) {
-		printf("Could not get menu state from config file \n");
-		return false;
-	}
+	if (!ParseLine<bool>(varName, &menu) || varName.compare("ENABLE_MENU"))
+		throw std::string("Could not get menu state from config file");
 
 	//get windowsize of menu
 	unsigned int winSize[2];
-	if (!ParseLine<unsigned int, 2>(varName, winSize) || varName.compare("MENU_SIZE")) {
-		printf("Could not get menu size from config file \n");
-		return false;
-	}
+	if (!ParseLine<unsigned int, 2>(varName, winSize) || varName.compare("MENU_SIZE"))
+		throw std::string("Could not get menu size from config file");
 	size = glm::uvec2(winSize[0], winSize[1]);
-
-	return true;
 }
 
-bool ConfigFileParser::GetWorldGravity(glm::vec3 & gravity) {
+boardInfo* ConfigFileParser::GetBoardInfo(void) {
 	std::string varName;
-	float values[3];
+	float valuesfl[3];
+	unsigned valuesui[2];
+	objectInfo objInfo;
+	boardInfo * board = nullptr;
 
-	//gravity
-	if (!ParseLine<float, 3>(varName, values) || varName.compare("WORLD_GRAVITY")) {
-		printf("Could not get gravity from config file \n");
-		return false;
-	}
-	gravity = glm::vec3(values[0], values[1], values[2]);
-	return true;
-}
+	//get object file
+	if (!ParseLine < std::string > (varName, &objInfo.m_objFile) || varName.compare("OBJ_FILE"))
+		throw std::string("Could not get object file from config file");
 
-bool ConfigFileParser::GetLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs) {
-	spotlightLocs.clear();
-	std::string varName;
-	float values[3];
+	//get scale
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("OBJ_SCALE"))
+		throw std::string("Could not get object scale from config file");
+	objInfo.m_scale = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 
-	//get ambient level
-	if (!ParseLine<float, 3>(varName, values) || varName.compare("AMBIENT_LEVEL")) {
-		printf("Could not get ambient level from config file \n");
-		return false;
-	}
-	ambientLevel = glm::vec3(values[0], values[1], values[2]);
+	//get rotation
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("OBJ_ROTATION"))
+		throw std::string("Could not get object rotation from config file");
+	objInfo.m_rotation = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 
-	//get shininess
-	if (!ParseLine<float>(varName, &shininess) || varName.compare("SHININESS")) {
-		printf("Could not get specular shininess level from config file \n");
-		return false;
-	}
+	//get diffuse product for lighting
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("OBJ_DIFFUSE"))
+		throw std::string("Could not get diffuse products from config file ");
+	objInfo.m_diffuseLevel = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+
+	//get specular product for lighting
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("OBJ_SPECULAR"))
+		throw std::string("Could not get specular products from config file");
+	objInfo.m_specularLevel = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+
+	//get shininess friction
+	if (!ParseLine<float>(varName, &objInfo.m_shininess) || varName.compare("OBJ_SHININESS"))
+		throw std::string("Could not get shiniess from config file");
+
+	//get number of spotlights
+	if (!ParseLine<unsigned int>(varName, valuesui) || varName.compare("NUM_SPOTLIGHTS"))
+		throw std::string("Could not get number of spotlights from config file");
+	board = new boardInfo(valuesui[0]);
+	board->m_object = objInfo;
 
 	//get spotlight locations
-	while (!m_fileBuffer.eof() && m_fileBuffer.peek() == 'S') {
-		//get location
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("SPOTLIGHT")) {
-			printf("Could not get spolight location from config file \n");
-			return false;
-		}
-		spotlightLocs.push_back(glm::vec3(values[0], values[1], values[2]));
+	for (unsigned int i = 0; i < valuesui[0]; ++i) {
+		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("SPOTLIGHT_LOC"))
+			throw std::string("Could not get spotlight location from config file");
+		board->m_spotlightLocs[i] = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 	}
 
-	return true;
+	//get ambient level
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("AMBIENT_LEVEL"))
+		throw std::string("Could not get ambient level from config file");
+	board->m_ambientLevel = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+
+	//get board size
+	if (!ParseLine<unsigned int, 2>(varName, valuesui) || varName.compare("BOARD_SIZE"))
+		throw std::string("Could not get board size from config file");
+	board->m_size = glm::uvec2(valuesui[0], valuesui[1]);
+
+	//get distance
+	if (!ParseLine<float>(varName, &board->m_objectDistance) || varName.compare("DISTANCE_BETWEEN"))
+		throw std::string("Could not get distance between objects in board from config file");
+
+	//get texture files
+	if (!ParseLine < std::string > (varName, &board->m_textureDead) || varName.compare("TEXTURE_DEAD"))
+		throw std::string("Could not get texture for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textureP1) || varName.compare("TEXTURE_P1"))
+		throw std::string("Could not get texture for P1 from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textureP2) || varName.compare("TEXTURE_P2"))
+		throw std::string("Could not get texture for P2 from config file");
+
+	return board;
 }
 
-bool ConfigFileParser::GetObjects(std::vector<objectModel> & objects) {
-	objects.clear();
+void ConfigFileParser::GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile) {
+	if (m_fileBuffer.eof() || m_fileBuffer.peek() != 'N')
+		throw false;
+
 	std::string varName;
-	float values[3];
-	objectModel obj;
 
-	while (!m_fileBuffer.eof() && m_fileBuffer.peek() == 'O') {
-		//get name
-		if (!ParseLine < std::string > (varName, &obj.name) || varName.compare("OBJ_NAME")) {
-			printf("Could not get object name from config file \n");
-			return false;
-		}
+	//get shader set name
+	if (!ParseLine < std::string > (varName, &shaderSetName) || varName.compare("NAME_SET"))
+		throw std::string("Could not get shader set name from config file");
 
-		//get scale for all objects
-		float scaleFactor;
-		if (!ParseLine<float>(varName, &scaleFactor) || varName.compare("SCALE_FACTOR")) {
-			printf("Could not get object scale from config file \n");
-			return false;
-		}
+	//get vertex shader name
+	if (!ParseLine < std::string > (varName, &vertexShaderFile) || varName.compare("VERTEX_SHADER"))
+		throw std::string("Could not get vertex shader file from config file");
 
-		//get type
-		if (!ParseLine < std::string > (varName, &obj.btType) || varName.compare("BT_TYPE")) {
-			printf("Could not get object type from config file \n");
-			return false;
-		}
+	//get fragment shader name
+	if (!ParseLine < std::string > (varName, &fragmentShaderFile) || varName.compare("FRAGMENT_SHADER"))
+		throw std::string("Could not get fragment shader file from config file");
+}
 
-		//get obj file name
-		if (!ParseLine < std::string > (varName, &obj.objFile) || varName.compare("OBJ_FILE")) {
-			printf("Could not get object name from config file \n");
-			return false;
-		}
-
-		//get starting location
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("OBJ_STARTING_LOC")) {
-			printf("Could not get object starting location from config file \n");
-			return false;
-		}
-		obj.startingLoc = glm::vec3(values[0], values[1], values[2]);
-		obj.startingLoc *= scaleFactor;
-
-		//get scale
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("OBJ_SCALE")) {
-			printf("Could not get object scale from config file \n");
-			return false;
-		}
-		obj.scale = glm::vec3(values[0], values[1], values[2]);
-		obj.scale *= scaleFactor;
-
-		//get rotation
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("OBJ_ROTATION")) {
-			printf("Could not get object rotation from config file \n");
-			return false;
-		}
-		obj.rotation = glm::vec3(values[0], values[1], values[2]);
-
-		//get mass
-		if (!ParseLine<unsigned int>(varName, &obj.mass) || varName.compare("OBJ_MASS")) {
-			printf("Could not get bullet object mass from config file \n");
-			return false;
-		}
-
-		//get friction
-		if (!ParseLine<float>(varName, &obj.friction) || varName.compare("OBJ_FRICTION")) {
-			printf("Could not get bullet object friction from config file \n");
-			return false;
-		}
-
-		//get restituion
-		if (!ParseLine<float>(varName, &obj.restitution) || varName.compare("OBJ_RESTITUION")) {
-			printf("Could not get bullet object restituion from config file \n");
-			return false;
-		}
-
-		//get diffuse product for lighting
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("OBJ_DIFFUSE")) {
-			printf("Could not get diffuse products from config file \n");
-			return false;
-		}
-		obj.diffuseProduct = glm::vec3(values[0], values[1], values[2]);
-
-		//get specular product for lighting
-		if (!ParseLine<float, 3>(varName, values) || varName.compare("OBJ_SPECULAR")) {
-			printf("Could not get specular products from config file \n");
-			return false;
-		}
-		obj.specularProduct = glm::vec3(values[0], values[1], values[2]);
-
-		objects.push_back(obj);
-	}
-
-	return true;
+void ConfigFileParser::GetShaderSetActive(std::string & set) {
+	std::string varName;
+	//get shader set name
+	if (!ParseLine < std::string > (varName, &set) || varName.compare("DEFAULT_SET"))
+		throw std::string("Could not get active shader set from config file");
 }

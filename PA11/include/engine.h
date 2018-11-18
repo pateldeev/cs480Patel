@@ -8,33 +8,32 @@
 
 class Engine {
 public:
-	Engine(const std::string & launchFile);
+	Engine(void) = delete;
+	Engine(const std::string & launchFile, float frameCap = 100);
 	~Engine(void);
-	
+
 	//Engine is not meant to be copied or moved
 	Engine(const Engine &) = delete;
-	Engine(const Engine &&) = delete;
+	Engine(Engine &&) = delete;
 	Engine& operator=(const Engine &) = delete;
-	
-	bool Initialize(void);
-	
+	Engine& operator=(Engine&&) = delete;
+
 	void Run(void);
-	
+
+private:
 	unsigned int GetDT(void);
 	static long long GetCurrentTimeMillis(void);
 
-private:
-
 	void EventChecker(void);
 	void HandleEvent(const SDL_Event & event);
-	
+
 	bool StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc);
 	bool CloseMenu(void);
-	
+
 	Window * m_window;
 	Graphics * m_graphics;
 	ConfigFileParser m_configFile; //used to get parameters from
-	
+
 	bool m_shift; //keeps track of shift being pressed
 
 	Menu * m_menu;
@@ -44,6 +43,8 @@ private:
 	unsigned int m_dt;
 	long long m_currentTimeMillis;
 	bool m_running;
+
+	const float m_minFrameTime; //for max frame rate
 };
 
 #endif // ENGINE_H

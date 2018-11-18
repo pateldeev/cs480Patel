@@ -5,7 +5,11 @@ smooth in vec2 texture;
 smooth in vec3 v_posWorld;
 smooth in vec3 v_normalWorld;
 
-uniform sampler2D sampler;
+uniform sampler2D samplerDead;
+uniform sampler2D samplerP1;
+uniform sampler2D samplerP2;
+uniform int sampleType[100];
+flat in int instanceID;
 
 uniform vec3 ambientP;
 uniform vec3 diffuseP;
@@ -21,7 +25,14 @@ out vec4 frag_color;
 vec3 addLight(vec3 baseColor, vec3 lightPosition);
 
 void main(void){
-  vec3 baseColor = texture2D(sampler, texture).xyz;
+  vec3 baseColor; 
+  
+  if(sampleType[instanceID] == 1)
+    baseColor = texture2D(samplerP1, texture).xyz;
+  else if(sampleType[instanceID] == 2)
+    baseColor = texture2D(samplerP2, texture).xyz;
+  else
+    baseColor = texture2D(samplerDead, texture).xyz;
 
   //add contribution of each light
   for(int i = 0; i <3; ++i)

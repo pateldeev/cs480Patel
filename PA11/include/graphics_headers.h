@@ -19,6 +19,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include <string>
+
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 
 typedef struct Vertex{
@@ -30,5 +32,35 @@ typedef struct Vertex{
 			m_vertex(vertex), m_normal(normal), m_texture(texture) {
 	}
 } Vertex;
+
+typedef struct objectInfo {
+		std::string m_objFile;
+		glm::vec3 m_scale;
+		glm::vec3 m_rotation;
+		glm::vec3 m_diffuseLevel;
+		glm::vec3 m_specularLevel;
+		float m_shininess;
+} objectInfo;
+
+
+typedef struct boardInfo {
+	objectInfo m_object;
+	glm::uvec2 m_size;
+	float m_objectDistance;
+	std::string m_textureDead;
+	std::string m_textureP1;
+	std::string m_textureP2;
+	glm::vec3 m_ambientLevel;
+	unsigned int m_spotlightNum;
+	glm::vec3 * m_spotlightLocs;
+
+	boardInfo(unsigned int spotlightNum): m_spotlightNum(spotlightNum){
+		m_spotlightLocs = new glm::vec3[m_spotlightNum];
+	}
+
+	~boardInfo(void){
+		delete[] m_spotlightLocs;
+	}
+} boardInfo;
 
 #endif /* GRAPHICS_HEADERS_H */

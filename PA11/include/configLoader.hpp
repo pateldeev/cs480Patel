@@ -1,25 +1,10 @@
 #ifndef CONFIGLOADER_HPP
 #define CONFIGLOADER_HPP
 
-#include <glm/glm.hpp>
+#include "graphics_headers.h"
 
 #include <sstream>
 #include <vector>
-
-//holds data related to each object
-struct objectModel {
-	std::string name;
-	std::string btType;
-	std::string objFile;
-	glm::vec3 startingLoc;
-	glm::vec3 scale;
-	glm::vec3 rotation;
-	unsigned int mass;
-	float friction;
-	float restitution;
-	glm::vec3 diffuseProduct;
-	glm::vec3 specularProduct;
-};
 
 //class to parse configuration file of paramters
 class ConfigFileParser {
@@ -30,24 +15,21 @@ public:
 
 	//ConfigFileParser is not meant to be copied or moved
 	ConfigFileParser(const ConfigFileParser &) = delete;
-	ConfigFileParser(const ConfigFileParser &&) = delete;
+	ConfigFileParser(ConfigFileParser &&) = delete;
 	ConfigFileParser& operator=(const ConfigFileParser &) = delete;
+	ConfigFileParser& operator=(ConfigFileParser &&) = delete;
 
-	bool GetWindowInfo(std::string & windowName, glm::uvec2 & size);
+	void GetWindowInfo(std::string & windowName, glm::uvec2 & size);
 
-	bool GetCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
+	void GetCameraInfo(glm::vec3 & eyePos, glm::vec3 & eyeLoc);
 
-	bool GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
+	void GetMenuState(bool & menu, glm::uvec2 & size);
 
-	bool GetShaderSetActive(std::string & set);
+	boardInfo * GetBoardInfo(void);
 
-	bool GetMenuState(bool & menu, glm::uvec2 & size);
+	void GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
 
-	bool GetWorldGravity(glm::vec3 & gravity);
-
-	bool GetLightingInfo(glm::vec3 & ambientLevel, float & shininess, std::vector<glm::vec3> & spotlightLocs);
-
-	bool GetObjects(std::vector<objectModel> & objects);
+	void GetShaderSetActive(std::string & set);
 
 private:
 	std::stringstream m_fileBuffer;
