@@ -48,8 +48,8 @@ typedef struct boardInfo {
 	glm::uvec2 m_size;
 	float m_objectDistance;
 	std::string m_textureDead;
-	std::string m_textureP1;
-	std::string m_textureP2;
+	std::string m_texturesP1[3]; //order: alive, dead, marked
+	std::string m_texturesP2[3]; //order: alive, dead, marked
 	glm::vec3 m_ambientLevel;
 	unsigned int m_spotlightNum;
 	glm::vec3 * m_spotlightLocs;

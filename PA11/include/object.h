@@ -6,7 +6,7 @@
 #include <vector>
 
 enum ObjType {
-	DEAD = 0, P1 = 1, P2 = 2
+	DEAD = 0, P1_ALIVE = 1, P2_ALIVE = 2, P1_DYING = 3, P2_DYING = 4, P1_MARKED = 5, P2_MARKED = 6
 };
 
 class Object {
@@ -61,7 +61,7 @@ private:
 	GLuint VB;
 	GLuint IB;
 
-	GLuint m_textures[3]; //vector of texture locations on GPU {0=dead, 1=P1, 2=P2}
+	GLuint m_textures[7]; //vector of texture locations on GPU {follow enumaration layout}
 };
 
 #endif /* OBJECT_H */

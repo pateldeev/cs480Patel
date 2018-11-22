@@ -51,9 +51,17 @@ void Object::Render(void) {
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_textures[DEAD]);
 	glActiveTexture (GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE]);
 	glActiveTexture (GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE]);
+	glActiveTexture (GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DYING]);
+	glActiveTexture (GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DYING]);
+	glActiveTexture (GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_MARKED]);
+	glActiveTexture (GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_MARKED]);
 
 	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances);
 

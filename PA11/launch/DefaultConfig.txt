@@ -38,7 +38,11 @@ BOARD_SIZE=10,10
 DISTANCE_BETWEEN=5.0
 TEXTURE_DEAD=objFiles/textures/dead.png
 TEXTURE_P1=objFiles/textures/blue_alive.png
-TEXTURE_P2=objFiles/textures/blue_dying.png
+TEXTURE_P1_DYING=objFiles/textures/blue_dying.png
+TEXTURE_P1_MARKED=objFiles/textures/blue_marked_for_death.png
+TEXTURE_P2=objFiles/textures/blue_alive.png
+TEXTURE_P2_DYING=objFiles/textures/blue_dying.png
+TEXTURE_P2_MARKED=objFiles/textures/blue_marked_for_death.png
 
 
 #Shaders
