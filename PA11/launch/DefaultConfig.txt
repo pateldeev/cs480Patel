@@ -21,7 +21,7 @@ MENU_SIZE=400,600
 
 
 #Main repeating object of board
-OBJ_FILE=objFiles/cylinder_bumper.obj
+OBJ_FILE=objFiles/cube.obj
 OBJ_SCALE=1.0,1.0,1.0
 OBJ_ROTATION=0.0,0.0,0.0
 OBJ_DIFFUSE=0.2,0.2,0.2
@@ -36,9 +36,9 @@ SPOTLIGHT_LOC=0,10,0
 AMBIENT_LEVEL=0.55,0.55,0.55
 BOARD_SIZE=10,10
 DISTANCE_BETWEEN=5.0
-TEXTURE_DEAD=objFiles/textureDead.png
-TEXTURE_P1=objFiles/textureP1.png
-TEXTURE_P2=objFiles/textureP2.png
+TEXTURE_DEAD=objFiles/textures/dead.png
+TEXTURE_P1=objFiles/textures/blue_alive.png
+TEXTURE_P2=objFiles/textures/blue_dying.png
 
 
 #Shaders
