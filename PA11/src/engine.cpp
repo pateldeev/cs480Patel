@@ -162,13 +162,13 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_o)
 			m_graphics->ZoomOut(1.0);
     else if (event.key.keysym.sym == SDLK_w)
-      m_graphics->MoveForward(0.5 * m_dt);
+      m_graphics->MoveForward(0.01 * m_dt);
     else if (event.key.keysym.sym == SDLK_s)
-      m_graphics->MoveBackward(0.5 * m_dt);
+      m_graphics->MoveBackward(0.01 * m_dt);
     else if (event.key.keysym.sym == SDLK_d)
-      m_graphics->MoveRight(0.5 * m_dt);
+      m_graphics->MoveRight(0.01 * m_dt);
     else if (event.key.keysym.sym == SDLK_a)
-      m_graphics->MoveLeft(0.5 * m_dt);
+      m_graphics->MoveLeft(0.01 * m_dt);
 	}
 }
 
