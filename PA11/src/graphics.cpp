@@ -108,6 +108,46 @@ void Graphics::ZoomOut(float moveAmount) {
 	UpdateCamera(newEyePos, GetEyeLoc());
 }
 
+void Graphics::MoveForward(float moveAmount) {
+  glm::vec3 newEyePos = GetEyePos();
+  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	newEyePos += moveVector;
+  newEyeLoc += moveVector;
+	UpdateCamera(newEyePos, newEyeLoc);
+}
+
+void Graphics::MoveBackward(float moveAmount) {
+  glm::vec3 newEyePos = GetEyePos();
+  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	newEyePos -= moveVector;
+  newEyeLoc -= moveVector;
+	UpdateCamera(newEyePos, newEyeLoc);
+}
+
+void Graphics::MoveRight(float moveAmount) {
+  glm::vec3 newEyePos = GetEyePos();
+  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 pointVector = newEyeLoc - newEyePos;
+  glm::vec3 upVector = glm::vec3(0, 1, 0);
+  glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
+	newEyePos += moveVector;
+  newEyeLoc += moveVector;
+	UpdateCamera(newEyePos, newEyeLoc);
+}
+
+void Graphics::MoveLeft(float moveAmount) {
+  glm::vec3 newEyePos = GetEyePos();
+  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 pointVector = newEyeLoc - newEyePos;
+  glm::vec3 upVector = glm::vec3(0, 1, 0);
+  glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
+	newEyePos -= moveVector;
+  newEyeLoc -= moveVector;
+	UpdateCamera(newEyePos, newEyeLoc);
+}
+
 void Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
 	m_camera.UpdateCamera(eyePos, eyeFocus);
 	UpdateCameraBindings();
