@@ -24,7 +24,7 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
 
 	//get board information from configuration file
 	boardInfo * board = m_configFile.GetBoardInfo();
-	m_graphics = new Graphics(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc, *board);	//start the graphics 
+	m_graphics = new Graphics(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc, *board);	//start the graphics
 	delete board;
 	board = nullptr;
 
@@ -125,7 +125,9 @@ void Engine::EventChecker(void) {
 			else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS || event.key.keysym.sym == SDLK_m
 					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT
 					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_i
-					|| event.key.keysym.sym == SDLK_o)
+					|| event.key.keysym.sym == SDLK_o || event.key.keysym.sym == SDLK_w
+          || event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_a
+          || event.key.keysym.sym == SDLK_d)
 				HandleEvent(event);
 			else
 				m_menu->HandleEvent(event);
@@ -159,6 +161,14 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->ZoomIn(1.0);
 		else if (event.key.keysym.sym == SDLK_o)
 			m_graphics->ZoomOut(1.0);
+    else if (event.key.keysym.sym == SDLK_w)
+      m_graphics->MoveForward(0.5 * m_dt);
+    else if (event.key.keysym.sym == SDLK_s)
+      m_graphics->MoveBackward(0.5 * m_dt);
+    else if (event.key.keysym.sym == SDLK_d)
+      m_graphics->MoveRight(0.5 * m_dt);
+    else if (event.key.keysym.sym == SDLK_a)
+      m_graphics->MoveLeft(0.5 * m_dt);
 	}
 }
 
