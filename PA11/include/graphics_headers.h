@@ -23,7 +23,7 @@
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 
-typedef struct Vertex{
+typedef struct Vertex {
 	glm::vec3 m_vertex;
 	glm::vec3 m_normal;
 	glm::vec2 m_texture;
@@ -34,19 +34,20 @@ typedef struct Vertex{
 } Vertex;
 
 typedef struct objectInfo {
-		std::string m_objFile;
-		glm::vec3 m_scale;
-		glm::vec3 m_rotation;
-		glm::vec3 m_diffuseLevel;
-		glm::vec3 m_specularLevel;
-		float m_shininess;
+	std::string m_objFile;
+	glm::vec3 m_scale;
+	glm::vec3 m_rotation;
+	glm::vec3 m_diffuseLevel;
+	glm::vec3 m_specularLevel;
+	float m_shininess;
 } objectInfo;
-
 
 typedef struct boardInfo {
 	objectInfo m_object;
 	glm::uvec2 m_size;
-	float m_objectDistance;
+	glm::vec3 m_startingLoc;
+	glm::vec3 m_directionRow;
+	glm::vec3 m_directionCol;
 	std::string m_textureDead;
 	std::string m_texturesP1[3]; //order: alive, dead, marked
 	std::string m_texturesP2[3]; //order: alive, dead, marked
@@ -54,11 +55,12 @@ typedef struct boardInfo {
 	unsigned int m_spotlightNum;
 	glm::vec3 * m_spotlightLocs;
 
-	boardInfo(unsigned int spotlightNum): m_spotlightNum(spotlightNum){
+	boardInfo(unsigned int spotlightNum) :
+			m_spotlightNum(spotlightNum) {
 		m_spotlightLocs = new glm::vec3[m_spotlightNum];
 	}
 
-	~boardInfo(void){
+	~boardInfo(void) {
 		delete[] m_spotlightLocs;
 	}
 } boardInfo;

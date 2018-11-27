@@ -109,42 +109,42 @@ void Graphics::ZoomOut(float moveAmount) {
 }
 
 void Graphics::MoveForward(float moveAmount) {
-  glm::vec3 newEyePos = GetEyePos();
-  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 newEyeLoc = GetEyeLoc();
 	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
 	newEyePos += moveVector * moveAmount;
-  newEyeLoc += moveVector * moveAmount;
+	newEyeLoc += moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 
 void Graphics::MoveBackward(float moveAmount) {
-  glm::vec3 newEyePos = GetEyePos();
-  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 newEyeLoc = GetEyeLoc();
 	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
 	newEyePos -= moveVector * moveAmount;
-  newEyeLoc -= moveVector * moveAmount;
+	newEyeLoc -= moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 
 void Graphics::MoveRight(float moveAmount) {
-  glm::vec3 newEyePos = GetEyePos();
-  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 newEyeLoc = GetEyeLoc();
 	glm::vec3 pointVector = newEyeLoc - newEyePos;
-  glm::vec3 upVector = glm::vec3(0, 1, 0);
-  glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
+	glm::vec3 upVector = glm::vec3(0, 1, 0);
+	glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
 	newEyePos += moveVector * moveAmount;
-  newEyeLoc += moveVector * moveAmount;
+	newEyeLoc += moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 
 void Graphics::MoveLeft(float moveAmount) {
-  glm::vec3 newEyePos = GetEyePos();
-  glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyePos = GetEyePos();
+	glm::vec3 newEyeLoc = GetEyeLoc();
 	glm::vec3 pointVector = newEyeLoc - newEyePos;
-  glm::vec3 upVector = glm::vec3(0, 1, 0);
-  glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
+	glm::vec3 upVector = glm::vec3(0, 1, 0);
+	glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
 	newEyePos -= moveVector * moveAmount;
-  newEyeLoc -= moveVector * moveAmount;
+	newEyeLoc -= moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 

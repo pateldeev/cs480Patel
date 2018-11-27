@@ -12,7 +12,7 @@ enum ObjType {
 class Object {
 public:
 	Object(void) = delete;
-	Object(const std::string & objFile, unsigned int numIstances, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation =
+	Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation =
 			glm::vec3(0, 0, 0), const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Object(void);
 
@@ -36,9 +36,9 @@ public:
 	glm::vec3 GetScale(void) const;
 	void SetScale(const glm::vec3 & scale);
 
-	ObjType GetType(unsigned int id) const;
+	ObjType GetType(unsigned int r, unsigned int c) const;
 	std::vector<ObjType> & GetTypesList(void);
-	void SetType(const ObjType type, unsigned int id);
+	void SetType(const ObjType type, unsigned int r, unsigned int c);
 
 	float GetDistanceFromPoint(glm::vec3 point) const;
 
@@ -53,7 +53,7 @@ private:
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 
-	int m_numInstances;
+	glm::uvec2 m_numInstances;
 	std::vector<ObjType> m_types;
 
 	std::vector<Vertex> m_vertices;

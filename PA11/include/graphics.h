@@ -34,10 +34,10 @@ public:
 	void DecreaseEyePosZ(float moveAmount);
 	void ZoomIn(float moveAmount);
 	void ZoomOut(float moveAmount);
-  void MoveForward(float moveAmount);
-  void MoveBackward(float moveAmount);
-  void MoveRight(float moveAmount);
-  void MoveLeft(float moveAmount);
+	void MoveForward(float moveAmount);
+	void MoveBackward(float moveAmount);
+	void MoveRight(float moveAmount);
+	void MoveLeft(float moveAmount);
 
 	void UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 	glm::vec3 GetEyePos(void) const;

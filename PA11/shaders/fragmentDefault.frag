@@ -13,7 +13,7 @@ uniform sampler2D samplerP2_Dying;
 uniform sampler2D samplerP1_Marked;
 uniform sampler2D samplerP2_Marked;
 
-uniform int sampleType[100];
+uniform int sampleType[150];
 flat in int instanceID;
 
 uniform vec3 ambientP;

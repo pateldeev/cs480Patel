@@ -124,9 +124,16 @@ boardInfo* ConfigFileParser::GetBoardInfo(void) {
 		throw std::string("Could not get board size from config file");
 	board->m_size = glm::uvec2(valuesui[0], valuesui[1]);
 
-	//get distance
-	if (!ParseLine<float>(varName, &board->m_objectDistance) || varName.compare("DISTANCE_BETWEEN"))
-		throw std::string("Could not get distance between objects in board from config file");
+	//get board starting point and direction
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("STARTING_POINT"))
+		throw std::string("Could not get starting point of board from config file");
+	board->m_startingLoc = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_DIRECTION_ROW"))
+		throw std::string("Could not get board row direction from config file");
+	board->m_directionRow = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+	if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_DIRECTION_COL"))
+		throw std::string("Could not get board column direction from config file");
+	board->m_directionCol = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 
 	//get texture files
 	if (!ParseLine < std::string > (varName, &board->m_textureDead) || varName.compare("TEXTURE_DEAD"))
