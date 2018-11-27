@@ -45,6 +45,9 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
   m_a = false;
   m_s = false;
   m_d = false;
+
+  mouseX = 0.0;
+  mouseY = 0.0;
 }
 
 Engine::~Engine(void) {
@@ -185,8 +188,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
     else if (event.key.keysym.sym == SDLK_a)
       m_a = true;
 	}
-  else if (event.type == SDL_KEYUP)
-  {
+  else if (event.type == SDL_KEYUP) {
     if (event.key.keysym.sym == SDLK_w)
       m_w = false;
     else if (event.key.keysym.sym == SDLK_s)
@@ -195,6 +197,16 @@ void Engine::HandleEvent(const SDL_Event & event) {
       m_d = false;
     else if (event.key.keysym.sym == SDLK_a)
       m_a = false;
+  }
+  else if (event.type == SDL_MOUSEMOTION){
+    if (!mouseWarp) {
+      m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
+      mouseWarp = true;
+      SDL_WarpMouseInWindow(NULL, m_window->GetWindowWidth(), m_window->GetWindowHeight());
+    }
+    else
+      mouseWarp = false;
+
   }
 }
 

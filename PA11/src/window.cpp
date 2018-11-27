@@ -30,7 +30,7 @@ Window::Window(const std::string & name, unsigned int height, unsigned int width
 	m_width = (width) ? width : display.w;
 
 	m_gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_width, m_height,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_MOUSE_CAPTURE);
 	if (!m_gWindow) {
 		std::string errMsg = "Widow failed to create. Window object not created properly: ";
 		errMsg += SDL_GetError();
@@ -51,6 +51,8 @@ Window::Window(const std::string & name, unsigned int height, unsigned int width
 		errMsg += SDL_GetError();
 		throw errMsg;
 	}
+
+  SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 Window::~Window(void) {

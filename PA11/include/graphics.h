@@ -38,6 +38,7 @@ public:
   void MoveBackward(float moveAmount);
   void MoveRight(float moveAmount);
   void MoveLeft(float moveAmount);
+  void RotateCamera(float newX, float newY);
 
 	void UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 	glm::vec3 GetEyePos(void) const;
@@ -53,6 +54,9 @@ private:
 	void UpdateCameraBindings(void); //updates bindings for camera in shader - need to call for camera change to take effect
 
 	Camera m_camera;
+
+  float yaw = 0.0;
+  float pitch = 0.0;
 
 	Board * m_board;
 };
