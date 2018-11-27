@@ -40,6 +40,11 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
 
 	if (menu)
 		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+
+  m_w = false;
+  m_a = false;
+  m_s = false;
+  m_d = false;
 }
 
 Engine::~Engine(void) {
@@ -62,6 +67,16 @@ void Engine::Run(void) {
 
 		// Update and render the graphics
 		m_dt = GetDT();
+
+    if (m_w)
+      m_graphics->MoveForward(0.01 * m_dt);
+    if (m_a)
+      m_graphics->MoveLeft(0.01 * m_dt);
+    if (m_s)
+      m_graphics->MoveBackward(0.01 * m_dt);
+    if (m_d)
+      m_graphics->MoveRight(0.01 * m_dt);
+
 		m_graphics->Update(m_dt);
 		m_graphics->Render();
 
@@ -162,14 +177,25 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_o)
 			m_graphics->ZoomOut(1.0);
     else if (event.key.keysym.sym == SDLK_w)
-      m_graphics->MoveForward(0.01 * m_dt);
+      m_w = true;
     else if (event.key.keysym.sym == SDLK_s)
-      m_graphics->MoveBackward(0.01 * m_dt);
+      m_s = true;
     else if (event.key.keysym.sym == SDLK_d)
-      m_graphics->MoveRight(0.01 * m_dt);
+      m_d = true;
     else if (event.key.keysym.sym == SDLK_a)
-      m_graphics->MoveLeft(0.01 * m_dt);
+      m_a = true;
 	}
+  else if (event.type == SDL_KEYUP)
+  {
+    if (event.key.keysym.sym == SDLK_w)
+      m_w = false;
+    else if (event.key.keysym.sym == SDLK_s)
+      m_s = false;
+    else if (event.key.keysym.sym == SDLK_d)
+      m_d = false;
+    else if (event.key.keysym.sym == SDLK_a)
+      m_a = false;
+  }
 }
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {

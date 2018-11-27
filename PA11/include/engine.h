@@ -36,6 +36,11 @@ private:
 
 	bool m_shift; //keeps track of shift being pressed
 
+  bool m_w; //W key
+  bool m_a; //A key
+  bool m_s; //S key
+  bool m_d; //D key 
+
 	Menu * m_menu;
 	glm::uvec2 m_menuSize;
 	long long m_menuLastTime; // last time when menu was created or destoryed
