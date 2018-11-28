@@ -33,6 +33,20 @@ typedef struct Vertex {
 	}
 } Vertex;
 
+enum ObjType {
+	DEAD = 0,
+	P1_ALIVE_FUTURE = 1,
+	P2_ALIVE_FUTURE = 2,
+	P1_ALIVE = 3,
+	P2_ALIVE = 4,
+	P1_DEAD_FUTURE = 5,
+	P2_DEAD_FUTURE = 6,
+	P1_ALIVE_MARKED = 7,
+	P2_ALIVE_MARKED = 8,
+	P1_DEAD_MARKED = 9,
+	P2_DEAD_MARKED = 10
+};
+
 typedef struct objectInfo {
 	std::string m_objFile;
 	glm::vec3 m_scale;
@@ -48,9 +62,7 @@ typedef struct boardInfo {
 	glm::vec3 m_startingLoc;
 	glm::vec3 m_directionRow;
 	glm::vec3 m_directionCol;
-	std::string m_textureDead;
-	std::string m_texturesP1[3]; //order: alive, dead, marked
-	std::string m_texturesP2[3]; //order: alive, dead, marked
+	std::string m_textures[11];
 	glm::vec3 m_ambientLevel;
 	unsigned int m_spotlightNum;
 	glm::vec3 * m_spotlightLocs;

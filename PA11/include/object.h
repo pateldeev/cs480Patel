@@ -5,10 +5,6 @@
 
 #include <vector>
 
-enum ObjType {
-	DEAD = 0, P1_ALIVE = 1, P2_ALIVE = 2, P1_DYING = 3, P2_DYING = 4, P1_MARKED = 5, P2_MARKED = 6
-};
-
 class Object {
 public:
 	Object(void) = delete;
@@ -16,7 +12,7 @@ public:
 			glm::vec3(0, 0, 0), const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Object(void);
 
-//Object is not meant to be copied or moved
+	//Object is not meant to be copied or moved
 	Object(const Object &) = delete;
 	Object(Object &&) = delete;
 	Object& operator=(const Object &) = delete;
@@ -38,7 +34,7 @@ public:
 
 	ObjType GetType(unsigned int r, unsigned int c) const;
 	std::vector<ObjType> & GetTypesList(void);
-	void SetType(const ObjType type, unsigned int r, unsigned int c);
+	void SetType(unsigned int r, unsigned int c, const ObjType type = ObjType::DEAD);
 
 	float GetDistanceFromPoint(glm::vec3 point) const;
 
@@ -61,7 +57,7 @@ private:
 	GLuint VB;
 	GLuint IB;
 
-	GLuint m_textures[7]; //vector of texture locations on GPU {follow enumaration layout}
+	GLuint m_textures[11]; //vector of texture locations on GPU {follow enumaration layout}
 };
 
 #endif /* OBJECT_H */

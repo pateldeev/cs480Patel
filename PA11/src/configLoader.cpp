@@ -135,23 +135,29 @@ boardInfo* ConfigFileParser::GetBoardInfo(void) {
 		throw std::string("Could not get board column direction from config file");
 	board->m_directionCol = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 
-	//get texture files
-	if (!ParseLine < std::string > (varName, &board->m_textureDead) || varName.compare("TEXTURE_DEAD"))
-		throw std::string("Could not get texture for dead from config file");
-	//get Player 1 textures
-	if (!ParseLine < std::string > (varName, &board->m_texturesP1[0]) || varName.compare("TEXTURE_P1"))
-		throw std::string("Could not get texture for P1 alive from config file");
-	if (!ParseLine < std::string > (varName, &board->m_texturesP1[1]) || varName.compare("TEXTURE_P1_DYING"))
-		throw std::string("Could not get texture for P1 dying from config file");
-	if (!ParseLine < std::string > (varName, &board->m_texturesP1[2]) || varName.compare("TEXTURE_P1_MARKED"))
-		throw std::string("Could not get texture for P1 marked from config file");
-	//get Player 2 texures
-	if (!ParseLine < std::string > (varName, &board->m_texturesP2[0]) || varName.compare("TEXTURE_P2"))
-		throw std::string("Could not get texture for P2 alive from config file");
-	if (!ParseLine < std::string > (varName, &board->m_texturesP2[1]) || varName.compare("TEXTURE_P2_DYING"))
-		throw std::string("Could not get texture for P2 dying from config file");
-	if (!ParseLine < std::string > (varName, &board->m_texturesP2[2]) || varName.compare("TEXTURE_P2_MARKED"))
-		throw std::string("Could not get texture for P2 marked from config file");
+	//get textures
+	if (!ParseLine < std::string > (varName, &board->m_textures[0]) || varName.compare("TEXTURE_DEAD"))
+		throw std::string("Could not get texture 0 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[1]) || varName.compare("TEXTURE_P1_ALIVE_FUTURE"))
+		throw std::string("Could not get texture 1 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[2]) || varName.compare("TEXTURE_P2_ALIVE_FUTURE"))
+		throw std::string("Could not get texture 2 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[3]) || varName.compare("TEXTURE_P1_ALIVE"))
+		throw std::string("Could not get texture 3 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[4]) || varName.compare("TEXTURE_P2_ALIVE"))
+		throw std::string("Could not get texture 4 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[5]) || varName.compare("TEXTURE_P1_DEAD_FUTURE"))
+		throw std::string("Could not get texture 5 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[6]) || varName.compare("TEXTURE_P2_DEAD_FUTURE"))
+		throw std::string("Could not get texture 6 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[7]) || varName.compare("TEXTURE_P1_ALIVE_MARKED"))
+		throw std::string("Could not get texture 7 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[8]) || varName.compare("TEXTURE_P2_ALIVE_MARKED"))
+		throw std::string("Could not get texture 8 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[9]) || varName.compare("TEXTURE_P1_DEAD_MARKED"))
+		throw std::string("Could not get texture 9 for dead from config file");
+	if (!ParseLine < std::string > (varName, &board->m_textures[10]) || varName.compare("TEXTURE_P2_DEAD_MARKED"))
+		throw std::string("Could not get texture 10 for dead from config file");
 
 	return board;
 }

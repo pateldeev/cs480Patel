@@ -51,17 +51,25 @@ void Object::Render(void) {
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_textures[DEAD]);
 	glActiveTexture (GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE_FUTURE]);
 	glActiveTexture (GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE_FUTURE]);
 	glActiveTexture (GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DYING]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE]);
 	glActiveTexture (GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DYING]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE]);
 	glActiveTexture (GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_MARKED]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DEAD_FUTURE]);
 	glActiveTexture (GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_MARKED]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DEAD_FUTURE]);
+	glActiveTexture (GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE_MARKED]);
+	glActiveTexture (GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE_MARKED]);
+	glActiveTexture (GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DEAD_MARKED]);
+	glActiveTexture (GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DEAD_MARKED]);
 
 	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances.x * m_numInstances.y);
 
@@ -114,7 +122,7 @@ std::vector<ObjType>& Object::GetTypesList(void) {
 	return m_types;
 }
 
-void Object::SetType(const ObjType type, unsigned int r, unsigned int c) {
+void Object::SetType(unsigned int r, unsigned int c, const ObjType type) {
 	if (r >= m_numInstances.y || c >= m_numInstances.x) {
 		std::string err = "Location: ";
 		err += std::to_string(r);

@@ -25,7 +25,7 @@ Menu::~Menu(void) {
 	SDL_DestroyWindow (m_window);
 }
 
-bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc) {
+bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, const glm::vec3 & currentEyeFocus) {
 
 	bool updated = false;
 
@@ -46,7 +46,7 @@ bool Menu::Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEy
 	ImGui::Text("\n");
 
 	ImGui::InputFloat3("Camera Focus", mn_eyeFocus);
-	ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", m_eyeFocus.x, m_eyeFocus.y, m_eyeFocus.z);
+	ImGui::Text("Current Camera Focus: (%.2f, %.2f, %.2f)", currentEyeFocus.x, currentEyeFocus.y, currentEyeFocus.z);
 	ImGui::Text("\n");
 	if (ImGui::Button("Update Location")) {
 		updated = true;

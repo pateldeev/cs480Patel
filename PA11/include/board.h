@@ -68,7 +68,7 @@ private:
 	GLint m_instanceChangeRow;
 	GLint m_instanceChangeCol;
 	GLint m_instanceNumPerRow;
-	GLint m_samplerDead;
+	GLint m_samplers;
 	GLint m_samplersP1[3];
 	GLint m_samplersP2[3];
 	GLint m_sampleTypes; //type of texture to use on each object

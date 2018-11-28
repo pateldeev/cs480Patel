@@ -81,7 +81,7 @@ void Engine::Run(void) {
 		m_window->Swap();
 
 		//update menu and change variables if necessary
-		if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos()))
+		if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos(), m_graphics->GetEyeLoc()))
 			m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus());
 
 	}

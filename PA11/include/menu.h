@@ -24,7 +24,7 @@ public:
 	Menu& operator=(const Menu &) = delete;
 	Menu& operator=(Menu&&) = delete;
 
-	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc); //returns true if menu has been undated
+	bool Update(const SDL_GLContext & gl_context, const glm::vec3 & currrentEyeLoc, const glm::vec3 & currentEyeFocus); //returns true if menu has been undated
 
 	void HandleEvent(SDL_Event event);
 
