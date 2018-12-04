@@ -5,15 +5,9 @@ smooth in vec2 texture;
 smooth in vec3 v_posWorld;
 smooth in vec3 v_normalWorld;
 
-uniform sampler2D samplerDead;
-uniform sampler2D samplerP1_Alive;
-uniform sampler2D samplerP2_Alive;
-uniform sampler2D samplerP1_Dying;
-uniform sampler2D samplerP2_Dying;
-uniform sampler2D samplerP1_Marked;
-uniform sampler2D samplerP2_Marked;
+uniform sampler2D samplers[11];
 
-uniform int sampleType[100];
+uniform int sampleType[150];
 flat in int instanceID;
 
 uniform vec3 ambientP;
@@ -33,19 +27,27 @@ void main(void){
   vec3 baseColor; 
   
   if(sampleType[instanceID] == 1)
-    baseColor = texture2D(samplerP1_Alive, texture).xyz;
+    baseColor = texture2D(samplers[1], texture).xyz;
   else if(sampleType[instanceID] == 2)
-    baseColor = texture2D(samplerP2_Alive, texture).xyz;
+    baseColor = texture2D(samplers[2], texture).xyz;
   else if(sampleType[instanceID] == 3)
-    baseColor = texture2D(samplerP1_Dying, texture).xyz;
+    baseColor = texture2D(samplers[3], texture).xyz;
   else if(sampleType[instanceID] == 4)
-    baseColor = texture2D(samplerP2_Dying, texture).xyz;
+    baseColor = texture2D(samplers[4], texture).xyz;
   else if(sampleType[instanceID] == 5)
-    baseColor = texture2D(samplerP1_Marked, texture).xyz;
+    baseColor = texture2D(samplers[5], texture).xyz;
   else if(sampleType[instanceID] == 6)
-    baseColor = texture2D(samplerP2_Marked, texture).xyz;
+    baseColor = texture2D(samplers[6], texture).xyz;
+  else if(sampleType[instanceID] == 7)
+    baseColor = texture2D(samplers[7], texture).xyz;
+  else if(sampleType[instanceID] == 8)
+    baseColor = texture2D(samplers[8], texture).xyz;
+  else if(sampleType[instanceID] == 9)
+    baseColor = texture2D(samplers[9], texture).xyz;
+  else if(sampleType[instanceID] == 10)
+    baseColor = texture2D(samplers[10], texture).xyz;
   else
-    baseColor = texture2D(samplerDead, texture).xyz;
+    baseColor = texture2D(samplers[0], texture).xyz;
 
   //add contribution of each light
   for(int i = 0; i <3; ++i)

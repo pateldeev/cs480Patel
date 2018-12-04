@@ -44,7 +44,8 @@ private:
 	Shader * m_shaderCurrent;
 
 	glm::uvec2 m_boardSize;
-	glm::vec2 m_spaceBetween;
+	glm::vec3 m_changeRow;
+	glm::vec3 m_changeCol;
 
 	//for unifroms in shaders for translation and lighting
 	GLint m_projectionMatrix;
@@ -64,9 +65,10 @@ private:
 	std::vector<glm::vec3> m_spotlightLocs;
 
 	//for instancing
-	GLint m_instanceChange;
+	GLint m_instanceChangeRow;
+	GLint m_instanceChangeCol;
 	GLint m_instanceNumPerRow;
-	GLint m_samplerDead;
+	GLint m_samplers;
 	GLint m_samplersP1[3];
 	GLint m_samplersP2[3];
 	GLint m_sampleTypes; //type of texture to use on each object

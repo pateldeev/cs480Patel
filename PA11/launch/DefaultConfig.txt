@@ -33,16 +33,22 @@ NUM_SPOTLIGHTS=3
 SPOTLIGHT_LOC=0,10,10
 SPOTLIGHT_LOC=0,10,-15
 SPOTLIGHT_LOC=0,10,0
-AMBIENT_LEVEL=0.55,0.55,0.55
-BOARD_SIZE=10,10
-DISTANCE_BETWEEN=5.0
+AMBIENT_LEVEL=0.75,0.75,0.75
+BOARD_SIZE=10,15
+STARTING_POINT=-10.0,0.0,-5.0
+BOARD_DIRECTION_ROW=2.5,0.75,0
+BOARD_DIRECTION_COL=0,0,4.25
 TEXTURE_DEAD=objFiles/textures/dead.png
-TEXTURE_P1=objFiles/textures/blue_alive.png
-TEXTURE_P1_DYING=objFiles/textures/blue_dying.png
-TEXTURE_P1_MARKED=objFiles/textures/blue_marked_for_death.png
-TEXTURE_P2=objFiles/textures/blue_alive.png
-TEXTURE_P2_DYING=objFiles/textures/blue_dying.png
-TEXTURE_P2_MARKED=objFiles/textures/blue_marked_for_death.png
+TEXTURE_P1_ALIVE_FUTURE=objFiles/textures/dead.png
+TEXTURE_P2_ALIVE_FUTURE=objFiles/textures/dead.png
+TEXTURE_P1_ALIVE=objFiles/textures/blue_alive.png
+TEXTURE_P2_ALIVE=objFiles/textures/blue_alive.png
+TEXTURE_P1_DEAD_FUTURE=objFiles/textures/blue_dying.png
+TEXTURE_P2_DEAD_FUTURE=objFiles/textures/blue_dying.png
+TEXTURE_P1_ALIVE_MARKED=objFiles/textures/dead.png
+TEXTURE_P2_ALIVE_MARKED=objFiles/textures/dead.png
+TEXTURE_P1_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
+TEXTURE_P2_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
 
 
 #Shaders

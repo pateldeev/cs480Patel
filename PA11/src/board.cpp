@@ -1,22 +1,19 @@
 #include "board.h"
 
 Board::Board(const boardInfo & board) :
-		m_shaderCurrent(nullptr), m_boardSize(board.m_size), m_spaceBetween(board.m_objectDistance), m_ambientLevel(board.m_ambientLevel), m_diffuseLevel(
-				board.m_object.m_diffuseLevel), m_specularLevel(board.m_object.m_specularLevel), m_shininessConst(board.m_object.m_shininess), m_spotlightNum(
-				board.m_spotlightNum) {
+		m_shaderCurrent(nullptr), m_boardSize(board.m_size), m_changeRow(board.m_directionRow), m_changeCol(board.m_directionCol), m_ambientLevel(
+				board.m_ambientLevel), m_diffuseLevel(board.m_object.m_diffuseLevel), m_specularLevel(board.m_object.m_specularLevel), m_shininessConst(
+				board.m_object.m_shininess), m_spotlightNum(board.m_spotlightNum) {
 	//add spotlights
 	m_spotlightLocs.resize(board.m_spotlightNum);
 	for (unsigned int i = 0; i < board.m_spotlightNum; ++i)
 		m_spotlightLocs[i] = board.m_spotlightLocs[i];
 
-	m_obj = new Object(board.m_object.m_objFile, board.m_size.x * board.m_size.y);
-	m_obj->LoadTexture(board.m_textureDead, ObjType::DEAD);
-	m_obj->LoadTexture(board.m_texturesP1[0], ObjType::P1_ALIVE);
-	m_obj->LoadTexture(board.m_texturesP2[0], ObjType::P2_ALIVE);
-	m_obj->LoadTexture(board.m_texturesP1[1], ObjType::P1_DYING);
-	m_obj->LoadTexture(board.m_texturesP2[1], ObjType::P2_DYING);
-	m_obj->LoadTexture(board.m_texturesP1[2], ObjType::P1_MARKED);
-	m_obj->LoadTexture(board.m_texturesP2[2], ObjType::P2_MARKED);
+	m_obj = new Object(board.m_object.m_objFile, board.m_size, board.m_startingLoc);
+
+	//load textures
+	for (int i = 0; i < 11; ++i)
+		m_obj->LoadTexture(board.m_textures[i], static_cast<ObjType>(i));
 }
 
 Board::~Board(void) {
@@ -66,40 +63,32 @@ void Board::UseShaderSet(const std::string & setName) {
 	bindUniform(m_shininess, "shininess");
 
 	//find instancing uniforms
-	bindUniform(m_instanceChange, "change");
+	bindUniform(m_instanceChangeRow, "changeRow");
+	bindUniform(m_instanceChangeCol, "changeCol");
 	bindUniform(m_instanceNumPerRow, "numPerRow");
-	bindUniform(m_samplerDead, "samplerDead");
-	
-	bindUniform(m_samplersP1[0], "samplerP1_Alive");
-	bindUniform(m_samplersP2[0], "samplerP2_Alive");
-	bindUniform(m_samplersP1[1], "samplerP1_Dying");
-	bindUniform(m_samplersP2[1], "samplerP2_Dying");
-	bindUniform(m_samplersP1[2], "samplerP1_Marked");
-	bindUniform(m_samplersP2[2], "samplerP2_Marked");
-	
+	bindUniform(m_samplers, "samplers");
 	bindUniform(m_sampleTypes, "sampleType");
 
 	m_shaderCurrent->Enable();
 
-	glUniform3f(m_instanceChange, m_spaceBetween.x, 0.0, m_spaceBetween.y);
+	glUniform3f(m_instanceChangeRow, m_changeRow.x, m_changeRow.y, m_changeRow.z);
+	glUniform3f(m_instanceChangeCol, m_changeCol.x, m_changeCol.y, m_changeCol.z);
 	glUniform1i(m_instanceNumPerRow, (int) m_boardSize.x);
 
-	glUniform1i(m_samplerDead, 0);
-	glUniform1i(m_samplersP1[0], 1);
-	glUniform1i(m_samplersP2[0], 2);
-	glUniform1i(m_samplersP1[1], 3);
-	glUniform1i(m_samplersP2[1], 4);
-	glUniform1i(m_samplersP1[2], 5);
-	glUniform1i(m_samplersP2[2], 6);
-	
+	const int samplerNums[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	glUniform1iv(m_samplers, 11, samplerNums);
+
 	UpdateTypeBindings();
 }
 
 void Board::Update(void) {
-	m_obj->SetType(ObjType::P1_DYING, 2);
-	m_obj->SetType(ObjType::P1_ALIVE, 7);
-	m_obj->SetType(ObjType::P2_MARKED, 14);
+	m_obj->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
+	m_obj->SetType(2, 3, ObjType::P1_DEAD_MARKED);
+	m_obj->SetType(7, 3, ObjType::P1_ALIVE);
+	m_obj->SetType(9, 9, ObjType::P2_DEAD_MARKED);
+	m_obj->SetType(14, 8, ObjType::P2_ALIVE_MARKED);
 	UpdateTypeBindings();
+	m_obj->Update();
 }
 
 void Board::Render(void) {

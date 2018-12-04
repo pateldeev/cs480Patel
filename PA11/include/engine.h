@@ -35,7 +35,7 @@ private:
 	ConfigFileParser m_configFile; //used to get parameters from
 
 	bool m_shift; //keeps track of shift being pressed
-
+  
   bool m_w; //W key
   bool m_a; //A key
   bool m_s; //S key
@@ -43,8 +43,7 @@ private:
 
   float mouseX;
   float mouseY;
-
-  bool mouseWarp = false;
+  bool mouseWarp;
 
 	Menu * m_menu;
 	glm::uvec2 m_menuSize;

@@ -7,9 +7,9 @@
 
 #include <Magick++.h>
 
-Object::Object(const std::string & objFile, unsigned int numIstances, const glm::vec3 & traslation, const glm::vec3 & rotation,
+Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & traslation, const glm::vec3 & rotation,
 		const glm::vec3 & scale) :
-		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(numIstances), VB(0), IB(0) {
+		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(size), VB(0), IB(0) {
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	LoadObjAssimp(objFile);
 
@@ -21,7 +21,7 @@ Object::Object(const std::string & objFile, unsigned int numIstances, const glm:
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices.size(), &m_indices[0], GL_STATIC_DRAW);
 
-	m_types.resize(m_numInstances, DEAD);
+	m_types.resize(m_numInstances.x * m_numInstances.y, DEAD);
 }
 
 Object::~Object(void) {
@@ -51,19 +51,27 @@ void Object::Render(void) {
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_textures[DEAD]);
 	glActiveTexture (GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE_FUTURE]);
 	glActiveTexture (GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE_FUTURE]);
 	glActiveTexture (GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DYING]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE]);
 	glActiveTexture (GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DYING]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE]);
 	glActiveTexture (GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P1_MARKED]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DEAD_FUTURE]);
 	glActiveTexture (GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, m_textures[P2_MARKED]);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DEAD_FUTURE]);
+	glActiveTexture (GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_ALIVE_MARKED]);
+	glActiveTexture (GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_ALIVE_MARKED]);
+	glActiveTexture (GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DEAD_MARKED]);
+	glActiveTexture (GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DEAD_MARKED]);
 
-	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances);
+	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances.x * m_numInstances.y);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -98,16 +106,32 @@ void Object::SetScale(const glm::vec3 & scale) {
 	m_scale = scale;
 }
 
-ObjType Object::GetType(unsigned int id) const {
-	return m_types[id];
+ObjType Object::GetType(unsigned int r, unsigned int c) const {
+	if (r >= m_numInstances.y || c >= m_numInstances.x) {
+		std::string err = "Location: ";
+		err += std::to_string(r);
+		err += ",";
+		err += std::to_string(c);
+		err += " is not a valid instance";
+		throw err;
+	}
+	return m_types[r * m_numInstances.x + c];
 }
 
 std::vector<ObjType>& Object::GetTypesList(void) {
 	return m_types;
 }
 
-void Object::SetType(const ObjType type, unsigned int id) {
-	m_types[id] = type;
+void Object::SetType(unsigned int r, unsigned int c, const ObjType type) {
+	if (r >= m_numInstances.y || c >= m_numInstances.x) {
+		std::string err = "Location: ";
+		err += std::to_string(r);
+		err += ",";
+		err += std::to_string(c);
+		err += " is not a valid instance";
+		throw err;
+	}
+	m_types[r * m_numInstances.x + c] = type;
 }
 
 void Object::LoadTexture(const std::string & textureFile, ObjType type) {

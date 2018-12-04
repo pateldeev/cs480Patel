@@ -23,7 +23,7 @@
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 
-typedef struct Vertex{
+typedef struct Vertex {
 	glm::vec3 m_vertex;
 	glm::vec3 m_normal;
 	glm::vec2 m_texture;
@@ -33,32 +33,46 @@ typedef struct Vertex{
 	}
 } Vertex;
 
-typedef struct objectInfo {
-		std::string m_objFile;
-		glm::vec3 m_scale;
-		glm::vec3 m_rotation;
-		glm::vec3 m_diffuseLevel;
-		glm::vec3 m_specularLevel;
-		float m_shininess;
-} objectInfo;
+enum ObjType {
+	DEAD = 0,
+	P1_ALIVE_FUTURE = 1,
+	P2_ALIVE_FUTURE = 2,
+	P1_ALIVE = 3,
+	P2_ALIVE = 4,
+	P1_DEAD_FUTURE = 5,
+	P2_DEAD_FUTURE = 6,
+	P1_ALIVE_MARKED = 7,
+	P2_ALIVE_MARKED = 8,
+	P1_DEAD_MARKED = 9,
+	P2_DEAD_MARKED = 10
+};
 
+typedef struct objectInfo {
+	std::string m_objFile;
+	glm::vec3 m_scale;
+	glm::vec3 m_rotation;
+	glm::vec3 m_diffuseLevel;
+	glm::vec3 m_specularLevel;
+	float m_shininess;
+} objectInfo;
 
 typedef struct boardInfo {
 	objectInfo m_object;
 	glm::uvec2 m_size;
-	float m_objectDistance;
-	std::string m_textureDead;
-	std::string m_texturesP1[3]; //order: alive, dead, marked
-	std::string m_texturesP2[3]; //order: alive, dead, marked
+	glm::vec3 m_startingLoc;
+	glm::vec3 m_directionRow;
+	glm::vec3 m_directionCol;
+	std::string m_textures[11];
 	glm::vec3 m_ambientLevel;
 	unsigned int m_spotlightNum;
 	glm::vec3 * m_spotlightLocs;
 
-	boardInfo(unsigned int spotlightNum): m_spotlightNum(spotlightNum){
+	boardInfo(unsigned int spotlightNum) :
+			m_spotlightNum(spotlightNum) {
 		m_spotlightLocs = new glm::vec3[m_spotlightNum];
 	}
 
-	~boardInfo(void){
+	~boardInfo(void) {
 		delete[] m_spotlightLocs;
 	}
 } boardInfo;

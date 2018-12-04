@@ -5,18 +5,14 @@
 
 #include <vector>
 
-enum ObjType {
-	DEAD = 0, P1_ALIVE = 1, P2_ALIVE = 2, P1_DYING = 3, P2_DYING = 4, P1_MARKED = 5, P2_MARKED = 6
-};
-
 class Object {
 public:
 	Object(void) = delete;
-	Object(const std::string & objFile, unsigned int numIstances, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation =
+	Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation =
 			glm::vec3(0, 0, 0), const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Object(void);
 
-//Object is not meant to be copied or moved
+	//Object is not meant to be copied or moved
 	Object(const Object &) = delete;
 	Object(Object &&) = delete;
 	Object& operator=(const Object &) = delete;
@@ -36,9 +32,9 @@ public:
 	glm::vec3 GetScale(void) const;
 	void SetScale(const glm::vec3 & scale);
 
-	ObjType GetType(unsigned int id) const;
+	ObjType GetType(unsigned int r, unsigned int c) const;
 	std::vector<ObjType> & GetTypesList(void);
-	void SetType(const ObjType type, unsigned int id);
+	void SetType(unsigned int r, unsigned int c, const ObjType type = ObjType::DEAD);
 
 	float GetDistanceFromPoint(glm::vec3 point) const;
 
@@ -53,7 +49,7 @@ private:
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 
-	int m_numInstances;
+	glm::uvec2 m_numInstances;
 	std::vector<ObjType> m_types;
 
 	std::vector<Vertex> m_vertices;
@@ -61,7 +57,7 @@ private:
 	GLuint VB;
 	GLuint IB;
 
-	GLuint m_textures[7]; //vector of texture locations on GPU {follow enumaration layout}
+	GLuint m_textures[11]; //vector of texture locations on GPU {follow enumaration layout}
 };
 
 #endif /* OBJECT_H */
