@@ -35,11 +35,15 @@ private:
 	ConfigFileParser m_configFile; //used to get parameters from
 
 	bool m_shift; //keeps track of shift being pressed
+  
+  bool m_w; //W key
+  bool m_a; //A key
+  bool m_s; //S key
+  bool m_d; //D key
 
-	bool m_w; //W key
-	bool m_a; //A key
-	bool m_s; //S key
-	bool m_d; //D key 
+  float mouseX;
+  float mouseY;
+  bool mouseWarp;
 
 	Menu * m_menu;
 	glm::uvec2 m_menuSize;

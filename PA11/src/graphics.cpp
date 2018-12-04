@@ -148,6 +148,31 @@ void Graphics::MoveLeft(float moveAmount) {
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 
+void Graphics::RotateCamera(float newX, float newY){
+
+  float sensitivity = 0.5;
+  newX *= sensitivity;
+  newY *= sensitivity;
+
+  yaw += newX;
+  pitch += newY;
+
+  if (pitch > 89.0) {
+    pitch = 89.0;
+  }
+  if (pitch < -89.0) {
+    pitch = -89.0;
+  }
+
+  glm::vec3 front;
+  front.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
+  front.y = -sin(glm::radians(pitch));
+  front.z = sin(sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+  glm::vec3 newFront = glm::normalize(front);
+
+  UpdateCamera(GetEyePos(), GetEyePos() + newFront);
+}
+
 void Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
 	m_camera.UpdateCamera(eyePos, eyeFocus);
 	UpdateCameraBindings();
