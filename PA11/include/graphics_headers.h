@@ -64,17 +64,6 @@ typedef struct boardInfo {
 	glm::vec3 m_directionCol;
 	std::string m_textures[11];
 	glm::vec3 m_ambientLevel;
-	unsigned int m_spotlightNum;
-	glm::vec3 * m_spotlightLocs;
-
-	boardInfo(unsigned int spotlightNum) :
-			m_spotlightNum(spotlightNum) {
-		m_spotlightLocs = new glm::vec3[m_spotlightNum];
-	}
-
-	~boardInfo(void) {
-		delete[] m_spotlightLocs;
-	}
 } boardInfo;
 
 #endif /* GRAPHICS_HEADERS_H */

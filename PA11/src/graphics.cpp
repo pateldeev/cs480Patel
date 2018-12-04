@@ -52,6 +52,8 @@ void Graphics::UseShaderSet(const std::string & setName) {
 
 void Graphics::Update(unsigned int dt) {
 	m_board->Update();
+	m_board->UpdateSpotlightLoc(GetEyePos());
+	UpdateCameraBindings();
 }
 
 void Graphics::Render(void) {
@@ -149,7 +151,6 @@ void Graphics::MoveLeft(float moveAmount) {
 }
 
 void Graphics::RotateCamera(float newX, float newY) {
-
 	float sensitivity = 0.5;
 	newX *= sensitivity;
 	newY *= sensitivity;

@@ -30,6 +30,7 @@ public:
 	void ChangeAmbientLight(const glm::vec3 & change);
 	void ChangeDiffuseLight(const glm::vec3 & change);
 	void ChangeSpecularLight(const glm::vec3 & change);
+	void UpdateSpotlightLoc(const glm::vec3 & location);
 
 	//for updating the bindings of uniforms
 	void UpdateCameraBindings(const glm::mat4 & viewMat, const glm::mat4 & projectionMat, const glm::vec3 & cameraPos);
@@ -61,8 +62,7 @@ private:
 	glm::vec3 m_diffuseLevel;
 	glm::vec3 m_specularLevel;
 	float m_shininessConst;
-	unsigned int m_spotlightNum;
-	std::vector<glm::vec3> m_spotlightLocs;
+	glm::vec3 m_spotlightLoc;
 
 	//for instancing
 	GLint m_instanceChangeRow;

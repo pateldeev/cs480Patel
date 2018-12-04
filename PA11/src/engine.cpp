@@ -24,10 +24,9 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
 	m_configFile.GetMenuState(menu, m_menuSize);
 
 	//get board information from configuration file
-	boardInfo * board = m_configFile.GetBoardInfo();
-	m_graphics = new Graphics(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc, *board);	//start the graphics
-	delete board;
-	board = nullptr;
+	boardInfo board;
+	m_configFile.GetBoardInfo(board);
+	m_graphics = new Graphics(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc, board);	//start the graphics
 
 	//add shader sets and set active one
 	std::string shaderSetName, shaderSrcVert, shaderSrcFrag;

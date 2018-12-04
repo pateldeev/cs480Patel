@@ -3,12 +3,7 @@
 Board::Board(const boardInfo & board) :
 		m_shaderCurrent(nullptr), m_boardSize(board.m_size), m_changeRow(board.m_directionRow), m_changeCol(board.m_directionCol), m_ambientLevel(
 				board.m_ambientLevel), m_diffuseLevel(board.m_object.m_diffuseLevel), m_specularLevel(board.m_object.m_specularLevel), m_shininessConst(
-				board.m_object.m_shininess), m_spotlightNum(board.m_spotlightNum) {
-	//add spotlights
-	m_spotlightLocs.resize(board.m_spotlightNum);
-	for (unsigned int i = 0; i < board.m_spotlightNum; ++i)
-		m_spotlightLocs[i] = board.m_spotlightLocs[i];
-
+				board.m_object.m_shininess), m_spotlightLoc(0.0, 0.0, 0.0) {
 	m_obj = new Object(board.m_object.m_objFile, board.m_size, board.m_startingLoc);
 
 	//load textures
@@ -50,9 +45,9 @@ void Board::UseShaderSet(const std::string & setName) {
 	};
 
 	//find MVP matricies
-	bindUniform(m_projectionMatrix, "projectionMatrix");
-	bindUniform(m_viewMatrix, "viewMatrix");
-	bindUniform(m_modelMatrix, "modelMatrix");
+	bindUniform(m_projectionMatrix, "projection");
+	bindUniform(m_viewMatrix, "view");
+	bindUniform(m_modelMatrix, "model");
 
 	//find lighting uniforms
 	bindUniform(m_lightPos, "lightPos");
@@ -81,7 +76,7 @@ void Board::UseShaderSet(const std::string & setName) {
 	UpdateTypeBindings();
 }
 
-void Board::Update(void) {
+void Board::Update() {
 	m_obj->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
 	m_obj->SetType(2, 3, ObjType::P1_DEAD_MARKED);
 	m_obj->SetType(7, 3, ObjType::P1_ALIVE);
@@ -117,6 +112,15 @@ void Board::ChangeSpecularLight(const glm::vec3 & change) {
 	UpdateLightBindings();
 }
 
+void Board::UpdateSpotlightLoc(const glm::vec3 & location) {
+	m_spotlightLoc = location;
+	if (!m_shaderCurrent) //Ensure shader is enabled
+		throw std::string("No shader has been enabled!");
+
+	//update location
+	glUniform3f(m_lightPos, m_spotlightLoc.x, m_spotlightLoc.y, m_spotlightLoc.z);
+}
+
 //updates bindings for camera in shader
 void Board::UpdateCameraBindings(const glm::mat4 & viewMat, const glm::mat4 & projectionMat, const glm::vec3 & cameraPos) {
 	if (!m_shaderCurrent) //Ensure shader is enabled
@@ -134,7 +138,7 @@ void Board::UpdateLightBindings(void) {
 		throw std::string("No shader has been enabled!");
 
 	//add lighting varibles/uniforms to shaders if needed
-	glUniform3fv(m_lightPos, 3, glm::value_ptr(m_spotlightLocs[0]));
+	glUniform3f(m_lightPos, m_spotlightLoc.x, m_spotlightLoc.y, m_spotlightLoc.z);
 
 	glUniform3f(m_ambientProduct, m_ambientLevel.x, m_ambientLevel.y, m_ambientLevel.z);
 	glUniform3f(m_diffuseProduct, m_diffuseLevel.x, m_diffuseLevel.y, m_diffuseLevel.z);
