@@ -4,8 +4,9 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & launchFile, float frameCap) :
-		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), mouseX(0.f), mouseY(0.f), mouseWarp(false), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(
-				0), m_currentTimeMillis(Engine::GetCurrentTimeMillis()), m_running(false), m_minFrameTime(1.0f / frameCap * 1000) {
+		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), m_mouseWarp(
+				false), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(0), m_currentTimeMillis(Engine::GetCurrentTimeMillis()), m_running(
+				false), m_minFrameTime(1.0f / frameCap * 1000) {
 	std::srand(time(nullptr));
 
 	//get window parameters and start the window
@@ -187,27 +188,24 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = false;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = false;
+	} else if (event.type == SDL_KEYUP) {
+		if (event.key.keysym.sym == SDLK_w)
+			m_w = false;
+		else if (event.key.keysym.sym == SDLK_s)
+			m_s = false;
+		else if (event.key.keysym.sym == SDLK_d)
+			m_d = false;
+		else if (event.key.keysym.sym == SDLK_a)
+			m_a = false;
+	} else if (event.type == SDL_MOUSEMOTION) {
+		if (!m_mouseWarp) {
+			m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
+			m_mouseWarp = true;
+			SDL_WarpMouseInWindow(NULL, m_window->GetWindowWidth(), m_window->GetWindowHeight());
+		} else {
+			m_mouseWarp = false;
+		}
 	}
-  else if (event.type == SDL_KEYUP) {
-    if (event.key.keysym.sym == SDLK_w)
-      m_w = false;
-    else if (event.key.keysym.sym == SDLK_s)
-      m_s = false;
-    else if (event.key.keysym.sym == SDLK_d)
-      m_d = false;
-    else if (event.key.keysym.sym == SDLK_a)
-      m_a = false;
-  }
-  else if (event.type == SDL_MOUSEMOTION){
-    if (!mouseWarp) {
-      m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
-      mouseWarp = true;
-      SDL_WarpMouseInWindow(NULL, m_window->GetWindowWidth(), m_window->GetWindowHeight());
-    }
-    else
-      mouseWarp = false;
-
-  }
 }
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
