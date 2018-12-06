@@ -20,6 +20,8 @@ public:
 
 	void Update(void);
 	void Render(void);
+	
+	void BindTextures(void);
 
 	glm::mat4 GetModel(void);
 
@@ -36,6 +38,14 @@ public:
 	std::vector<ObjType> & GetTypesList(void);
 	void SetType(unsigned int r, unsigned int c, const ObjType type = ObjType::DEAD);
 
+	glm::uvec2 GetSize(void) const;
+
+	glm::vec3 GetChangeRow(void) const;
+	void SetChangeRow(const glm::vec3 & change);
+
+	glm::vec3 GetChangeCol(void) const;
+	void SetChangeCol(const glm::vec3 & change);
+
 	float GetDistanceFromPoint(glm::vec3 point) const;
 
 	void LoadTexture(const std::string & textureFile, ObjType type = ObjType::DEAD);
@@ -49,7 +59,10 @@ private:
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 
-	glm::uvec2 m_numInstances;
+	//for instancing
+	const glm::uvec2 m_numInstances;
+	glm::vec3 m_changeRow;
+	glm::vec3 m_changeCol;
 	std::vector<ObjType> m_types;
 
 	std::vector<Vertex> m_vertices;

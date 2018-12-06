@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-Graphics::Graphics(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const boardInfo & board) :
+Graphics::Graphics(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const gameInfo & game) :
 		m_camera(windowWidth, windowHeight, eyePos, eyeFocus), m_board(nullptr) {
 
 // Used for the linux OS
@@ -33,7 +33,7 @@ Graphics::Graphics(unsigned int windowWidth, unsigned int windowHeight, const gl
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	m_board = new Board(board);
+	m_board = new Board(game);
 }
 
 Graphics::~Graphics(void) {
@@ -53,7 +53,6 @@ void Graphics::UseShaderSet(const std::string & setName) {
 void Graphics::Update(unsigned int dt) {
 	m_board->Update();
 	m_board->UpdateSpotlightLoc(GetEyePos());
-	UpdateCameraBindings();
 }
 
 void Graphics::Render(void) {

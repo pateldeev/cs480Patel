@@ -11,7 +11,7 @@ WINDOW_SIZE=500,750
 
 
 #Initial camera information
-CAMERA_EYEPOS=0.0,20.0,5.0
+CAMERA_EYEPOS=0.0,15.0,5.0
 CAMERA_FOCUSPOS=0.0,0.0,0.0
 
 
@@ -28,12 +28,12 @@ OBJ_DIFFUSE=0.2,0.2,0.2
 OBJ_SPECULAR=0.8,0.8,0.8
 OBJ_SHININESS=32
 
-#For board
+
+#For lighting
 AMBIENT_LEVEL=0.35,0.35,0.35
-BOARD_SIZE=10,15
-STARTING_POINT=-10.0,0.0,-5.0
-BOARD_DIRECTION_ROW=2.5,0.75,0
-BOARD_DIRECTION_COL=0,0,4.25
+
+
+//For various textures
 TEXTURE_DEAD=objFiles/textures/dead.png
 TEXTURE_P1_ALIVE_FUTURE=objFiles/textures/dead.png
 TEXTURE_P2_ALIVE_FUTURE=objFiles/textures/dead.png
@@ -46,6 +46,19 @@ TEXTURE_P2_ALIVE_MARKED=objFiles/textures/dead.png
 TEXTURE_P1_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
 TEXTURE_P2_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
 
+
+//for various sides of game
+BOARD_NAME=floor
+BOARD_SIZE=10,15
+BOARD_START_POINT=-10.0,0.0,-5.0
+BOARD_DIRECTION_ROW=2.5,0.0,0.0
+BOARD_DIRECTION_COL=0.0,0.0,4.25
+
+BOARD_NAME=roof
+BOARD_SIZE=10,15
+BOARD_START_POINT=-10.0,30.0,-5.0
+BOARD_DIRECTION_ROW=2.5,0.0,0.0
+BOARD_DIRECTION_COL=0.0,0.0,4.25
 
 #Shaders
 NAME_SET=Default

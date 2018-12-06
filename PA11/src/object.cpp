@@ -47,6 +47,14 @@ void Object::Render(void) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
+	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances.x * m_numInstances.y);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+}
+
+void Object::BindTextures(void) {
 	//bind textures
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_textures[DEAD]);
@@ -70,12 +78,6 @@ void Object::Render(void) {
 	glBindTexture(GL_TEXTURE_2D, m_textures[P1_DEAD_MARKED]);
 	glActiveTexture (GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, m_textures[P2_DEAD_MARKED]);
-
-	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, m_numInstances.x * m_numInstances.y);
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 }
 
 glm::mat4 Object::GetModel(void) {
@@ -132,6 +134,26 @@ void Object::SetType(unsigned int r, unsigned int c, const ObjType type) {
 		throw err;
 	}
 	m_types[r * m_numInstances.x + c] = type;
+}
+
+glm::uvec2 Object::GetSize(void) const {
+	return m_numInstances;
+}
+
+glm::vec3 Object::GetChangeRow(void) const {
+	return m_changeRow;
+}
+
+void Object::SetChangeRow(const glm::vec3 & change) {
+	m_changeRow = change;
+}
+
+glm::vec3 Object::GetChangeCol(void) const {
+	return m_changeCol;
+}
+
+void Object::SetChangeCol(const glm::vec3 & change) {
+	m_changeCol = change;
 }
 
 void Object::LoadTexture(const std::string & textureFile, ObjType type) {

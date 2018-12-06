@@ -57,13 +57,18 @@ typedef struct objectInfo {
 } objectInfo;
 
 typedef struct boardInfo {
-	objectInfo m_object;
+	std::string m_name;
 	glm::uvec2 m_size;
 	glm::vec3 m_startingLoc;
 	glm::vec3 m_directionRow;
 	glm::vec3 m_directionCol;
+} boardInfo;
+
+typedef struct gameInfo {
+	objectInfo m_object;
 	std::string m_textures[11];
 	glm::vec3 m_ambientLevel;
-} boardInfo;
+	boardInfo m_sides[2]; //{floor, roof}
+} gameInfo;
 
 #endif /* GRAPHICS_HEADERS_H */

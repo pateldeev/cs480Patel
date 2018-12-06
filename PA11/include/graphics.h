@@ -11,7 +11,7 @@
 class Graphics {
 public:
 	Graphics(void) = delete;
-	Graphics(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const boardInfo & board);
+	Graphics(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const gameInfo & game);
 	~Graphics(void);
 
 	//Graphics is not meant to be copied or moved

@@ -8,7 +8,7 @@
 class Board {
 public:
 	Board(void) = delete;
-	Board(const boardInfo & board);
+	Board(const gameInfo & game);
 	~Board(void);
 
 	//Board is not meant to be copied or moved
@@ -16,8 +16,6 @@ public:
 	Board(Board &&) = delete;
 	Board& operator=(const Board &) = delete;
 	Board& operator=(Board&&) = delete;
-
-	Object * m_obj;
 
 	//to add and change shaders
 	void AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
@@ -35,18 +33,17 @@ public:
 	//for updating the bindings of uniforms
 	void UpdateCameraBindings(const glm::mat4 & viewMat, const glm::mat4 & projectionMat, const glm::vec3 & cameraPos);
 	void UpdateLightBindings(void);
-	void UpdateTypeBindings(void);
+	void UpdateInstanceBindings(Object * obj);
 
 private:
-	void EnforceBounds(glm::vec3 & v, float min = 0, float max = 1); //rounds everything to be in range [min, max]
+	void EnforceBounds(glm::vec3 & v, float min = 0.f, float max = 1.f); //rounds everything to be in range [min, max]
+
+	Object * m_floor;
+	Object * m_roof;
 
 	//variable to keep track of shaders
 	std::vector<std::pair<std::string, Shader *>> m_shaders;
 	Shader * m_shaderCurrent;
-
-	glm::uvec2 m_boardSize;
-	glm::vec3 m_changeRow;
-	glm::vec3 m_changeCol;
 
 	//for unifroms in shaders for translation and lighting
 	GLint m_projectionMatrix;
@@ -69,8 +66,6 @@ private:
 	GLint m_instanceChangeCol;
 	GLint m_instanceNumPerRow;
 	GLint m_samplers;
-	GLint m_samplersP1[3];
-	GLint m_samplersP2[3];
 	GLint m_sampleTypes; //type of texture to use on each object
 };
 

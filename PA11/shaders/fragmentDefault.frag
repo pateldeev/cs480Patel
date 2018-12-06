@@ -65,8 +65,13 @@ vec3 addLight(vec3 baseColor, vec3 lightPosition){
 
   float kS = pow(max(dot(N, H), 0.0), shininess);
   vec3 specular = specularP * kS;
-  if(kD == 0.0) 
+  if(dot(N, L) < 0.0) 
     specular = vec3(0.0,0.0,0.0);
+
+  float distance = length(lightPosition - v_posWorld);
+  float attenuation = 1.0 / (1.0 + 0.009 * distance + 0.0032 * (distance * distance));
+  diffuse *= attenuation;    
+  specular *= attenuation;    
 
   return ((ambient + diffuse + specular) * baseColor);
 }

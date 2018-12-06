@@ -1,21 +1,29 @@
 #include "board.h"
 
-Board::Board(const boardInfo & board) :
-		m_shaderCurrent(nullptr), m_boardSize(board.m_size), m_changeRow(board.m_directionRow), m_changeCol(board.m_directionCol), m_ambientLevel(
-				board.m_ambientLevel), m_diffuseLevel(board.m_object.m_diffuseLevel), m_specularLevel(board.m_object.m_specularLevel), m_shininessConst(
-				board.m_object.m_shininess), m_spotlightLoc(0.0, 0.0, 0.0) {
-	m_obj = new Object(board.m_object.m_objFile, board.m_size, board.m_startingLoc);
+Board::Board(const gameInfo & game) :
+		m_shaderCurrent(nullptr), m_ambientLevel(game.m_ambientLevel), m_diffuseLevel(game.m_object.m_diffuseLevel), m_specularLevel(
+				game.m_object.m_specularLevel), m_shininessConst(game.m_object.m_shininess), m_spotlightLoc(0.0, 0.0, 0.0) {
+
+	m_floor = new Object(game.m_object.m_objFile, game.m_sides[0].m_size, game.m_sides[0].m_startingLoc);
+	m_floor->SetChangeRow(game.m_sides[0].m_directionRow);
+	m_floor->SetChangeCol(game.m_sides[0].m_directionCol);
+
+	m_roof = new Object(game.m_object.m_objFile, game.m_sides[1].m_size, game.m_sides[1].m_startingLoc);
+	m_roof->SetChangeRow(game.m_sides[1].m_directionRow);
+	m_roof->SetChangeCol(game.m_sides[1].m_directionCol);
 
 	//load textures
 	for (int i = 0; i < 11; ++i)
-		m_obj->LoadTexture(board.m_textures[i], static_cast<ObjType>(i));
+		m_floor->LoadTexture(game.m_textures[i], static_cast<ObjType>(i));
+	m_floor->BindTextures();
 }
 
 Board::~Board(void) {
 	for (std::pair<std::string, Shader *> temp : m_shaders)
 		delete temp.second;
 
-	delete m_obj;
+	delete m_floor;
+	delete m_roof;
 }
 
 void Board::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -66,32 +74,33 @@ void Board::UseShaderSet(const std::string & setName) {
 
 	m_shaderCurrent->Enable();
 
-	glUniform3f(m_instanceChangeRow, m_changeRow.x, m_changeRow.y, m_changeRow.z);
-	glUniform3f(m_instanceChangeCol, m_changeCol.x, m_changeCol.y, m_changeCol.z);
-	glUniform1i(m_instanceNumPerRow, (int) m_boardSize.x);
-
 	const int samplerNums[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	glUniform1iv(m_samplers, 11, samplerNums);
-
-	UpdateTypeBindings();
 }
 
 void Board::Update() {
-	m_obj->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
-	m_obj->SetType(2, 3, ObjType::P1_DEAD_MARKED);
-	m_obj->SetType(7, 3, ObjType::P1_ALIVE);
-	m_obj->SetType(9, 9, ObjType::P2_DEAD_MARKED);
-	m_obj->SetType(14, 8, ObjType::P2_ALIVE_MARKED);
-	UpdateTypeBindings();
-	m_obj->Update();
+	m_floor->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
+	m_floor->SetType(2, 3, ObjType::P1_DEAD_MARKED);
+	m_floor->SetType(7, 3, ObjType::P1_ALIVE);
+	m_floor->SetType(9, 9, ObjType::P2_DEAD_MARKED);
+	m_floor->SetType(14, 8, ObjType::P2_ALIVE_MARKED);
+
+	m_floor->Update();
+	
+	m_roof->Update();
 }
 
 void Board::Render(void) {
 	if (!m_shaderCurrent) //Ensure shader is enabled
 		throw std::string("No shader has been enabled!");
 
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_obj->GetModel()));
-	m_obj->Render();
+	UpdateInstanceBindings (m_floor);
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_floor->GetModel()));
+	m_floor->Render();
+
+	UpdateInstanceBindings (m_roof);
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_roof->GetModel()));
+	m_roof->Render();
 }
 
 void Board::ChangeAmbientLight(const glm::vec3 & change) {
@@ -146,10 +155,15 @@ void Board::UpdateLightBindings(void) {
 	glUniform1f(m_shininess, m_shininessConst);
 }
 
-//updates bindings for type in shader
-void Board::UpdateTypeBindings(void) {
-	std::vector < ObjType > types = m_obj->GetTypesList();
-	glUniform1iv(m_sampleTypes, types.size(), (reinterpret_cast<int*>(&types[0])));
+void Board::UpdateInstanceBindings(Object * obj) {
+	glm::vec3 changeRow = obj->GetChangeRow();
+	glm::vec3 changeCol = obj->GetChangeCol();
+	const std::vector<ObjType> types = obj->GetTypesList();
+
+	glUniform1iv(m_sampleTypes, types.size(), reinterpret_cast<const int*>(&types[0]));
+	glUniform3f(m_instanceChangeRow, changeRow.x, changeRow.y, changeRow.z);
+	glUniform3f(m_instanceChangeCol, changeCol.x, changeCol.y, changeCol.z);
+	glUniform1i(m_instanceNumPerRow, (int) obj->GetSize().x);
 }
 
 //rounds everything to be in range [min, max]
