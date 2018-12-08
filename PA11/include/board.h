@@ -35,6 +35,10 @@ public:
 	void UpdateCameraBindings(const glm::mat4 & viewMat, const glm::mat4 & projectionMat, const glm::vec3 & cameraPos);
 	void UpdateLightBindings(void);
 	void UpdateTypeBindings(void);
+        
+        //for clicking
+        glm::vec3 GetChangePerRow();
+        glm::vec3 GetChangePerCol();
 
 private:
 	void EnforceBounds(glm::vec3 & v, float min = 0, float max = 1); //rounds everything to be in range [min, max]

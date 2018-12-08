@@ -166,3 +166,11 @@ void Board::EnforceBounds(glm::vec3 & v, float min, float max) {
 		v.z = max;
 }
 
+glm::vec3 Board::GetChangePerRow() {
+    return m_changeRow;
+}
+
+glm::vec3 Board::GetChangePerCol() {
+    return m_changeCol;
+}
+

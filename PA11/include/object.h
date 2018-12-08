@@ -31,6 +31,8 @@ public:
 
 	glm::vec3 GetScale(void) const;
 	void SetScale(const glm::vec3 & scale);
+        
+        glm::vec2 GetNumInstances();
 
 	ObjType GetType(unsigned int r, unsigned int c) const;
 	std::vector<ObjType> & GetTypesList(void);

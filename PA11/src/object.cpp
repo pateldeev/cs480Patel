@@ -106,6 +106,10 @@ void Object::SetScale(const glm::vec3 & scale) {
 	m_scale = scale;
 }
 
+glm::vec2 Object::GetNumInstances() {
+    return m_numInstances;
+}
+
 ObjType Object::GetType(unsigned int r, unsigned int c) const {
 	if (r >= m_numInstances.y || c >= m_numInstances.x) {
 		std::string err = "Location: ";

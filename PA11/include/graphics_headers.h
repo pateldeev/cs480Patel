@@ -33,6 +33,11 @@ typedef struct Vertex {
 	}
 } Vertex;
 
+typedef struct BasicTransform {
+            glm::vec3 pos;
+            glm::vec3 rot;
+} BasicTransform;
+
 enum ObjType {
 	DEAD = 0,
 	P1_ALIVE_FUTURE = 1,
@@ -44,7 +49,8 @@ enum ObjType {
 	P1_ALIVE_MARKED = 7,
 	P2_ALIVE_MARKED = 8,
 	P1_DEAD_MARKED = 9,
-	P2_DEAD_MARKED = 10
+	P2_DEAD_MARKED = 10,
+        NUM_OBJ_TYPES = 11
 };
 
 typedef struct objectInfo {

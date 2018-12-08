@@ -25,9 +25,13 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
 	//get board information from configuration file
 	boardInfo * board = m_configFile.GetBoardInfo();
 	m_graphics = new Graphics(m_window->GetWindowWidth(), m_window->GetWindowHeight(), eyePos, eyeLoc, *board);	//start the graphics
-	delete board;
+	//delete board;
 	board = nullptr;
 
+        //set graphics height and width for clicks
+        m_graphics->SetScreenHeight(m_window->GetWindowHeight());
+        m_graphics->SetScreenWidth(m_window->GetWindowWidth());
+        
 	//add shader sets and set active one
 	std::string shaderSetName, shaderSrcVert, shaderSrcFrag;
 	try {
@@ -163,33 +167,36 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_RIGHT)
 			m_graphics->IncreaseEyePosX(1.0);
 		else if (event.key.keysym.sym == SDLK_LEFT)
-			m_graphics->DecreaseEyePosX(1.0);
-		else if (event.key.keysym.sym == SDLK_UP)
-			m_graphics->IncreaseEyePosZ(1.0);
-		else if (event.key.keysym.sym == SDLK_DOWN)
-			m_graphics->DecreaseEyePosZ(1.0);
-		else if (event.key.keysym.sym == SDLK_i)
-			m_graphics->ZoomIn(1.0);
-		else if (event.key.keysym.sym == SDLK_o)
-			m_graphics->ZoomOut(1.0);
-		else if (event.key.keysym.sym == SDLK_w)
-			m_w = true;
-		else if (event.key.keysym.sym == SDLK_s)
-			m_s = true;
-		else if (event.key.keysym.sym == SDLK_d)
-			m_d = true;
-		else if (event.key.keysym.sym == SDLK_a)
-			m_a = true;
-	} else if (event.type == SDL_KEYUP) {
-		if (event.key.keysym.sym == SDLK_w)
-			m_w = false;
-		else if (event.key.keysym.sym == SDLK_s)
-			m_s = false;
-		else if (event.key.keysym.sym == SDLK_d)
-			m_d = false;
-		else if (event.key.keysym.sym == SDLK_a)
-			m_a = false;
-	}
+            m_graphics->DecreaseEyePosX(1.0);
+        else if (event.key.keysym.sym == SDLK_UP)
+            m_graphics->IncreaseEyePosZ(1.0);
+        else if (event.key.keysym.sym == SDLK_DOWN)
+            m_graphics->DecreaseEyePosZ(1.0);
+        else if (event.key.keysym.sym == SDLK_i)
+            m_graphics->ZoomIn(1.0);
+        else if (event.key.keysym.sym == SDLK_o)
+            m_graphics->ZoomOut(1.0);
+        else if (event.key.keysym.sym == SDLK_w)
+            m_w = true;
+        else if (event.key.keysym.sym == SDLK_s)
+            m_s = true;
+        else if (event.key.keysym.sym == SDLK_d)
+            m_d = true;
+        else if (event.key.keysym.sym == SDLK_a)
+            m_a = true;
+    } else if (event.type == SDL_KEYUP) {
+        if (event.key.keysym.sym == SDLK_w)
+            m_w = false;
+        else if (event.key.keysym.sym == SDLK_s)
+            m_s = false;
+        else if (event.key.keysym.sym == SDLK_d)
+            m_d = false;
+        else if (event.key.keysym.sym == SDLK_a)
+            m_a = false;
+    } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+        if (event.button.button == SDL_BUTTON_LEFT)
+            m_graphics->LeftClick(glm::vec2((float) event.button.x, (float) event.button.y));
+    }
 }
 
 bool Engine::StartMenu(const glm::vec3 & eyePos, const glm::vec3 & eyeLoc) {
