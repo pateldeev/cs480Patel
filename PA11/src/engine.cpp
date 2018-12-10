@@ -4,7 +4,7 @@
 #include <assert.h>
 
 Engine::Engine(const std::string & launchFile, float frameCap) :
-		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_spacebar(true), m_w(false), m_a(false), m_s(false), m_d(false), m_mouseWarp(
+		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_spacebar(false), m_w(false), m_a(false), m_s(false), m_d(false), m_mouseWarp(
 				false), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(0), m_currentTimeMillis(Engine::GetCurrentTimeMillis()), m_running(
 				false), m_minFrameTime(1.0f / frameCap * 1000) {
 	std::srand(time(nullptr));
