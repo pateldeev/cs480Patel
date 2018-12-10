@@ -187,15 +187,6 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = false;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = false;
-	} else if (event.type == SDL_KEYUP) {
-		if (event.key.keysym.sym == SDLK_w)
-			m_w = false;
-		else if (event.key.keysym.sym == SDLK_s)
-			m_s = false;
-		else if (event.key.keysym.sym == SDLK_d)
-			m_d = false;
-		else if (event.key.keysym.sym == SDLK_a)
-			m_a = false;
 	} else if (event.type == SDL_MOUSEMOTION) {
 		if (!m_mouseWarp) {
 			m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
