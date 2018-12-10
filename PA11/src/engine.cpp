@@ -115,10 +115,10 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-		//keep track of shift key being pressed/released
-		if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
+		//keep track of right shift key being pressed/released
+		if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RSHIFT))
 			m_shift = true;
-		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
+		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_RSHIFT))
 			m_shift = false;
 
 		//handle event based on correct window location
@@ -136,7 +136,8 @@ void Engine::EventChecker(void) {
 					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT
 					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_i
 					|| event.key.keysym.sym == SDLK_o || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
-					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d)
+					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_SPACE
+          || event.key.keysym.sym == SDLK_LSHIFT)
 				HandleEvent(event);
 			else
 				m_menu->HandleEvent(event);
@@ -178,6 +179,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = true;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
+    else if (event.key.keysym.sym == SDLK_SPACE)
+      m_spacebar = true;
+    else if (event.key.keysym.sym == SDLK_LSHIFT)
+      m_leftShift = true;
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_w)
 			m_w = false;
@@ -187,11 +192,15 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = false;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = false;
+    else if (event.key.keysym.sym == SDLK_SPACE)
+      m_spacebar = false;
+    else if (event.key.keysym.sym == SDLK_LSHIFT)
+      m_leftShift = false;
 	} else if (event.type == SDL_MOUSEMOTION) {
 		if (!m_mouseWarp) {
 			m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
 			m_mouseWarp = true;
-			SDL_WarpMouseInWindow(NULL, m_window->GetWindowWidth(), m_window->GetWindowHeight());
+			SDL_WarpMouseInWindow(NULL, m_window->GetWindowWidth()/2, m_window->GetWindowHeight()/2);
 		} else {
 			m_mouseWarp = false;
 		}
