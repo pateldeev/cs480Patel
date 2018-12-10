@@ -138,8 +138,7 @@ void Engine::EventChecker(void) {
 				CloseMenu();
 			else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS || event.key.keysym.sym == SDLK_m
 					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT
-					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_i
-					|| event.key.keysym.sym == SDLK_o || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
+					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
 					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_SPACE
           || event.key.keysym.sym == SDLK_LSHIFT)
 				HandleEvent(event);
@@ -171,10 +170,6 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->IncreaseEyePosZ(1.0);
 		else if (event.key.keysym.sym == SDLK_DOWN)
 			m_graphics->DecreaseEyePosZ(1.0);
-		else if (event.key.keysym.sym == SDLK_i)
-			m_graphics->ZoomIn(1.0);
-		else if (event.key.keysym.sym == SDLK_o)
-			m_graphics->ZoomOut(1.0);
 		else if (event.key.keysym.sym == SDLK_w)
 			m_w = true;
 		else if (event.key.keysym.sym == SDLK_s)
