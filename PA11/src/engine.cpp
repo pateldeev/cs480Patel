@@ -71,6 +71,10 @@ void Engine::Run(void) {
 			m_graphics->MoveBackward(0.01 * m_dt);
 		if (m_d)
 			m_graphics->MoveRight(0.01 * m_dt);
+    if (m_spacebar)
+      m_graphics->MoveUp(0.01 * m_dt);
+    if (m_leftShift)
+      m_graphics->MoveDown(0.01 * m_dt);
 
 		m_graphics->Update(m_dt);
 		m_graphics->Render();

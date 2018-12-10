@@ -149,6 +149,22 @@ void Graphics::MoveLeft(float moveAmount) {
 	UpdateCamera(newEyePos, newEyeLoc);
 }
 
+void Graphics::MoveUp(float moveAmount) {
+  glm::vec3 newEyePos(GetEyePos());
+  glm::vec3 newEyeLoc(GetEyeLoc());
+  newEyePos += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+  newEyeLoc += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+  UpdateCamera(newEyePos, newEyeLoc);
+}
+
+void Graphics::MoveDown(float moveAmount) {
+  glm::vec3 newEyePos(GetEyePos());
+  glm::vec3 newEyeLoc(GetEyeLoc());
+  newEyePos -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+  newEyeLoc -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+  UpdateCamera(newEyePos, newEyeLoc);
+}
+
 void Graphics::RotateCamera(float newX, float newY) {
 	float sensitivity = 0.9;
 	newX *= sensitivity;

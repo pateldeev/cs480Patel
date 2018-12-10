@@ -38,6 +38,8 @@ public:
 	void MoveBackward(float moveAmount);
 	void MoveRight(float moveAmount);
 	void MoveLeft(float moveAmount);
+  void MoveUp(float moveAmount);
+  void MoveDown(float moveAmount);
 	void RotateCamera(float newX, float newY);
 
 	void UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
