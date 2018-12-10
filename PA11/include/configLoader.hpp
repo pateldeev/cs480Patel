@@ -25,7 +25,7 @@ public:
 
 	void GetMenuState(bool & menu, glm::uvec2 & size);
 
-	void GetGameInfo(gameInfo & game);
+	void GetGameInfo(GameInfo & game);
 
 	void GetShaderSet(std::string & shaderSetName, std::string & vertexShaderFile, std::string & fragmentShaderFile);
 

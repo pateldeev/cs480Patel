@@ -1,29 +1,40 @@
 #include "board.h"
 
-Board::Board(const gameInfo & game) :
+Board::Board(const GameInfo & game) :
 		m_shaderCurrent(nullptr), m_ambientLevel(game.m_ambientLevel), m_diffuseLevel(game.m_object.m_diffuseLevel), m_specularLevel(
-				game.m_object.m_specularLevel), m_shininessConst(game.m_object.m_shininess), m_spotlightLoc(0.0, 0.0, 0.0) {
+				game.m_object.m_specularLevel), m_shininessConst(game.m_object.m_shininess), m_spotlightLoc(0.0, 0.0, 0.0), m_broadphase(nullptr), m_collisionConfiguration(
+				nullptr), m_dispatcher(nullptr), m_solver(nullptr), m_dynamicsWorld(nullptr) {
 
-	m_floor = new Object(game.m_object.m_objFile, game.m_sides[0].m_size, game.m_sides[0].m_startingLoc);
-	m_floor->SetChangeRow(game.m_sides[0].m_directionRow);
-	m_floor->SetChangeCol(game.m_sides[0].m_directionCol);
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
+		m_sides[i] = nullptr;
 
-	m_roof = new Object(game.m_object.m_objFile, game.m_sides[1].m_size, game.m_sides[1].m_startingLoc);
-	m_roof->SetChangeRow(game.m_sides[1].m_directionRow);
-	m_roof->SetChangeCol(game.m_sides[1].m_directionCol);
+	m_sides[BoardSides::FLOOR] = new Object(game.m_object.m_objFile, game.m_sides[BoardSides::FLOOR].m_size,
+			game.m_sides[BoardSides::FLOOR].m_changeRow, game.m_sides[BoardSides::FLOOR].m_changeCol, game.m_sides[BoardSides::FLOOR].m_startingLoc);
+
+	m_sides[BoardSides::ROOF] = new Object(game.m_object.m_objFile, game.m_sides[BoardSides::ROOF].m_size, game.m_sides[BoardSides::ROOF].m_changeRow,
+			game.m_sides[BoardSides::ROOF].m_changeCol, game.m_sides[BoardSides::ROOF].m_startingLoc);
 
 	//load textures
-	for (int i = 0; i < 11; ++i)
-		m_floor->LoadTexture(game.m_textures[i], static_cast<ObjType>(i));
-	m_floor->BindTextures();
+	for (int i = 0; i < ObjType::NUM_TYPES; ++i)
+		m_sides[0]->LoadTexture(game.m_textures[i], static_cast<ObjType>(i));
+	m_sides[0]->BindTextures();
+
+	InitializeBullet(); //start bullet for raycasting
 }
 
 Board::~Board(void) {
 	for (std::pair<std::string, Shader *> temp : m_shaders)
 		delete temp.second;
 
-	delete m_floor;
-	delete m_roof;
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
+		delete m_sides[i];
+
+	//clean up bullet world
+	delete m_dynamicsWorld;
+	delete m_solver;
+	delete m_dispatcher;
+	delete m_collisionConfiguration;
+	delete m_broadphase;
 }
 
 void Board::AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc) {
@@ -79,28 +90,28 @@ void Board::UseShaderSet(const std::string & setName) {
 }
 
 void Board::Update() {
-	m_floor->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
-	m_floor->SetType(2, 3, ObjType::P1_DEAD_MARKED);
-	m_floor->SetType(7, 3, ObjType::P1_ALIVE);
-	m_floor->SetType(9, 9, ObjType::P2_DEAD_MARKED);
-	m_floor->SetType(14, 8, ObjType::P2_ALIVE_MARKED);
+	//m_sides[BoardSides::FLOOR]->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
+	//m_sides[BoardSides::FLOOR]->SetType(2, 3, ObjType::P1_DEAD_MARKED);
+	//m_sides[BoardSides::FLOOR]->SetType(7, 3, ObjType::P1_ALIVE);
+	//m_sides[BoardSides::FLOOR]->SetType(9, 9, ObjType::P2_DEAD_MARKED);
+	//m_sides[BoardSides::ROOF]->SetType(14, 8, ObjType::P2_DEAD_MARKED);
 
-	m_floor->Update();
-	
-	m_roof->Update();
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
+		if (m_sides[i])
+			m_sides[i]->Update();
 }
 
 void Board::Render(void) {
 	if (!m_shaderCurrent) //Ensure shader is enabled
 		throw std::string("No shader has been enabled!");
 
-	UpdateInstanceBindings (m_floor);
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_floor->GetModel()));
-	m_floor->Render();
-
-	UpdateInstanceBindings (m_roof);
-	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_roof->GetModel()));
-	m_roof->Render();
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
+		if (m_sides[i]) {
+			UpdateInstanceBindings (m_sides[i]);
+			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sides[i]->GetModel()));
+			m_sides[i]->Render();
+		}
+	}
 }
 
 void Board::ChangeAmbientLight(const glm::vec3 & change) {
@@ -163,7 +174,39 @@ void Board::UpdateInstanceBindings(Object * obj) {
 	glUniform1iv(m_sampleTypes, types.size(), reinterpret_cast<const int*>(&types[0]));
 	glUniform3f(m_instanceChangeRow, changeRow.x, changeRow.y, changeRow.z);
 	glUniform3f(m_instanceChangeCol, changeCol.x, changeCol.y, changeCol.z);
-	glUniform1i(m_instanceNumPerRow, (int) obj->GetSize().x);
+	glUniform1i(m_instanceNumPerRow, (int) obj->GetSize().y);
+}
+
+const btDiscreteDynamicsWorld * Board::GetBulletWorld(void) const {
+	return m_dynamicsWorld;
+}
+
+//finds specific element at position. returns {face - BoardSides enumeration, row, column}
+glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
+	//implimented exhaustive search for now
+	//will need to use normals in future to narrow down search to correct face
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
+		if (m_sides[i]) {
+			try {
+				glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
+				return glm::uvec3(i, elementPos);
+			} catch (const std::string &) { //not this one - go to next one
+			}
+		}
+	}
+
+	//did not find game element. Throw exception
+	throw std::string("Position " + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z) + " not found!");
+}
+
+//get current status of game element. element = {face - BoardSides enumeration, row, column}
+ObjType Board::GetGameElementType(const glm::uvec3 & element) const {
+	return m_sides[element.x]->GetType(element.y, element.z);
+}
+
+//set currents status of game element. element = {face - BoardSides enumeration, row, column}
+void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
+	m_sides[element.x]->SetType(element.y, element.z, type);
 }
 
 //rounds everything to be in range [min, max]
@@ -182,5 +225,67 @@ void Board::EnforceBounds(glm::vec3 & v, float min, float max) {
 		v.z = min;
 	else if (v.z > max)
 		v.z = max;
+}
+
+void Board::InitializeBullet(void) {
+#ifdef DEBUG 
+	printf("Initializing Bullet!\n");
+#endif
+
+//initialize bullet world
+	m_broadphase = new btDbvtBroadphase();
+	m_collisionConfiguration = new btDefaultCollisionConfiguration();
+	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
+	m_solver = new btSequentialImpulseConstraintSolver();
+	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
+	m_dynamicsWorld->setGravity(btVector3(0, 0, 0));
+
+	LoadColliders(); //load colliders
+}
+
+//for loading each face of game
+void Board::LoadColliders(void) {
+
+#ifdef DEBUG
+	printf("Setting cube positions...\n");
+#endif
+
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
+
+#ifdef DEBUG
+		printf("Setting side %i...\n", i);
+#endif
+
+		if (m_sides[i]) {
+			std::vector < glm::vec3 > positions = m_sides[i]->GetInstancePositions();
+
+			for (const glm::vec3 & pos : positions)
+				AddCubeColliderToWorld(pos, m_sides[i]->GetRotation(), m_sides[i]->GetScale());
+		}
+
+	}
+}
+
+//for adding cube collider to bullet world
+void Board::AddCubeColliderToWorld(const glm::vec3 & position, const glm::vec3 & rotation, const glm::vec3 & scale) {
+	btCollisionShape * collider = new btBoxShape(btVector3(scale.x, scale.y, scale.z));
+	btQuaternion rotQuat = btQuaternion::getIdentity();
+	rotQuat.setEuler(rotation.y, rotation.x, rotation.z);
+	btDefaultMotionState * startTransform = new btDefaultMotionState(btTransform(rotQuat, { position.x, position.y, position.z })); //rotation and position
+	btScalar mass = 0;
+	btVector3 inertia(0, 0, 0);
+	collider->calculateLocalInertia(mass, inertia);
+	btRigidBody * rigidBody = new btRigidBody(btRigidBody::btRigidBodyConstructionInfo(mass, startTransform, collider, inertia)); //and thus the rigidbody was born
+//rigidBody->setGravity({0, 0, 0});
+//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
+	rigidBody->setSleepingThresholds(0, 0);
+	m_dynamicsWorld->addRigidBody(rigidBody); //I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
+	m_rigidBodies.push_back(rigidBody);
+
+#ifdef DEBUG
+	printf("Cube Collider placed at location {%f, %f, %f} with scale {%f, %f, %f}\n",
+			position.x, position.y, position.z,
+			scale.x, scale.y, scale.z);
+#endif
 }
 

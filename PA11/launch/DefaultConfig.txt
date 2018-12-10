@@ -30,7 +30,7 @@ OBJ_SHININESS=32
 
 
 #For lighting
-AMBIENT_LEVEL=0.35,0.35,0.35
+AMBIENT_LEVEL=0.4,0.4,0.4
 
 
 //For various textures
@@ -47,18 +47,18 @@ TEXTURE_P1_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
 TEXTURE_P2_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
 
 
-//for various sides of game
+//for various sides of game - size = row, col
 BOARD_NAME=floor
-BOARD_SIZE=10,15
+BOARD_SIZE=6,9
 BOARD_START_POINT=-10.0,0.0,-5.0
-BOARD_DIRECTION_ROW=2.5,0.0,0.0
-BOARD_DIRECTION_COL=0.0,0.0,4.25
+BOARD_CHANGE_ROW=2.5,0.0,0.0
+BOARD_CHANGE_COL=0.0,0.0,4.0
 
 BOARD_NAME=roof
-BOARD_SIZE=10,15
+BOARD_SIZE=5,3
 BOARD_START_POINT=-10.0,30.0,-5.0
-BOARD_DIRECTION_ROW=2.5,0.0,0.0
-BOARD_DIRECTION_COL=0.0,0.0,4.25
+BOARD_CHANGE_ROW=2.5,0.0,0.0
+BOARD_CHANGE_COL=0.0,0.0,4.0
 
 #Shaders
 NAME_SET=Default

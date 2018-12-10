@@ -66,7 +66,7 @@ void ConfigFileParser::GetMenuState(bool & menu, glm::uvec2 & size) {
 	size = glm::uvec2(winSize[0], winSize[1]);
 }
 
-void ConfigFileParser::GetGameInfo(gameInfo & game) {
+void ConfigFileParser::GetGameInfo(GameInfo & game) {
 	std::string varName;
 	float valuesfl[3];
 	unsigned valuesui[2];
@@ -144,12 +144,12 @@ void ConfigFileParser::GetGameInfo(gameInfo & game) {
 		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_START_POINT"))
 			throw std::string("Could not get starting point of board from config file");
 		game.m_sides[i].m_startingLoc = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
-		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_DIRECTION_ROW"))
+		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_CHANGE_ROW"))
 			throw std::string("Could not get board row direction from config file");
-		game.m_sides[i].m_directionRow = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
-		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_DIRECTION_COL"))
+		game.m_sides[i].m_changeRow = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+		if (!ParseLine<float, 3>(varName, valuesfl) || varName.compare("BOARD_CHANGE_COL"))
 			throw std::string("Could not get board column direction from config file");
-		game.m_sides[i].m_directionCol = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
+		game.m_sides[i].m_changeCol = glm::vec3(valuesfl[0], valuesfl[1], valuesfl[2]);
 	}
 }
 

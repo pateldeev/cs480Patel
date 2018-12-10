@@ -7,9 +7,11 @@
 
 #include <Magick++.h>
 
-Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & traslation, const glm::vec3 & rotation,
-		const glm::vec3 & scale) :
-		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(size), VB(0), IB(0) {
+Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & changeRow, const glm::vec3 & changeCol,
+		const glm::vec3 & traslation, const glm::vec3 & rotation, const glm::vec3 & scale) :
+		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(size), m_changeRow(changeRow), m_changeCol(
+				changeCol), VB(0), IB(0), m_normal(glm::cross(m_changeRow, m_changeCol)) {
+
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	LoadObjAssimp(objFile);
 
@@ -21,7 +23,14 @@ Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices.size(), &m_indices[0], GL_STATIC_DRAW);
 
+	//load dead texture by default
 	m_types.resize(m_numInstances.x * m_numInstances.y, DEAD);
+
+	//calculate instance positions
+	m_instancePositions.resize(m_numInstances.x * m_numInstances.y);
+	for (unsigned int r = 0; r < m_numInstances.x; ++r) //row
+		for (unsigned int c = 0; c < m_numInstances.y; ++c) //col
+			m_instancePositions[r * m_numInstances.y + c] = (m_translation + (m_changeRow * float(r)) + (m_changeCol * float(c)));
 }
 
 Object::~Object(void) {
@@ -104,12 +113,16 @@ glm::vec3 Object::GetScale(void) const {
 	return m_scale;
 }
 
+glm::vec3 Object::GetNormal(void) const {
+	return m_normal;
+}
+
 void Object::SetScale(const glm::vec3 & scale) {
 	m_scale = scale;
 }
 
 ObjType Object::GetType(unsigned int r, unsigned int c) const {
-	if (r >= m_numInstances.y || c >= m_numInstances.x) {
+	if (r >= m_numInstances.x || c >= m_numInstances.y) {
 		std::string err = "Location: ";
 		err += std::to_string(r);
 		err += ",";
@@ -117,15 +130,15 @@ ObjType Object::GetType(unsigned int r, unsigned int c) const {
 		err += " is not a valid instance";
 		throw err;
 	}
-	return m_types[r * m_numInstances.x + c];
+	return m_types[r * m_numInstances.y + c];
 }
 
-std::vector<ObjType>& Object::GetTypesList(void) {
+const std::vector<ObjType>& Object::GetTypesList(void) const {
 	return m_types;
 }
 
 void Object::SetType(unsigned int r, unsigned int c, const ObjType type) {
-	if (r >= m_numInstances.y || c >= m_numInstances.x) {
+	if (r >= m_numInstances.x || c >= m_numInstances.y) {
 		std::string err = "Location: ";
 		err += std::to_string(r);
 		err += ",";
@@ -133,7 +146,22 @@ void Object::SetType(unsigned int r, unsigned int c, const ObjType type) {
 		err += " is not a valid instance";
 		throw err;
 	}
-	m_types[r * m_numInstances.x + c] = type;
+	m_types[r * m_numInstances.y + c] = type;
+}
+
+const std::vector<glm::vec3>& Object::GetInstancePositions(void) const {
+	return m_instancePositions;
+}
+
+//use to find cube at position - return {r,c}
+glm::uvec2 Object::GetCubeByPosition(const glm::vec3 & position) const {
+	for (unsigned int r = 0; r < m_numInstances.x; ++r) { //row
+		for (unsigned int c = 0; c < m_numInstances.y; ++c) { //col
+			if (position == (m_translation + (m_changeRow * float(r)) + (m_changeCol * float(c))))
+				return glm::uvec2(r, c);
+		}
+	}
+	throw std::string("NOT FOUND");
 }
 
 glm::uvec2 Object::GetSize(void) const {
@@ -144,16 +172,8 @@ glm::vec3 Object::GetChangeRow(void) const {
 	return m_changeRow;
 }
 
-void Object::SetChangeRow(const glm::vec3 & change) {
-	m_changeRow = change;
-}
-
 glm::vec3 Object::GetChangeCol(void) const {
 	return m_changeCol;
-}
-
-void Object::SetChangeCol(const glm::vec3 & change) {
-	m_changeCol = change;
 }
 
 void Object::LoadTexture(const std::string & textureFile, ObjType type) {
