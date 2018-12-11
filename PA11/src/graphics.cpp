@@ -1,7 +1,7 @@
 #include "graphics.h"
 
-Graphics::Graphics(unsigned int windowWidth, unsigned int windowHeight, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const gameInfo & game) :
-		m_camera(windowWidth, windowHeight, eyePos, eyeFocus), m_board(nullptr) {
+Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const GameInfo & game) :
+		m_camera(windowSize.x, windowSize.y, eyePos, eyeFocus), m_yaw(0.f), m_pitch(0.f), m_board(nullptr), m_screenSize(windowSize) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -33,7 +33,7 @@ Graphics::Graphics(unsigned int windowWidth, unsigned int windowHeight, const gl
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	m_board = new Board(game);
+	m_board = new Board(game); //load board
 }
 
 Graphics::~Graphics(void) {
@@ -150,40 +150,38 @@ void Graphics::MoveLeft(float moveAmount) {
 }
 
 void Graphics::MoveUp(float moveAmount) {
-  glm::vec3 newEyePos(GetEyePos());
-  glm::vec3 newEyeLoc(GetEyeLoc());
-  newEyePos += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
-  newEyeLoc += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
-  UpdateCamera(newEyePos, newEyeLoc);
+	glm::vec3 newEyePos(GetEyePos());
+	glm::vec3 newEyeLoc(GetEyeLoc());
+	newEyePos += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+	newEyeLoc += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+	UpdateCamera(newEyePos, newEyeLoc);
 }
 
 void Graphics::MoveDown(float moveAmount) {
-  glm::vec3 newEyePos(GetEyePos());
-  glm::vec3 newEyeLoc(GetEyeLoc());
-  newEyePos -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
-  newEyeLoc -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
-  UpdateCamera(newEyePos, newEyeLoc);
+	glm::vec3 newEyePos(GetEyePos());
+	glm::vec3 newEyeLoc(GetEyeLoc());
+	newEyePos -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+	newEyeLoc -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
+	UpdateCamera(newEyePos, newEyeLoc);
 }
 
 void Graphics::RotateCamera(float newX, float newY) {
-	float sensitivity = 0.9;
+	const float sensitivity = 0.9;
 	newX *= sensitivity;
 	newY *= sensitivity;
 
-	yaw += newX;
-	pitch += newY;
+	m_yaw += newX;
+	m_pitch += newY;
 
-	if (pitch > 89.0) {
-		pitch = 89.0;
-	}
-	if (pitch < -89.0) {
-		pitch = -89.0;
-	}
+	if (m_pitch > 89.0)
+		m_pitch = 89.0;
+	else if (m_pitch < -89.0)
+		m_pitch = -89.0;
 
 	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = -sin(glm::radians(pitch));
-	front.z = sin(sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+	front.x = std::cos(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch));
+	front.y = -std::sin(glm::radians(m_pitch));
+	front.z = std::sin(sin(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch)));
 	glm::vec3 newFront = glm::normalize(front);
 
 	UpdateCamera(GetEyePos(), GetEyePos() + newFront);
@@ -214,6 +212,25 @@ void Graphics::ChangeSpecularLight(const glm::vec3 & change) {
 	m_board->ChangeSpecularLight(change);
 }
 
+//call this from engine, and it should successfully click on object
+void Graphics::LeftClick(const glm::vec2 & mousePosition) {
+	glm::uvec3 elementClicked;
+	try {
+		elementClicked = m_board->GetGameElementByPosition(GetPositionUnder(mousePosition));
+	} catch (const std::string & e) {
+#ifdef DEBUG
+		printf("Not hit for mouse {%f, %f} \n", mousePosition.x, mousePosition.y);
+		printf("   Msg: %s \n", e.c_str());
+#endif
+		return;
+	}
+
+	//just increment type by 2 to show it worked for now
+	ObjType type = m_board->GetGameElementType(elementClicked);
+	type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
+	m_board->SetGameElementType(elementClicked, type);
+}
+
 std::string Graphics::ErrorString(const GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
@@ -232,4 +249,52 @@ std::string Graphics::ErrorString(const GLenum error) const {
 //updates bindings for camera in shader - need to call for camera change to take effect
 void Graphics::UpdateCameraBindings(void) {
 	m_board->UpdateCameraBindings(m_camera.GetView(), m_camera.GetProjection(), m_camera.GetEyePos());
+}
+
+//raycast and find position mouse is pointing at
+glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
+	float mouseScreenX = (2.0f * mousePosition.x) / m_screenSize.x - 1.0f;
+	float mouseScreenY = 1.0f - (2.0f * mousePosition.y) / m_screenSize.y;
+	glm::vec4 mouseRayStart(mouseScreenX, mouseScreenY, -1.0f, 1.0f);
+	glm::vec4 mouseRayEnd(mouseScreenX, mouseScreenY, 0, 1.0f);
+
+	glm::mat4 inverseProjectionMatrix = glm::inverse(m_camera.GetProjection());
+	glm::mat4 inverseViewMatrix = glm::inverse(m_camera.GetView());
+
+	glm::vec4 cameraRayStart = inverseProjectionMatrix * mouseRayStart;
+	cameraRayStart /= cameraRayStart.w;
+	glm::vec4 cameraRayEnd = inverseProjectionMatrix * mouseRayEnd;
+	cameraRayEnd /= cameraRayEnd.w;
+
+	glm::vec4 worldRayStart = inverseViewMatrix * cameraRayStart;
+	worldRayStart /= worldRayStart.w;
+	glm::vec4 worldRayEnd = inverseViewMatrix * cameraRayEnd;
+	worldRayEnd /= worldRayEnd.w;
+
+	glm::vec3 worldRayDirection(worldRayEnd - worldRayStart);
+	worldRayDirection = glm::normalize(worldRayDirection);
+	glm::vec3 worldRayMax = glm::vec3(worldRayStart.x, worldRayStart.y, worldRayStart.z) + worldRayDirection * 1000.0f;
+
+	btVector3 start, end;
+	start = btVector3(worldRayStart.x, worldRayStart.y, worldRayStart.z);
+	end = btVector3(worldRayMax.x, worldRayMax.y, worldRayMax.z);
+
+	//get the raycast callback ready
+	btCollisionWorld::ClosestRayResultCallback closestResults(start, end);
+	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+	m_board->GetBulletWorld()->rayTest(start, end, closestResults);
+
+	//if it hit, grab the position of the collider, otherwise throw not found error
+	if (closestResults.hasHit()) {
+		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
+		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position 
+
+#ifdef DEBUG
+		printf("World position for cube for {%f, %f} was {%f, %f, %f}\n", mousePosition.x, mousePosition.y, cubePosition.x, cubePosition.y, cubePosition.z);
+#endif
+		return cubePosition;
+	} else {
+		throw std::string("No Hit Found");
+	}
 }

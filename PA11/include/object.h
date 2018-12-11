@@ -8,8 +8,9 @@
 class Object {
 public:
 	Object(void) = delete;
-	Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation =
-			glm::vec3(0, 0, 0), const glm::vec3 & scale = glm::vec3(1, 1, 1));
+	Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & changeRow, const glm::vec3 & changeCol,
+			const glm::vec3 & traslation = glm::vec3(0, 0, 0), const glm::vec3 & rotation = glm::vec3(0, 0, 0),
+			const glm::vec3 & scale = glm::vec3(1, 1, 1));
 	~Object(void);
 
 	//Object is not meant to be copied or moved
@@ -20,7 +21,7 @@ public:
 
 	void Update(void);
 	void Render(void);
-	
+
 	void BindTextures(void);
 
 	glm::mat4 GetModel(void);
@@ -34,17 +35,19 @@ public:
 	glm::vec3 GetScale(void) const;
 	void SetScale(const glm::vec3 & scale);
 
+	glm::vec3 GetNormal(void) const;
+
 	ObjType GetType(unsigned int r, unsigned int c) const;
-	std::vector<ObjType> & GetTypesList(void);
+	const std::vector<ObjType>& GetTypesList(void) const;
 	void SetType(unsigned int r, unsigned int c, const ObjType type = ObjType::DEAD);
+
+	const std::vector<glm::vec3>& GetInstancePositions(void) const;
+	glm::uvec2 GetCubeByPosition(const glm::vec3 & position) const; //use to find cube at position - return {r,c}
 
 	glm::uvec2 GetSize(void) const;
 
 	glm::vec3 GetChangeRow(void) const;
-	void SetChangeRow(const glm::vec3 & change);
-
 	glm::vec3 GetChangeCol(void) const;
-	void SetChangeCol(const glm::vec3 & change);
 
 	float GetDistanceFromPoint(glm::vec3 point) const;
 
@@ -58,12 +61,14 @@ private:
 	glm::vec3 m_translation;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
+	glm::vec3 m_normal;
 
 	//for instancing
-	const glm::uvec2 m_numInstances;
+	const glm::uvec2 m_numInstances; //{x = row, y = col}
 	glm::vec3 m_changeRow;
 	glm::vec3 m_changeCol;
 	std::vector<ObjType> m_types;
+	std::vector<glm::vec3> m_instancePositions;
 
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned int> m_indices;

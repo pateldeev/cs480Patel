@@ -1,6 +1,6 @@
 #version 330
 
-flat in int instanceID;
+flat in int obj_row, obj_col;
 
 smooth in vec3 v_posWorld;
 smooth in vec3 v_normalWorld;
@@ -8,6 +8,8 @@ smooth in vec2 texture;
 
 uniform sampler2D samplers[11];
 uniform int sampleType[150];
+
+uniform int numPerRow;
 
 uniform vec3 ambientP, diffuseP, specularP;
 uniform float shininess;
@@ -21,27 +23,29 @@ out vec4 frag_color;
 vec3 addLight(vec3 baseColor, vec3 lightPosition);
 
 void main(void){
-  vec3 baseColor; 
+  vec3 baseColor;
+
+  int currentSample = sampleType[obj_row * numPerRow + obj_col]; 
   
-  if(sampleType[instanceID] == 1)
+  if(currentSample== 1)
     baseColor = texture2D(samplers[1], texture).xyz;
-  else if(sampleType[instanceID] == 2)
+  else if(currentSample == 2)
     baseColor = texture2D(samplers[2], texture).xyz;
-  else if(sampleType[instanceID] == 3)
+  else if(currentSample == 3)
     baseColor = texture2D(samplers[3], texture).xyz;
-  else if(sampleType[instanceID] == 4)
+  else if(currentSample == 4)
     baseColor = texture2D(samplers[4], texture).xyz;
-  else if(sampleType[instanceID] == 5)
+  else if(currentSample == 5)
     baseColor = texture2D(samplers[5], texture).xyz;
-  else if(sampleType[instanceID] == 6)
+  else if(currentSample == 6)
     baseColor = texture2D(samplers[6], texture).xyz;
-  else if(sampleType[instanceID] == 7)
+  else if(currentSample == 7)
     baseColor = texture2D(samplers[7], texture).xyz;
-  else if(sampleType[instanceID] == 8)
+  else if(currentSample == 8)
     baseColor = texture2D(samplers[8], texture).xyz;
-  else if(sampleType[instanceID] == 9)
+  else if(currentSample == 9)
     baseColor = texture2D(samplers[9], texture).xyz;
-  else if(sampleType[instanceID] == 10)
+  else if(currentSample == 10)
     baseColor = texture2D(samplers[10], texture).xyz;
   else
     baseColor = texture2D(samplers[0], texture).xyz;

@@ -43,6 +43,10 @@ private:
   bool m_spacebar; // Space Bar Key
   bool m_leftShift; // Left Shift Key
 
+	bool m_spacebar; // Space Bar Key
+	bool m_leftShift; // Left Shift Key
+	bool m_captureMouse;
+
 	bool m_mouseWarp;
 
 	Menu * m_menu;

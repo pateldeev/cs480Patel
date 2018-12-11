@@ -44,31 +44,47 @@ enum ObjType {
 	P1_ALIVE_MARKED = 7,
 	P2_ALIVE_MARKED = 8,
 	P1_DEAD_MARKED = 9,
-	P2_DEAD_MARKED = 10
+	P2_DEAD_MARKED = 10,
+  NUM_TYPES
 };
 
-typedef struct objectInfo {
+enum BoardSides{
+	FLOOR = 0,
+	ROOF = 1,
+	NORTH = 2,
+	SOUTH = 3,
+	EAST = 4,
+	WEST = 5,
+	NUM_SIDES
+};
+
+typedef struct ObjectInfo {
 	std::string m_objFile;
 	glm::vec3 m_scale;
 	glm::vec3 m_rotation;
 	glm::vec3 m_diffuseLevel;
 	glm::vec3 m_specularLevel;
 	float m_shininess;
-} objectInfo;
+} ObjectInfo;
 
-typedef struct boardInfo {
+typedef struct BoardInfo {
 	std::string m_name;
 	glm::uvec2 m_size;
 	glm::vec3 m_startingLoc;
-	glm::vec3 m_directionRow;
-	glm::vec3 m_directionCol;
-} boardInfo;
+	glm::vec3 m_changeRow;
+	glm::vec3 m_changeCol;
+} BoardInfo;
 
-typedef struct gameInfo {
-	objectInfo m_object;
-	std::string m_textures[11];
+typedef struct GameInfo {
+	ObjectInfo m_object;
+	std::string m_textures[ObjType::NUM_TYPES];
 	glm::vec3 m_ambientLevel;
-	boardInfo m_sides[2]; //{floor, roof}
-} gameInfo;
+	BoardInfo m_sides[BoardSides::NUM_SIDES];
+} GameInfo;
+
+typedef struct BasicTransform {
+            glm::vec3 m_pos;
+            glm::vec3 m_rot;
+} BasicTransform;
 
 #endif /* GRAPHICS_HEADERS_H */

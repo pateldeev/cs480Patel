@@ -4,7 +4,7 @@ layout (location = 0) in vec3 v_pos;
 layout (location = 1) in vec3 v_normal;
 layout (location = 2) in vec2 v_texture;
 
-flat out int instanceID;
+flat out int obj_row, obj_col;
 
 smooth out vec3 v_posWorld;
 smooth out vec3 v_normalWorld;
@@ -16,11 +16,9 @@ uniform vec3 changeRow, changeCol;
 uniform int numPerRow;
 
 void main(void){
-  vec3 translationRow = changeRow*(gl_InstanceID % numPerRow);
-  vec3 translationCol = changeCol*(gl_InstanceID/numPerRow);
-  vec3 v_posInstance = v_pos + translationRow + translationCol;
-  
-  instanceID = gl_InstanceID;
+  obj_row = gl_InstanceID / numPerRow;
+  obj_col = gl_InstanceID % numPerRow;
+  vec3 v_posInstance = v_pos + (changeRow * obj_row) + (changeCol * obj_col);
   
   v_posWorld = (model * vec4(v_posInstance, 1.0)).xyz;
   v_normalWorld = mat3(transpose(inverse(model))) * v_normal;  
