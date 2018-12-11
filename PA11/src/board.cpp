@@ -172,7 +172,6 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 	//implimented exhaustive search for now
 	//will need to use normals in future to narrow down search to correct face
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-<<<<<<< HEAD
 		if (m_sides[i]) {
                     glm::vec3 testVector(position + m_sides[i]->GetChangeRow());
                     //glm::vec3 tempNormal(position + m_sides[i]->GetChangeRow());
@@ -191,12 +190,6 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 			} catch (const std::string &) { //not this one - go to next one
 			}
                     }
-=======
-		try {
-			glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
-			return glm::uvec3(i, elementPos);
-		} catch (const std::string &) { //not this one - go to next one
->>>>>>> e5a60e5c7bb62d9f1cb210231a5065d1cc25932c
 		}
 	}
 
