@@ -37,37 +37,36 @@ Full Usage with all variables
 ```bash
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_COMPLEX_BOARD_MESH=On
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 ./PA11_FinalProject -l launch/DefaultConfig.txt
 ```
 
-## General Comments
-
-## Extra Credit
+## General Comments & Features
+* Movement
+* Raycasting with bullet for clicking
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard Controls
   * Game Controls
-    * r: reset everything - (in the rare instance of something getting stuck)
+    * c: switch to selection mode - can how click on cubes
   * Camera Movement
-    * left_arrow: move left
-    * right_arrow: move right
-    * up_arrow: move forward
-    * down_arrow: move back
+    * w: move forward
+    * s: move backward
+    * a: move left
+    * d: move right
+    * space: move up
+    * l-Shift: move down
     * mouse: Look around (left/right/up/down) without moving your position
-  * Lighting
-    * Global
-      * f: change to fragment lighting
-      * v: change to vertex lighting
+  * Lighting - Global
       * +/-: adjust ambient lighting
    * Other
       * t: toggle (open/close) IMGUI menu window
    * Exiting
       * ESC: Will properly close all windows and exit program
 
-## Scoring and Gameplay
+## Gameplay
 
 ## Configuration File
 This program makes use of configuration files to initialize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.

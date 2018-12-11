@@ -3,7 +3,8 @@
 #include <chrono>
 #include <assert.h>
 
-Engine::Engine(const std::string & launchFile, float frameCap) : m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), m_spacebar(
+Engine::Engine(const std::string & launchFile, float frameCap) :
+		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), m_spacebar(
 				false), m_leftShift(false), m_captureMouse(true), m_mouseWarp(true), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(0), m_currentTimeMillis(
 				Engine::GetCurrentTimeMillis()), m_running(false), m_minFrameTime(1.0f / frameCap * 1000) {
 	std::srand(time(nullptr));
@@ -70,7 +71,7 @@ void Engine::Run(void) {
 			m_graphics->MoveBackward(0.01 * m_dt);
 		if (m_d)
 			m_graphics->MoveRight(0.01 * m_dt);
-    
+
 		if (m_spacebar)
 			m_graphics->MoveUp(0.01 * m_dt);
 		if (m_leftShift)
@@ -137,10 +138,9 @@ void Engine::EventChecker(void) {
 					|| (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis()))
 				CloseMenu();
 			else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS || event.key.keysym.sym == SDLK_m
-					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT
-					|| event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_w
-					|| event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d
-					|| event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c)
+					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
+					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_SPACE
+					|| event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c)
 				HandleEvent(event);
 			else
 				m_menu->HandleEvent(event);
@@ -162,14 +162,6 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			(m_shift) ? m_graphics->ChangeSpecularLight(glm::vec3(0.03, 0.03, 0.03)) : m_graphics->ChangeDiffuseLight(glm::vec3(0.03, 0.03, 0.03));
 		else if (event.key.keysym.sym == SDLK_l)
 			(m_shift) ? m_graphics->ChangeSpecularLight(-glm::vec3(0.03, 0.03, 0.03)) : m_graphics->ChangeDiffuseLight(-glm::vec3(0.03, 0.03, 0.03));
-		else if (event.key.keysym.sym == SDLK_RIGHT)
-			m_graphics->IncreaseEyePosX(1.0);
-		else if (event.key.keysym.sym == SDLK_LEFT)
-			m_graphics->DecreaseEyePosX(1.0);
-		else if (event.key.keysym.sym == SDLK_UP)
-			m_graphics->IncreaseEyePosZ(1.0);
-		else if (event.key.keysym.sym == SDLK_DOWN)
-			m_graphics->DecreaseEyePosZ(1.0);
 		else if (event.key.keysym.sym == SDLK_w)
 			m_w = true;
 		else if (event.key.keysym.sym == SDLK_s)

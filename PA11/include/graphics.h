@@ -26,10 +26,6 @@ public:
 	void Render(void);
 
 	//for movement for camera
-	void IncreaseEyePosX(float moveAmount);
-	void IncreaseEyePosZ(float moveAmount);
-	void DecreaseEyePosX(float moveAmount);
-	void DecreaseEyePosZ(float moveAmount);
 	void ZoomIn(float moveAmount);
 	void ZoomOut(float moveAmount);
 	void MoveForward(float moveAmount);

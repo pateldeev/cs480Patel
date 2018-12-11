@@ -90,12 +90,6 @@ void Board::UseShaderSet(const std::string & setName) {
 }
 
 void Board::Update() {
-	//m_sides[BoardSides::FLOOR]->SetType(0, 0, ObjType::P1_DEAD_FUTURE);
-	//m_sides[BoardSides::FLOOR]->SetType(2, 3, ObjType::P1_DEAD_MARKED);
-	//m_sides[BoardSides::FLOOR]->SetType(7, 3, ObjType::P1_ALIVE);
-	//m_sides[BoardSides::FLOOR]->SetType(9, 9, ObjType::P2_DEAD_MARKED);
-	//m_sides[BoardSides::ROOF]->SetType(14, 8, ObjType::P2_DEAD_MARKED);
-
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
 		if (m_sides[i])
 			m_sides[i]->Update();
@@ -276,8 +270,8 @@ void Board::AddCubeColliderToWorld(const glm::vec3 & position, const glm::vec3 &
 	btVector3 inertia(0, 0, 0);
 	collider->calculateLocalInertia(mass, inertia);
 	btRigidBody * rigidBody = new btRigidBody(btRigidBody::btRigidBodyConstructionInfo(mass, startTransform, collider, inertia)); //and thus the rigidbody was born
-//rigidBody->setGravity({0, 0, 0});
-//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
+	//rigidBody->setGravity({0, 0, 0});
+	//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
 	rigidBody->setSleepingThresholds(0, 0);
 	m_dynamicsWorld->addRigidBody(rigidBody); //I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
 	m_rigidBodies.push_back(rigidBody);

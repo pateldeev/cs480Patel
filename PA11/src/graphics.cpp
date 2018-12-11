@@ -70,31 +70,6 @@ void Graphics::Render(void) {
 	}
 }
 
-void Graphics::IncreaseEyePosX(float moveAmount) {
-	glm::vec3 newEyePos = GetEyePos();
-	newEyePos.x += moveAmount;
-	UpdateCamera(newEyePos, GetEyeLoc());
-
-}
-
-void Graphics::DecreaseEyePosX(float moveAmount) {
-	glm::vec3 newEyePos = GetEyePos();
-	newEyePos.x -= moveAmount;
-	UpdateCamera(newEyePos, GetEyeLoc());
-}
-
-void Graphics::IncreaseEyePosZ(float moveAmount) {
-	glm::vec3 newEyePos = GetEyePos();
-	newEyePos.z -= moveAmount;
-	UpdateCamera(newEyePos, GetEyeLoc());
-}
-
-void Graphics::DecreaseEyePosZ(float moveAmount) {
-	glm::vec3 newEyePos = GetEyePos();
-	newEyePos.z += moveAmount;
-	UpdateCamera(newEyePos, GetEyeLoc());
-}
-
 void Graphics::ZoomIn(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
 	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
