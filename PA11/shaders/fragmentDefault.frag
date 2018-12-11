@@ -23,37 +23,37 @@ out vec4 frag_color;
 vec3 addLight(vec3 baseColor, vec3 lightPosition);
 
 void main(void){
-  vec3 baseColor;
+  vec4 baseColor;
 
   int currentSample = sampleType[obj_row * numPerRow + obj_col]; 
   
   if(currentSample== 1)
-    baseColor = texture2D(samplers[1], texture).xyz;
+    baseColor = texture2D(samplers[1], texture);
   else if(currentSample == 2)
-    baseColor = texture2D(samplers[2], texture).xyz;
+    baseColor = texture2D(samplers[2], texture);
   else if(currentSample == 3)
-    baseColor = texture2D(samplers[3], texture).xyz;
+    baseColor = texture2D(samplers[3], texture);
   else if(currentSample == 4)
-    baseColor = texture2D(samplers[4], texture).xyz;
+    baseColor = texture2D(samplers[4], texture);
   else if(currentSample == 5)
-    baseColor = texture2D(samplers[5], texture).xyz;
+    baseColor = texture2D(samplers[5], texture);
   else if(currentSample == 6)
-    baseColor = texture2D(samplers[6], texture).xyz;
+    baseColor = texture2D(samplers[6], texture);
   else if(currentSample == 7)
-    baseColor = texture2D(samplers[7], texture).xyz;
+    baseColor = texture2D(samplers[7], texture);
   else if(currentSample == 8)
-    baseColor = texture2D(samplers[8], texture).xyz;
+    baseColor = texture2D(samplers[8], texture);
   else if(currentSample == 9)
-    baseColor = texture2D(samplers[9], texture).xyz;
+    baseColor = texture2D(samplers[9], texture);
   else if(currentSample == 10)
-    baseColor = texture2D(samplers[10], texture).xyz;
+    baseColor = texture2D(samplers[10], texture);
   else
-    baseColor = texture2D(samplers[0], texture).xyz;
+    baseColor = texture2D(samplers[0], texture);
 
   //add contribution of light
-  baseColor = addLight(baseColor, lightPos);
+  baseColor = vec4(addLight(baseColor.rgb, lightPos), baseColor.a);
 
-  frag_color = vec4(baseColor, 1.0);
+  frag_color = baseColor;
 }
 
 vec3 addLight(vec3 baseColor, vec3 lightPosition){

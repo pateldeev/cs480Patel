@@ -169,11 +169,11 @@ const btDiscreteDynamicsWorld * Board::GetBulletWorld(void) const {
 
 //finds specific element at position. returns {face - BoardSides enumeration, row, column}
 glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
-	//implimented exhaustive search for now
-	//will need to use normals in future to narrow down search to correct face
-	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
+    glm::uvec3 elementPos = {-1, -1, -1};
+    
+    for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
 		if (m_sides[i]) {
-                    glm::vec3 testVector(position + m_sides[i]->GetChangeRow());
+                    glm::vec3 testVector(position + m_sides[i]->GetChangeRow() + m_sides[i]->GetTranslation());
                     //glm::vec3 tempNormal(position + m_sides[i]->GetChangeRow());
                     //tempNormal = glm::cross(m_sides[i]->GetChangeRow(), tempNormal);
                     //tempNormal = glm::normalize(tempNormal);
@@ -185,16 +185,24 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
                     if (glm::dot(testVector, m_sides[i]->GetNormal()) == 0) {//p lies on the plane defined by m_side[i]
                     //if (tempNormal == m_sides[i]->GetNormal()) {
 			try {
-				glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
-				return glm::uvec3(i, elementPos);
+				elementPos = glm::uvec3(i, m_sides[i]->GetCubeByPosition(position));
+                            //glm::uvec2 elementPos(m_sides[i]->GetCubeByPosition(position));
+                            //return glm::uvec3(i, elementPos);
 			} catch (const std::string &) { //not this one - go to next one
+                            elementPos = {-1, -1, -1};
+                            continue;
 			}
+                        break;
                     }
 		}
 	}
 
-	//did not find game element. Throw exception
-	throw std::string("Position " + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z) + " not found!");
+        if (elementPos != glm::uvec3(-1, -1, -1)) {
+            return elementPos;
+        } else {
+            //did not find game element. Throw exception
+            throw std::string("Position " + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z) + " not found!");
+        }
 }
 
 //get current status of game element. element = {face - BoardSides enumeration, row, column}
