@@ -10,8 +10,10 @@
 Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & changeRow, const glm::vec3 & changeCol,
 		const glm::vec3 & traslation, const glm::vec3 & rotation, const glm::vec3 & scale) :
 		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(size), m_changeRow(changeRow), m_changeCol(
-				changeCol), VB(0), IB(0), m_normal(glm::cross(m_changeRow, m_changeCol)) {
+				changeCol), VB(0), IB(0) {
 
+    m_normal = glm::cross(m_changeRow, m_changeCol);
+    
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	LoadObjAssimp(objFile);
 

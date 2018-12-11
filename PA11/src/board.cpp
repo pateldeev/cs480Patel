@@ -180,12 +180,24 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 	//implimented exhaustive search for now
 	//will need to use normals in future to narrow down search to correct face
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-		if (glm::dot(glm::vec3(position + m_sides[i]->GetChangeRow()), m_sides[i]) == 0) {//p lies on the plane defined by m_side[i]
+		if (m_sides[i]) {
+                    glm::vec3 testVector(position + m_sides[i]->GetChangeRow());
+                    //glm::vec3 tempNormal(position + m_sides[i]->GetChangeRow());
+                    //tempNormal = glm::cross(m_sides[i]->GetChangeRow(), tempNormal);
+                    //tempNormal = glm::normalize(tempNormal);
+#ifdef DEBUG
+                    printf("Normal of current board: {%f, %f, %f}\n", m_sides[i]->GetNormal().x, m_sides[i]->GetNormal().y, m_sides[i]->GetNormal().z);
+                    printf("Vector to test against normal: {%f, %f, %f}\n", testVector.x, testVector.y, testVector.z);
+                    //printf("Normal generated from point: {%f, %f, %f}\n", tempNormal.x, tempNormal.y, tempNormal.z);
+#endif
+                    if (glm::dot(testVector, m_sides[i]->GetNormal()) == 0) {//p lies on the plane defined by m_side[i]
+                    //if (tempNormal == m_sides[i]->GetNormal()) {
 			try {
 				glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
 				return glm::uvec3(i, elementPos);
 			} catch (const std::string &) { //not this one - go to next one
 			}
+                    }
 		}
 	}
 
