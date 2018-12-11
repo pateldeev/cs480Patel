@@ -180,7 +180,7 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 	//implimented exhaustive search for now
 	//will need to use normals in future to narrow down search to correct face
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-		if (m_sides[i]) {
+		if (glm::dot(glm::vec3(position + m_sides[i]->GetChangeRow()), m_sides[i]) == 0) {//p lies on the plane defined by m_side[i]
 			try {
 				glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
 				return glm::uvec3(i, elementPos);
