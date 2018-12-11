@@ -9,11 +9,9 @@
 
 Object::Object(const std::string & objFile, const glm::uvec2 & size, const glm::vec3 & changeRow, const glm::vec3 & changeCol,
 		const glm::vec3 & traslation, const glm::vec3 & rotation, const glm::vec3 & scale) :
-		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_numInstances(size), m_changeRow(changeRow), m_changeCol(
-				changeCol), VB(0), IB(0) {
+		m_model(1.0), m_translation(traslation), m_rotation(rotation), m_scale(scale), m_normal(glm::normalize(glm::cross(changeRow, changeCol))), m_numInstances(
+				size), m_changeRow(changeRow), m_changeCol(changeCol), VB(0), IB(0) {
 
-        m_normal = glm::cross(m_translation + m_changeRow, m_translation + m_changeCol);
-    
 	//vertex attributes: vec3 position, vec3 color, vec2 uv, vec3 normal
 	LoadObjAssimp(objFile);
 
@@ -159,7 +157,7 @@ const std::vector<glm::vec3>& Object::GetInstancePositions(void) const {
 glm::uvec2 Object::GetCubeByPosition(const glm::vec3 & position) const {
 	for (unsigned int r = 0; r < m_numInstances.x; ++r) { //row
 		for (unsigned int c = 0; c < m_numInstances.y; ++c) { //col
-			if (position == (m_translation + (m_changeRow * float(r)) + (m_changeCol * float(c))))
+			if (m_instancePositions[r * m_numInstances.y + c] == position)
 				return glm::uvec2(r, c);
 		}
 	}

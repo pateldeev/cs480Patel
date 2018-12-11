@@ -7,7 +7,7 @@ smooth in vec3 v_normalWorld;
 smooth in vec2 texture;
 
 uniform sampler2D samplers[11];
-uniform int sampleType[400];
+uniform int sampleType[500];
 
 uniform int numPerRow;
 

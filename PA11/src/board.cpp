@@ -169,40 +169,30 @@ const btDiscreteDynamicsWorld * Board::GetBulletWorld(void) const {
 
 //finds specific element at position. returns {face - BoardSides enumeration, row, column}
 glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
-    glm::uvec3 elementPos = {-1, -1, -1};
-    
-    for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-		if (m_sides[i]) {
-                    glm::vec3 testVector(position + m_sides[i]->GetChangeRow() + m_sides[i]->GetTranslation());
-                    //glm::vec3 tempNormal(position + m_sides[i]->GetChangeRow());
-                    //tempNormal = glm::cross(m_sides[i]->GetChangeRow(), tempNormal);
-                    //tempNormal = glm::normalize(tempNormal);
 #ifdef DEBUG
-                    printf("Normal of current board: {%f, %f, %f}\n", m_sides[i]->GetNormal().x, m_sides[i]->GetNormal().y, m_sides[i]->GetNormal().z);
-                    printf("Vector to test against normal: {%f, %f, %f}\n", testVector.x, testVector.y, testVector.z);
-                    //printf("Normal generated from point: {%f, %f, %f}\n", tempNormal.x, tempNormal.y, tempNormal.z);
+	printf("\nSearching board for postion: |%s|\n", glm::to_string(position).c_str());
+#endif	
+
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
+		glm::vec3 testVector = (position - m_sides[i]->GetTranslation()); //vector between point and main cube and board - should be orthogonal to normal if in plane
+
+#ifdef DEBUG
+		printf("%i\n", i);
+		printf("Normal of current board: |%s|\n", glm::to_string(m_sides[i]->GetNormal()).c_str());
+		printf("Vector to test against normal: |%s|\n", glm::to_string(testVector).c_str());
 #endif
-                    if (glm::dot(testVector, m_sides[i]->GetNormal()) == 0) {//p lies on the plane defined by m_side[i]
-                    //if (tempNormal == m_sides[i]->GetNormal()) {
-			try {
-				elementPos = glm::uvec3(i, m_sides[i]->GetCubeByPosition(position));
-                            //glm::uvec2 elementPos(m_sides[i]->GetCubeByPosition(position));
-                            //return glm::uvec3(i, elementPos);
-			} catch (const std::string &) { //not this one - go to next one
-                            elementPos = {-1, -1, -1};
-                            continue;
+		if (glm::length2(testVector) < 0.001 || glm::dot(testVector, m_sides[i]->GetNormal()) == 0) { //p lies on a plane defined by m_side[i]
+			try { //search for position
+				glm::uvec3 elementPos(i, m_sides[i]->GetCubeByPosition(position));
+#ifdef DEBUG
+				printf("Element found: |%s|\n", glm::to_string(elementPos).c_str());
+#endif
+				return elementPos;
+			} catch (const std::string &) { //not found in this side. Keep searching cause it could still be in same plane but be part of another, perpendicular side
 			}
-                        break;
-                    }
 		}
 	}
-
-        if (elementPos != glm::uvec3(-1, -1, -1)) {
-            return elementPos;
-        } else {
-            //did not find game element. Throw exception
-            throw std::string("Position " + std::to_string(position.x) + "," + std::to_string(position.y) + "," + std::to_string(position.z) + " not found!");
-        }
+	throw std::string("Position |" + glm::to_string(position) + "| not found!");
 }
 
 //get current status of game element. element = {face - BoardSides enumeration, row, column}
@@ -238,7 +228,7 @@ void Board::InitializeBullet(void) {
 	printf("Initializing Bullet!\n");
 #endif
 
-//initialize bullet world
+	//initialize bullet world
 	m_broadphase = new btDbvtBroadphase();
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
@@ -281,13 +271,11 @@ void Board::AddCubeColliderToWorld(const glm::vec3 & position, const glm::vec3 &
 	//rigidBody->setGravity({0, 0, 0});
 	//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
 	rigidBody->setSleepingThresholds(0, 0);
-	m_dynamicsWorld->addRigidBody(rigidBody); //I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
+	m_dynamicsWorld->addRigidBody(rigidBody);//I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
 	m_rigidBodies.push_back(rigidBody);
 
 #ifdef DEBUG
-	printf("Cube Collider placed at location {%f, %f, %f} with scale {%f, %f, %f}\n",
-			position.x, position.y, position.z,
-			scale.x, scale.y, scale.z);
+	printf("Cube Collider placed at location |%s| with scale |%s|\n", glm::to_string(position).c_str(), glm::to_string(scale).c_str());
 #endif
 }
 

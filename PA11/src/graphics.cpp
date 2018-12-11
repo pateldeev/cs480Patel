@@ -194,8 +194,7 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 		elementClicked = m_board->GetGameElementByPosition(GetPositionUnder(mousePosition));
 	} catch (const std::string & e) {
 #ifdef DEBUG
-		printf("Not hit for mouse {%f, %f} \n", mousePosition.x, mousePosition.y);
-		printf("   Msg: %s \n", e.c_str());
+		printf("\n%s\n", e.c_str());
 #endif
 		return;
 	}
@@ -266,10 +265,10 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position 
 
 #ifdef DEBUG
-		printf("World position for cube for {%f, %f} was {%f, %f, %f}\n", mousePosition.x, mousePosition.y, cubePosition.x, cubePosition.y, cubePosition.z);
+		printf("\nHit found for |%s|:|%s|\n", glm::to_string(mousePosition).c_str(), glm::to_string(cubePosition).c_str());
 #endif
 		return cubePosition;
 	} else {
-		throw std::string("No Hit Found");
+		throw std::string("No hit found for: " + glm::to_string(mousePosition));
 	}
 }
