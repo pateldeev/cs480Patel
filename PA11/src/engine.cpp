@@ -176,13 +176,13 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_leftShift = true;
 		else if (event.key.keysym.sym == SDLK_c) { //for turning off mouse movement for selection
 			m_captureMouse = !m_captureMouse;
-                        if (m_captureMouse) {
-                            SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
-                            SDL_SetRelativeMouseMode(SDL_TRUE);
-                        } else {
-                            SDL_SetRelativeMouseMode(SDL_FALSE);
-                            SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
-                        }
+			if (m_captureMouse) {
+				SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
+				SDL_SetRelativeMouseMode (SDL_TRUE);
+			} else {
+				SDL_SetRelativeMouseMode (SDL_FALSE);
+				SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
+			}
 		}
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_w)
@@ -202,16 +202,16 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_graphics->RotateCamera(event.motion.xrel, event.motion.yrel);
 			m_mouseWarp = true;
 			SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
-                } else {
+		} else {
 			m_mouseWarp = false;
 		}
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (!m_captureMouse)
-			m_graphics->LeftClick(glm::vec2((float) event.button.x, (float) event.button.y));
-                    else
-                        m_graphics->LeftClick(glm::vec2(m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2));
-                }
+			if (!m_captureMouse)
+				m_graphics->LeftClick(glm::vec2((float) event.button.x, (float) event.button.y));
+			else
+				m_graphics->LeftClick(glm::vec2(m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2));
+		}
 	}
 }
 

@@ -6,13 +6,8 @@ Board::Board(const GameInfo & game) :
 				nullptr), m_dispatcher(nullptr), m_solver(nullptr), m_dynamicsWorld(nullptr) {
 
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
-		m_sides[i] = nullptr;
-
-	m_sides[BoardSides::FLOOR] = new Object(game.m_object.m_objFile, game.m_sides[BoardSides::FLOOR].m_size,
-			game.m_sides[BoardSides::FLOOR].m_changeRow, game.m_sides[BoardSides::FLOOR].m_changeCol, game.m_sides[BoardSides::FLOOR].m_startingLoc);
-
-	m_sides[BoardSides::ROOF] = new Object(game.m_object.m_objFile, game.m_sides[BoardSides::ROOF].m_size, game.m_sides[BoardSides::ROOF].m_changeRow,
-			game.m_sides[BoardSides::ROOF].m_changeCol, game.m_sides[BoardSides::ROOF].m_startingLoc);
+		m_sides[i] = new Object(game.m_object.m_objFile, game.m_sides[i].m_size, game.m_sides[i].m_changeRow, game.m_sides[i].m_changeCol,
+				game.m_sides[i].m_startingLoc);
 
 	//load textures
 	for (int i = 0; i < ObjType::NUM_TYPES; ++i)
@@ -91,8 +86,7 @@ void Board::UseShaderSet(const std::string & setName) {
 
 void Board::Update() {
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
-		if (m_sides[i])
-			m_sides[i]->Update();
+		m_sides[i]->Update();
 }
 
 void Board::Render(void) {
@@ -100,11 +94,9 @@ void Board::Render(void) {
 		throw std::string("No shader has been enabled!");
 
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-		if (m_sides[i]) {
-			UpdateInstanceBindings (m_sides[i]);
-			glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sides[i]->GetModel()));
-			m_sides[i]->Render();
-		}
+		UpdateInstanceBindings (m_sides[i]);
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_sides[i]->GetModel()));
+		m_sides[i]->Render();
 	}
 }
 
@@ -180,12 +172,10 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 	//implimented exhaustive search for now
 	//will need to use normals in future to narrow down search to correct face
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
-		if (m_sides[i]) {
-			try {
-				glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
-				return glm::uvec3(i, elementPos);
-			} catch (const std::string &) { //not this one - go to next one
-			}
+		try {
+			glm::uvec2 elementPos = m_sides[i]->GetCubeByPosition(position);
+			return glm::uvec3(i, elementPos);
+		} catch (const std::string &) { //not this one - go to next one
 		}
 	}
 
@@ -249,14 +239,10 @@ void Board::LoadColliders(void) {
 #ifdef DEBUG
 		printf("Setting side %i...\n", i);
 #endif
+		std::vector < glm::vec3 > positions = m_sides[i]->GetInstancePositions();
 
-		if (m_sides[i]) {
-			std::vector < glm::vec3 > positions = m_sides[i]->GetInstancePositions();
-
-			for (const glm::vec3 & pos : positions)
-				AddCubeColliderToWorld(pos, m_sides[i]->GetRotation(), m_sides[i]->GetScale());
-		}
-
+		for (const glm::vec3 & pos : positions)
+			AddCubeColliderToWorld(pos, m_sides[i]->GetRotation(), m_sides[i]->GetScale());
 	}
 }
 

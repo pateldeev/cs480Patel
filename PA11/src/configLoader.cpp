@@ -129,11 +129,11 @@ void ConfigFileParser::GetGameInfo(GameInfo & game) {
 		throw std::string("Could not get texture 10 for dead from config file");
 
 	//get various sides of board
-	for (unsigned int i = 0; i < 2; ++i) {
+	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
 
 		//get board name
-		if (!ParseLine < std::string > (varName, &game.m_sides[i].m_name) || varName.compare("BOARD_NAME"))
-			throw std::string("Could not get board name from config file");
+		if (!ParseLine<unsigned int>(varName, valuesui) || varName.compare("BOARD_SIDE") || valuesui[0] != i)
+			throw std::string("Could not get board side" + std::to_string(i) + "from config file");
 
 		//get board size
 		if (!ParseLine<unsigned int, 2>(varName, valuesui) || varName.compare("BOARD_SIZE"))
