@@ -3,8 +3,7 @@
 #include <chrono>
 #include <assert.h>
 
-Engine::Engine(const std::string & launchFile, float frameCap) :
-		m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), m_spacebar(
+Engine::Engine(const std::string & launchFile, float frameCap) : m_window(nullptr), m_graphics(nullptr), m_configFile(launchFile), m_shift(false), m_w(false), m_a(false), m_s(false), m_d(false), m_spacebar(
 				false), m_leftShift(false), m_captureMouse(true), m_mouseWarp(true), m_menu(nullptr), m_menuSize(0, 0), m_menuLastTime(0), m_dt(0), m_currentTimeMillis(
 				Engine::GetCurrentTimeMillis()), m_running(false), m_minFrameTime(1.0f / frameCap * 1000) {
 	std::srand(time(nullptr));
@@ -71,6 +70,7 @@ void Engine::Run(void) {
 			m_graphics->MoveBackward(0.01 * m_dt);
 		if (m_d)
 			m_graphics->MoveRight(0.01 * m_dt);
+    
 		if (m_spacebar)
 			m_graphics->MoveUp(0.01 * m_dt);
 		if (m_leftShift)
@@ -119,10 +119,10 @@ void Engine::EventChecker(void) {
 			m_running = false;
 		}
 
-		//keep track of shift key being pressed/released
-		if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
+		//keep track of right shift key being pressed/released
+		if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RSHIFT))
 			m_shift = true;
-		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_RSHIFT || event.key.keysym.sym == SDLK_LSHIFT))
+		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_RSHIFT))
 			m_shift = false;
 
 		//handle event based on correct window location
@@ -182,7 +182,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_spacebar = true;
 		else if (event.key.keysym.sym == SDLK_LSHIFT)
 			m_leftShift = true;
-		else if (event.key.keysym.sym == SDLK_c) {
+		else if (event.key.keysym.sym == SDLK_c) { //for turing off mouse movement for selection
 			m_captureMouse = !m_captureMouse;
 			m_captureMouse ? SDL_SetRelativeMouseMode(SDL_TRUE) : SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
