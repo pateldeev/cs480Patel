@@ -51,6 +51,7 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
 * Keyboard Controls
   * Game Controls
     * c: switch to selection mode - can how click on cubes
+    * g: move one generation forward
   * Camera Movement
     * w: move forward
     * s: move backward
