@@ -174,6 +174,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = true;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
+    else if (event.key.keysym.sym == SDLK_g)
+      m_graphics->MoveForwardGeneration();
 		else if (event.key.keysym.sym == SDLK_SPACE)
 			m_spacebar = true;
 		else if (event.key.keysym.sym == SDLK_LSHIFT)

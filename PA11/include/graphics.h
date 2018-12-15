@@ -26,15 +26,15 @@ public:
 	void Render(void);
 
 	//for movement for camera
-	void ZoomIn(float moveAmount);
-	void ZoomOut(float moveAmount);
-	void MoveForward(float moveAmount);
-	void MoveBackward(float moveAmount);
-	void MoveRight(float moveAmount);
-	void MoveLeft(float moveAmount);
-	void MoveUp(float moveAmount);
-	void MoveDown(float moveAmount);
-	void RotateCamera(float newX, float newY);
+	void ZoomIn(float moveAmount);       // Move the camera location closer to the focus location
+	void ZoomOut(float moveAmount);      // Move the camera location away from the focus location
+	void MoveForward(float moveAmount);  // Move both the camera and focus positions toward the direction the camera is facing
+	void MoveBackward(float moveAmount); // Move both the camera and focus positions away from the direction the camera is facing
+	void MoveRight(float moveAmount);    // Move both the camera and focus positions right of the direction the camera is facing
+	void MoveLeft(float moveAmount);     // Move both the camera and focus positions left of the direction the camera is facing
+	void MoveUp(float moveAmount);       // Increase both the camera and focus position's y coordinate
+	void MoveDown(float moveAmount);     // Decrease both the camera and focus position's y coordinate
+	void RotateCamera(float newX, float newY); // Changes the focus position to cause the camera to look 'left,' 'right,' 'up,' or 'down' according to mouse movement
 
 	void UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 	glm::vec3 GetEyePos(void) const;
@@ -46,6 +46,9 @@ public:
 	void ChangeSpecularLight(const glm::vec3 & change);
 
 	void LeftClick(const glm::vec2 & mousePosition); //call this from engine, and it should successfully click on object
+
+  // Updates the board one generation, according to Conway's rules
+  void MoveForwardGeneration();
 
 private:
 	std::string ErrorString(const GLenum error) const;

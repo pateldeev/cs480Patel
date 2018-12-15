@@ -15,6 +15,8 @@ Board::Board(const GameInfo & game) :
 	m_sides[0]->BindTextures();
 
 	InitializeBullet(); //start bullet for raycasting
+
+  m_generation = 0; // Since no generations have occured
 }
 
 Board::~Board(void) {
@@ -171,7 +173,7 @@ const btDiscreteDynamicsWorld * Board::GetBulletWorld(void) const {
 glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 #ifdef DEBUG
 	printf("\nSearching board for postion: |%s|\n", glm::to_string(position).c_str());
-#endif	
+#endif
 
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i) {
 		glm::vec3 testVector = (position - m_sides[i]->GetTranslation()); //vector between point and main cube and board - should be orthogonal to normal if in plane
@@ -490,6 +492,12 @@ void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
 	m_sides[element.x]->SetType(element.y, element.z, type);
 }
 
+// Where all the calculations using Conway's rules will occur
+void Board::MoveForwardGeneration() {
+
+  return;
+}
+
 //rounds everything to be in range [min, max]
 void Board::EnforceBounds(glm::vec3 & v, float min, float max) {
 	if (v.x < min)
@@ -509,7 +517,7 @@ void Board::EnforceBounds(glm::vec3 & v, float min, float max) {
 }
 
 void Board::InitializeBullet(void) {
-#ifdef DEBUG 
+#ifdef DEBUG
 	printf("Initializing Bullet!\n");
 #endif
 
@@ -594,4 +602,3 @@ void Board::FindElementNeighborsInFace(std::vector<glm::uvec3> & neighbors, cons
 	if (element.z < faceSize.y - 1)
 		neighbors.emplace_back(element.x, element.y, element.z + 1);
 }
-

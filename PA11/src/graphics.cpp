@@ -212,6 +212,13 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 }
 
+// Updates the board one generation, according to Conway's rules
+void Graphics::MoveForwardGeneration() {
+  m_board->MoveForwardGeneration();
+
+  return;
+}
+
 std::string Graphics::ErrorString(const GLenum error) const {
 	if (error == GL_INVALID_ENUM)
 		return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
@@ -269,7 +276,7 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 	//if it hit, grab the position of the collider, otherwise throw not found error
 	if (closestResults.hasHit()) {
 		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
-		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position 
+		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position
 
 #ifdef DEBUG
 		printf("\nHit found for |%s|:|%s|\n", glm::to_string(mousePosition).c_str(), glm::to_string(cubePosition).c_str());
