@@ -39,7 +39,7 @@ Engine::Engine(const std::string & launchFile, float frameCap) :
 	m_graphics->UseShaderSet(shaderSetName);
 
 	if (menu)
-		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+		StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeFocus());
 }
 
 Engine::~Engine(void) {
@@ -50,6 +50,7 @@ Engine::~Engine(void) {
 void Engine::Run(void) {
 	m_running = true;
 
+	//variables to measure & enforce framerate
 	std::chrono::high_resolution_clock::time_point t1, t2;
 	float duration;
 
@@ -63,6 +64,7 @@ void Engine::Run(void) {
 		// Update and render the graphics
 		m_dt = GetDT();
 
+		//check if we need to perform movement
 		if (m_w)
 			m_graphics->MoveForward(0.01 * m_dt);
 		if (m_a)
@@ -77,6 +79,7 @@ void Engine::Run(void) {
 		if (m_leftShift)
 			m_graphics->MoveDown(0.01 * m_dt);
 
+		//update graphics worls
 		m_graphics->Update(m_dt);
 		m_graphics->Render();
 
@@ -84,10 +87,11 @@ void Engine::Run(void) {
 		m_window->Swap();
 
 		//update menu and change variables if necessary
-		if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos(), m_graphics->GetEyeLoc()))
+		if (m_menu && m_menu->Update(m_window->GetContext(), m_graphics->GetEyePos(), m_graphics->GetEyeFocus()))
 			m_graphics->UpdateCamera(m_menu->GetEyeLocation(), m_menu->GetEyeFocus());
 
 	}
+
 	//enforce max frame rate
 	t2 = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
@@ -153,7 +157,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		if (event.key.keysym.sym == SDLK_ESCAPE)
 			m_running = false;
 		else if (event.key.keysym.sym == SDLK_t && m_menuLastTime + 500 < Engine::GetCurrentTimeMillis())
-			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeLoc());
+			(m_menu) ? CloseMenu() : StartMenu(m_graphics->GetEyePos(), m_graphics->GetEyeFocus());
 		else if (event.key.keysym.sym == SDLK_EQUALS)
 			m_graphics->ChangeAmbientLight(glm::vec3(0.03, 0.03, 0.03));
 		else if (event.key.keysym.sym == SDLK_MINUS)

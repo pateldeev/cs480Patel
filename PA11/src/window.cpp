@@ -51,8 +51,8 @@ Window::Window(const std::string & name, unsigned int height, unsigned int width
 		errMsg += SDL_GetError();
 		throw errMsg;
 	}
-  SDL_WarpMouseInWindow(m_gWindow, m_width / 2, m_height / 2);
-  SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_WarpMouseInWindow(nullptr, m_width / 2, m_height / 2);
+	SDL_SetRelativeMouseMode (SDL_TRUE);
 }
 
 Window::~Window(void) {

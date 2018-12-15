@@ -45,13 +45,12 @@ public:
 	glm::uvec2 GetCubeByPosition(const glm::vec3 & position) const; //use to find cube at position - return {r,c}
 
 	glm::uvec2 GetSize(void) const;
+	bool IsValidElement(const glm::uvec2 & pos) const; //checks if given element is valid in regards to bounds of instance sizes
 
 	glm::vec3 GetChangeRow(void) const;
 	glm::vec3 GetChangeCol(void) const;
 
-	float GetDistanceFromPoint(glm::vec3 point) const;
-
-	void LoadTexture(const std::string & textureFile, ObjType type = ObjType::DEAD);
+	void LoadTexture(const std::string & textureFile, const ObjType type = ObjType::DEAD);
 
 private:
 	void LoadObjAssimp(const std::string & objFile);
@@ -75,7 +74,7 @@ private:
 	GLuint VB;
 	GLuint IB;
 
-	GLuint m_textures[11]; //vector of texture locations on GPU {follow enumaration layout}
+	GLuint m_textures[ObjType::NUM_TYPES]; //vector of texture locations on GPU {follow enumaration layout}
 };
 
 #endif /* OBJECT_H */

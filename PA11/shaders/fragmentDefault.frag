@@ -2,13 +2,13 @@
 
 flat in int obj_row, obj_col;
 
-smooth in vec3 v_posWorld;
-smooth in vec3 v_normalWorld;
+smooth in vec3 v_posWorld, v_normalWorld;
 smooth in vec2 texture;
+
+out vec4 frag_color;
 
 uniform sampler2D samplers[11];
 uniform int sampleType[500];
-
 uniform int numPerRow;
 
 uniform vec3 ambientP, diffuseP, specularP;
@@ -16,8 +16,6 @@ uniform float shininess;
 
 uniform vec3 lightPos;
 uniform vec3 eyePos;
-
-out vec4 frag_color;
 
 //function to add contribution of one light
 vec3 addLight(vec3 baseColor, vec3 lightPosition);

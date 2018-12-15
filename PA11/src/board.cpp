@@ -195,13 +195,298 @@ glm::uvec3 Board::GetGameElementByPosition(const glm::vec3 & position) const {
 	throw std::string("Position |" + glm::to_string(position) + "| not found!");
 }
 
+//finds position of all the neighbors. element = {face - BoardSides enumeration, row, column}
+std::vector<glm::uvec3> Board::GetGameElementNeighbors(const glm::uvec3 & element) const {
+#ifdef DEBUG
+	printf("\nGetting neighbors of: |%s|\n", glm::to_string(element).c_str());
+#endif
+	std::vector < glm::uvec3 > neighbors;
+
+	FindElementNeighborsInFace(neighbors, element); //get neighbors in same face
+
+#ifdef DEBUG
+	printf("Got neighbors on the same face. Checking if element has neighbors on another face\n");
+#endif
+
+	//for getting neighbors in different faces
+	//Note: some of this had to be hard coded. So changing the configuration file/board dimensions may cause errors here
+	glm::uvec2 faceSize = m_sides[element.x]->GetSize();
+	BoardSides tempSide;
+
+	//helper function to add neighbor if possible
+	auto addNeighbor = [this, &tempSide, &neighbors](unsigned int r, unsigned int c)->void {
+		if (m_sides[tempSide]->IsValidElement(glm::uvec2(r, c))) {
+			neighbors.emplace_back(tempSide, r, c);
+		}
+	};
+
+	if (element.y == 0) { //element is in first row
+
+		switch ((BoardSides) element.x) {
+
+		case BoardSides::FLOOR: //0
+			tempSide = BoardSides::NORTH;
+
+			addNeighbor(0, element.z + 1);
+			addNeighbor(0, element.z);
+			addNeighbor(0, element.z + 2);
+			break;
+
+		case BoardSides::ROOF: //1
+			tempSide = BoardSides::NORTH;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z + 1);
+			break;
+
+		case BoardSides::NORTH: //2
+			tempSide = BoardSides::FLOOR;
+
+			addNeighbor(0, element.z - 1);
+			addNeighbor(0, element.z - 2);
+			addNeighbor(0, element.z);
+			break;
+
+		case BoardSides::SOUTH: //3
+			tempSide = BoardSides::FLOOR;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z - 2);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z);
+			break;
+
+		case BoardSides::EAST: //4
+			tempSide = BoardSides::FLOOR;
+
+			addNeighbor(element.z - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.z - 2, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.z, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::WEST: //5
+			tempSide = BoardSides::FLOOR;
+
+			addNeighbor(element.z, 0);
+			addNeighbor(element.z - 1, 0);
+			addNeighbor(element.z + 1, 0);
+			break;
+
+		default:
+			throw std::string("Invalid element face number:" + glm::to_string(element));
+		}
+
+	} else if (element.y == faceSize.x - 1) { //element is in last row
+
+		switch ((BoardSides) element.x) {
+
+		case BoardSides::FLOOR: //0
+			tempSide = BoardSides::SOUTH;
+
+			addNeighbor(0, element.z + 1);
+			addNeighbor(0, element.z);
+			addNeighbor(0, element.z + 2);
+			break;
+
+		case BoardSides::ROOF: //1
+			tempSide = BoardSides::SOUTH;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z + 1);
+			break;
+
+		case BoardSides::NORTH: //2
+			tempSide = BoardSides::ROOF;
+
+			addNeighbor(0, element.z);
+			addNeighbor(0, element.z - 1);
+			addNeighbor(0, element.z + 1);
+			break;
+
+		case BoardSides::SOUTH: //3
+			tempSide = BoardSides::ROOF;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.z + 1);
+			break;
+
+		case BoardSides::EAST: //4
+			tempSide = BoardSides::ROOF;
+
+			addNeighbor(element.z, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.z - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.z + 1, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::WEST: //5
+			tempSide = BoardSides::ROOF;
+
+			addNeighbor(element.z + 1, 0);
+			addNeighbor(element.z, 0);
+			addNeighbor(element.z + 2, 0);
+			break;
+
+		default:
+			throw std::string("Invalid element face number:" + glm::to_string(element));
+		}
+
+	}
+
+	if (element.z == 0) { //element is in first column
+
+		switch ((BoardSides) element.x) {
+
+		case BoardSides::FLOOR: //0
+			tempSide = BoardSides::WEST;
+
+			addNeighbor(element.z, element.y);
+			addNeighbor(element.z, element.y - 1);
+			addNeighbor(element.z, element.y + 1);
+			break;
+
+		case BoardSides::ROOF: //1
+			tempSide = BoardSides::WEST;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y - 2);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y);
+			break;
+
+		case BoardSides::NORTH: //2
+			tempSide = BoardSides::WEST;
+
+			addNeighbor(element.y, 0);
+			addNeighbor(element.y - 1, 0);
+			addNeighbor(element.y + 1, 0);
+			break;
+
+		case BoardSides::SOUTH: //3
+			tempSide = BoardSides::WEST;
+
+			addNeighbor(element.y, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y + 1, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::EAST: //4
+			tempSide = BoardSides::NORTH;
+
+			addNeighbor(element.y, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y + 1, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::WEST: //5
+			tempSide = BoardSides::NORTH;
+
+			addNeighbor(element.y, 0);
+			addNeighbor(element.y - 1, 0);
+			addNeighbor(element.y + 1, 0);
+			break;
+
+		default:
+			throw std::string("Invalid element face number:" + glm::to_string(element));
+		}
+
+	} else if (element.z == faceSize.y - 1) { //element is in last column
+
+		switch ((BoardSides) element.x) {
+
+		case BoardSides::FLOOR: //0
+			tempSide = BoardSides::EAST;
+
+			addNeighbor(0, element.y + 1);
+			addNeighbor(0, element.y);
+			addNeighbor(0, element.y + 2);
+			break;
+
+		case BoardSides::ROOF: //1
+			tempSide = BoardSides::EAST;
+
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y - 1);
+			addNeighbor(m_sides[tempSide]->GetSize().x - 1, element.y + 1);
+			break;
+
+		case BoardSides::NORTH: //2
+			tempSide = BoardSides::EAST;
+
+			addNeighbor(element.y, 0);
+			addNeighbor(element.y - 1, 0);
+			addNeighbor(element.y + 1, 0);
+			break;
+
+		case BoardSides::SOUTH: //3
+			tempSide = BoardSides::EAST;
+
+			addNeighbor(element.y, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y + 1, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::EAST: //4
+			tempSide = BoardSides::SOUTH;
+
+			addNeighbor(element.y, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y - 1, m_sides[tempSide]->GetSize().y - 1);
+			addNeighbor(element.y + 1, m_sides[tempSide]->GetSize().y - 1);
+			break;
+
+		case BoardSides::WEST: //5
+			tempSide = BoardSides::SOUTH;
+
+			addNeighbor(element.y, 0);
+			addNeighbor(element.y - 1, 0);
+			addNeighbor(element.y + 1, 0);
+			break;
+
+		default:
+			throw std::string("Invalid element face number:" + glm::to_string(element));
+		}
+	}
+
+	//weird corner cases
+	if (element == glm::uvec3(1, 19, 0))
+		neighbors.emplace_back(3, 19, 0);
+	else if (element == glm::uvec3(1, 1, 0))
+		neighbors.emplace_back(2, 19, 0);
+	else if (element == glm::uvec3(1, 0, 19))
+		neighbors.emplace_back(4, 19, 0);
+	else if (element == glm::uvec3(1, 20, 19))
+		neighbors.emplace_back(4, 19, 20);
+	else if (element == glm::uvec3(2, 19, 0))
+		neighbors.emplace_back(1, 1, 0);
+	else if (element == glm::uvec3(2, 0, 19))
+		neighbors.emplace_back(4, 0, 1);
+	else if (element == glm::uvec3(3, 0, 1))
+		neighbors.emplace_back(5, 0, 18);
+	else if (element == glm::uvec3(3, 19, 0))
+		neighbors.emplace_back(1, 19, 0);
+	else if (element == glm::uvec3(4, 19, 0))
+		neighbors.emplace_back(1, 0, 19);
+	else if (element == glm::uvec3(4, 19, 20))
+		neighbors.emplace_back(1, 20, 19);
+	else if (element == glm::uvec3(5, 0, 18))
+		neighbors.emplace_back(3, 0, 18);
+
+	return neighbors;
+}
+
 //get current status of game element. element = {face - BoardSides enumeration, row, column}
 ObjType Board::GetGameElementType(const glm::uvec3 & element) const {
+#ifdef DEBUG
+	printf("\nGetting element type for element: |%s|\n", glm::to_string(element).c_str());
+#endif
 	return m_sides[element.x]->GetType(element.y, element.z);
 }
 
 //set currents status of game element. element = {face - BoardSides enumeration, row, column}
 void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
+#ifdef DEBUG
+	printf("\nSetting element |%s| to type: %i\n", glm::to_string(element).c_str(), type);
+#endif
 	m_sides[element.x]->SetType(element.y, element.z, type);
 }
 
@@ -268,14 +553,45 @@ void Board::AddCubeColliderToWorld(const glm::vec3 & position, const glm::vec3 &
 	btVector3 inertia(0, 0, 0);
 	collider->calculateLocalInertia(mass, inertia);
 	btRigidBody * rigidBody = new btRigidBody(btRigidBody::btRigidBodyConstructionInfo(mass, startTransform, collider, inertia)); //and thus the rigidbody was born
-	//rigidBody->setGravity({0, 0, 0});
-	//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
+//rigidBody->setGravity({0, 0, 0});
+//rigidBody->setActivationState(0);//ensuring it doesn't move no matter what, sleeping objects should still be hit with a raycast
 	rigidBody->setSleepingThresholds(0, 0);
-	m_dynamicsWorld->addRigidBody(rigidBody);//I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
+	m_dynamicsWorld->addRigidBody(rigidBody); //I might be able to improve this by simply using dynamicsWorld->addCollisionObject(), but i'm a tad skeptical, and this should work fine
 	m_rigidBodies.push_back(rigidBody);
 
 #ifdef DEBUG
 	printf("Cube Collider placed at location |%s| with scale |%s|\n", glm::to_string(position).c_str(), glm::to_string(scale).c_str());
 #endif
+}
+
+//helper function to get neighbors in same side as object
+void Board::FindElementNeighborsInFace(std::vector<glm::uvec3> & neighbors, const glm::uvec3 & element) const {
+	glm::uvec2 faceSize = m_sides[element.x]->GetSize();
+
+	//get neighbors in previous row
+	if (element.y > 0) {
+		neighbors.emplace_back(element.x, element.y - 1, element.z);
+		if (element.z > 0)
+			neighbors.emplace_back(element.x, element.y - 1, element.z - 1);
+		if (element.z < faceSize.y - 1)
+			neighbors.emplace_back(element.x, element.y - 1, element.z + 1);
+	}
+
+	//get neighbors in next row
+	if (element.y < faceSize.x - 1) {
+		neighbors.emplace_back(element.x, element.y + 1, element.z);
+		if (element.z > 0)
+			neighbors.emplace_back(element.x, element.y + 1, element.z - 1);
+		if (element.z < faceSize.y - 1)
+			neighbors.emplace_back(element.x, element.y + 1, element.z + 1);
+	}
+
+	//get neighbors in previous column
+	if (element.z > 0)
+		neighbors.emplace_back(element.x, element.y, element.z - 1);
+
+	//get neighbors in next column
+	if (element.z < faceSize.y - 1)
+		neighbors.emplace_back(element.x, element.y, element.z + 1);
 }
 

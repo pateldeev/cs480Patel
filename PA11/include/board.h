@@ -41,6 +41,7 @@ public:
 	//functions to interface with game elements
 	//uvec3: {face - BoardSides enumeration, row, column}
 	glm::uvec3 GetGameElementByPosition(const glm::vec3 & position) const;
+	std::vector<glm::uvec3> GetGameElementNeighbors(const glm::uvec3 & element) const;
 	ObjType GetGameElementType(const glm::uvec3 & element) const;
 	void SetGameElementType(const glm::uvec3 & element, const ObjType type = ObjType::DEAD);
 
@@ -50,6 +51,8 @@ private:
 	void InitializeBullet(void); //start bullet world
 	void LoadColliders(void); //loads one side of game board
 	void AddCubeColliderToWorld(const glm::vec3 & position, const glm::vec3 & rotation, const glm::vec3 & scale); //adds cube collider to bullet world
+
+	void FindElementNeighborsInFace(std::vector<glm::uvec3> & neighbors, const glm::uvec3 & element) const; //helper function to get neighbors in same side as object
 
 	Object * m_sides[BoardSides::NUM_SIDES];
 

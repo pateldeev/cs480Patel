@@ -38,7 +38,7 @@ public:
 
 	void UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus);
 	glm::vec3 GetEyePos(void) const;
-	glm::vec3 GetEyeLoc(void) const;
+	glm::vec3 GetEyeFocus(void) const;
 
 	//for changing lighting
 	void ChangeAmbientLight(const glm::vec3 & change);

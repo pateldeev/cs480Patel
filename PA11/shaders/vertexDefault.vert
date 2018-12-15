@@ -6,8 +6,7 @@ layout (location = 2) in vec2 v_texture;
 
 flat out int obj_row, obj_col;
 
-smooth out vec3 v_posWorld;
-smooth out vec3 v_normalWorld;
+smooth out vec3 v_posWorld, v_normalWorld;
 smooth out vec2 texture;
 
 uniform mat4 model, view, projection;

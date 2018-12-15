@@ -168,6 +168,11 @@ glm::uvec2 Object::GetSize(void) const {
 	return m_numInstances;
 }
 
+//checks if given element is valid in regards to bounds of instance sizes
+bool Object::IsValidElement(const glm::uvec2 & pos) const {
+	return (pos.x < m_numInstances.x && pos.y < m_numInstances.y);
+}
+
 glm::vec3 Object::GetChangeRow(void) const {
 	return m_changeRow;
 }
@@ -176,7 +181,7 @@ glm::vec3 Object::GetChangeCol(void) const {
 	return m_changeCol;
 }
 
-void Object::LoadTexture(const std::string & textureFile, ObjType type) {
+void Object::LoadTexture(const std::string & textureFile, const ObjType type) {
 	Magick::Image * img;
 
 	try {
@@ -205,10 +210,7 @@ void Object::LoadObjAssimp(const std::string & objFile) {
 	const aiScene * scene = importer.ReadFile(objFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	const aiMesh * currMesh;
 
-	glm::vec3 tempVertex, tempNormal;
-	glm::vec2 tempUV;
-	const aiVector3D * uv;
-	const aiMaterial * tempMat;
+	const aiVector3D *tempVertex, *tempNormal, *tempUV;
 
 	if (!scene)
 		throw std::string("Error loading object: " + std::string(importer.GetErrorString()));
@@ -223,15 +225,14 @@ void Object::LoadObjAssimp(const std::string & objFile) {
 
 			//iterate through each index of face - should be 3 for triangles
 			for (unsigned int indexNum = 0; indexNum < currMesh->mFaces[faceNum].mNumIndices; ++indexNum) {
-				tempVertex = {currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
-				tempNormal = {currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].x, currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].y, currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]].z};
-
-				uv = &currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
-				tempUV = glm::vec2(uv->x,uv->y);
+				tempVertex = &currMesh->mVertices[currMesh->mFaces[faceNum].mIndices[indexNum]];
+				tempNormal = &currMesh->mNormals[currMesh->mFaces[faceNum].mIndices[indexNum]];
+				tempUV = &currMesh->mTextureCoords[0][currMesh->mFaces[faceNum].mIndices[indexNum]];
 
 				//add vertex and index to internal array
-				m_vertices.push_back(Vertex(tempVertex, tempNormal ,tempUV));
-				m_indices.push_back(m_vertices.size()-1);
+				m_vertices.emplace_back(glm::vec3(tempVertex->x, tempVertex->y, tempVertex->z),
+						glm::vec3(tempNormal->x, tempNormal->y, tempNormal->z), glm::vec2(tempUV->x, tempUV->y));
+				m_indices.push_back(m_vertices.size() - 1);
 			}
 		}
 	}

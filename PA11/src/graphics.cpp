@@ -52,7 +52,7 @@ void Graphics::UseShaderSet(const std::string & setName) {
 
 void Graphics::Update(unsigned int dt) {
 	m_board->Update();
-	m_board->UpdateSpotlightLoc(GetEyePos());
+	m_board->UpdateSpotlightLoc(GetEyeFocus());
 }
 
 void Graphics::Render(void) {
@@ -72,22 +72,22 @@ void Graphics::Render(void) {
 
 void Graphics::ZoomIn(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	glm::vec3 moveVector = glm::normalize(GetEyeFocus() - newEyePos);
 	newEyePos += moveVector;
-	UpdateCamera(newEyePos, GetEyeLoc());
+	UpdateCamera(newEyePos, GetEyeFocus());
 }
 
 void Graphics::ZoomOut(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	glm::vec3 moveVector = glm::normalize(GetEyeFocus() - newEyePos);
 	newEyePos -= moveVector;
-	UpdateCamera(newEyePos, GetEyeLoc());
+	UpdateCamera(newEyePos, GetEyeFocus());
 }
 
 void Graphics::MoveForward(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 newEyeLoc = GetEyeLoc();
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	glm::vec3 newEyeLoc = GetEyeFocus();
+	glm::vec3 moveVector = glm::normalize(GetEyeFocus() - newEyePos);
 	newEyePos += moveVector * moveAmount;
 	newEyeLoc += moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
@@ -95,8 +95,8 @@ void Graphics::MoveForward(float moveAmount) {
 
 void Graphics::MoveBackward(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 newEyeLoc = GetEyeLoc();
-	glm::vec3 moveVector = glm::normalize(GetEyeLoc() - newEyePos);
+	glm::vec3 newEyeLoc = GetEyeFocus();
+	glm::vec3 moveVector = glm::normalize(GetEyeFocus() - newEyePos);
 	newEyePos -= moveVector * moveAmount;
 	newEyeLoc -= moveVector * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
@@ -104,7 +104,7 @@ void Graphics::MoveBackward(float moveAmount) {
 
 void Graphics::MoveRight(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyeLoc = GetEyeFocus();
 	glm::vec3 pointVector = newEyeLoc - newEyePos;
 	glm::vec3 upVector = glm::vec3(0, 1, 0);
 	glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
@@ -115,7 +115,7 @@ void Graphics::MoveRight(float moveAmount) {
 
 void Graphics::MoveLeft(float moveAmount) {
 	glm::vec3 newEyePos = GetEyePos();
-	glm::vec3 newEyeLoc = GetEyeLoc();
+	glm::vec3 newEyeLoc = GetEyeFocus();
 	glm::vec3 pointVector = newEyeLoc - newEyePos;
 	glm::vec3 upVector = glm::vec3(0, 1, 0);
 	glm::vec3 moveVector = glm::normalize(glm::cross(pointVector, upVector));
@@ -126,7 +126,7 @@ void Graphics::MoveLeft(float moveAmount) {
 
 void Graphics::MoveUp(float moveAmount) {
 	glm::vec3 newEyePos(GetEyePos());
-	glm::vec3 newEyeLoc(GetEyeLoc());
+	glm::vec3 newEyeLoc(GetEyeFocus());
 	newEyePos += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
 	newEyeLoc += glm::vec3(0.0, 1.0, 0.0) * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
@@ -134,7 +134,7 @@ void Graphics::MoveUp(float moveAmount) {
 
 void Graphics::MoveDown(float moveAmount) {
 	glm::vec3 newEyePos(GetEyePos());
-	glm::vec3 newEyeLoc(GetEyeLoc());
+	glm::vec3 newEyeLoc(GetEyeFocus());
 	newEyePos -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
 	newEyeLoc -= glm::vec3(0.0, 1.0, 0.0) * moveAmount;
 	UpdateCamera(newEyePos, newEyeLoc);
@@ -157,9 +157,9 @@ void Graphics::RotateCamera(float newX, float newY) {
 	front.x = std::cos(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch));
 	front.y = -std::sin(glm::radians(m_pitch));
 	front.z = std::sin(sin(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch)));
-	glm::vec3 newFront = glm::normalize(front);
+	glm::normalize(front);
 
-	UpdateCamera(GetEyePos(), GetEyePos() + newFront);
+	UpdateCamera(GetEyePos(), GetEyePos() + front);
 }
 
 void Graphics::UpdateCamera(const glm::vec3 & eyePos, const glm::vec3 & eyeFocus) {
@@ -171,7 +171,7 @@ glm::vec3 Graphics::GetEyePos(void) const {
 	return m_camera.GetEyePos();
 }
 
-glm::vec3 Graphics::GetEyeLoc(void) const {
+glm::vec3 Graphics::GetEyeFocus(void) const {
 	return m_camera.GetEyeFocus();
 }
 
@@ -199,10 +199,17 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 		return;
 	}
 
-	//just increment type by 2 to show it worked for now
+	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
 	type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
 	m_board->SetGameElementType(elementClicked, type);
+
+#if 1 //type of selected object's neighbors to show it works
+	std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(elementClicked);
+	for (const glm::uvec3 & e : neighbors)
+		m_board->SetGameElementType(e, type);
+#endif
+
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
