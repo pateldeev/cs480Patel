@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include "shader.h"
+#include <iostream>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -14,10 +15,10 @@ public:
 	~Board(void);
 
 	//Board is not meant to be copied or moved
-	Board(const Board &) = delete;
-	Board(Board &&) = delete;
-	Board& operator=(const Board &) = delete;
-	Board& operator=(Board&&) = delete;
+	// Board(const Board &) = delete;
+	// Board(Board &&) = delete;
+	// Board& operator=(const Board &) = delete;
+	// Board& operator=(Board&&) = delete;
 
 	//to add and change shaders
 	void AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);

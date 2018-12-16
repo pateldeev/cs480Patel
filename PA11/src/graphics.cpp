@@ -203,15 +203,10 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
-	type = (ObjType)((static_cast<int>(type) + 1) % ObjType::NUM_TYPES);
-	m_board->SetGameElementType(elementClicked, type);
-
-#if 0 //type of selected object's neighbors to show it works
-	std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(elementClicked);
-	for (const glm::uvec3 & e : neighbors)
-	m_board->SetGameElementType(e, type);
-#endif
-
+  if (type == DEAD)
+	  m_board->SetGameElementType(elementClicked, P1_ALIVE);
+  else
+    m_board->SetGameElementType(elementClicked, DEAD);
 }
 
 struct PositionComparator {
@@ -252,7 +247,7 @@ void Graphics::MoveForwardGeneration(void) {
 	for (const std::pair<glm::uvec3, ObjType> & x : updates) {
 		m_board->SetGameElementType(x.first, x.second);
 	}
-
+  
 	++m_generation;
 }
 
