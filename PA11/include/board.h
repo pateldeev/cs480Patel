@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include "shader.h"
+#include <iostream>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -13,10 +14,10 @@ public:
 	~Board(void);
 
 	//Board is not meant to be copied or moved
-	Board(const Board &) = delete;
-	Board(Board &&) = delete;
-	Board& operator=(const Board &) = delete;
-	Board& operator=(Board&&) = delete;
+	// Board(const Board &) = delete;
+	// Board(Board &&) = delete;
+	// Board& operator=(const Board &) = delete;
+	// Board& operator=(Board&&) = delete;
 
 	//to add and change shaders
 	void AddShaderSet(const std::string & setName, const std::string & vertexShaderSrc, const std::string & fragmentShaderSrc);
@@ -46,7 +47,7 @@ public:
 	void SetGameElementType(const glm::uvec3 & element, const ObjType type = ObjType::DEAD);
 
   // Updates the board one generation, according to Conway's rules
-  void MoveForwardGeneration();
+  Board* MoveForwardGeneration(Board* board);
 
 private:
 	void EnforceBounds(glm::vec3 & v, float min = 0.f, float max = 1.f); //rounds everything to be in range [min, max]

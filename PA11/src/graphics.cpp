@@ -201,10 +201,13 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
-	type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
-	m_board->SetGameElementType(elementClicked, type);
+	// type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
+  if (type == DEAD)
+	  m_board->SetGameElementType(elementClicked, P1_ALIVE);
+  else
+    m_board->SetGameElementType(elementClicked, DEAD);
 
-#if 1 //type of selected object's neighbors to show it works
+#if 0 //type of selected object's neighbors to show it works
 	std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(elementClicked);
 	for (const glm::uvec3 & e : neighbors)
 		m_board->SetGameElementType(e, type);
@@ -214,7 +217,7 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 // Updates the board one generation, according to Conway's rules
 void Graphics::MoveForwardGeneration() {
-  m_board->MoveForwardGeneration();
+  m_board = m_board->MoveForwardGeneration(m_board);
 
   return;
 }

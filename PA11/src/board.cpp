@@ -493,7 +493,8 @@ void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
 }
 
 // Where all the calculations using Conway's rules will occur
-void Board::MoveForwardGeneration() {
+Board* Board::MoveForwardGeneration(Board* board) {
+  Board *tempBoard = board;
   for (unsigned int i = 0; i < 6; ++i) {
     glm::uvec2 iter = m_sides[i]->GetSize();
     for (unsigned int j = 0; j < iter.x; ++j)
@@ -501,12 +502,30 @@ void Board::MoveForwardGeneration() {
       for (unsigned int k = 0; k < iter.y; ++k)
       {
         ObjType type = GetGameElementType(glm::uvec3(i, j, k));
-        type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
-        SetGameElementType(glm::uvec3(i, j, k), type);
+        int aliveNeighbors = 0;
+        bool isAlive = false;
+        if (type == P1_ALIVE || type == P2_ALIVE)
+          isAlive = true;
+
+        std::vector<glm::uvec3> neighbors = GetGameElementNeighbors(glm::uvec3(i, j, k));
+        for (const glm::uvec3 & e : neighbors) {
+          ObjType typeTemp = GetGameElementType(glm::uvec3(e.x, e.y, e.z));
+          if (typeTemp == P1_ALIVE || typeTemp == P2_ALIVE)
+            aliveNeighbors++;
+        }
+
+        if (isAlive && (aliveNeighbors == 2 || aliveNeighbors == 3)) {
+          tempBoard->SetGameElementType(glm::uvec3(i, j, k), P1_ALIVE);
+        } else if (aliveNeighbors < 2 || aliveNeighbors > 3){
+          tempBoard->SetGameElementType(glm::uvec3(i, j, k), DEAD);
+        }
+        if (!isAlive && aliveNeighbors == 3) {
+          tempBoard->SetGameElementType(glm::uvec3(i, j, k), P1_ALIVE);
+        }
       }
     }
   }
-  return;
+  return tempBoard;
 }
 
 //rounds everything to be in range [min, max]
