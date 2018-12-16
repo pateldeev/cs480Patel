@@ -203,10 +203,10 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
-  if (type == DEAD)
-	  m_board->SetGameElementType(elementClicked, P1_ALIVE);
-  else
-    m_board->SetGameElementType(elementClicked, DEAD);
+	if (type == DEAD)
+		m_board->SetGameElementType(elementClicked, P1_ALIVE);
+	else
+		m_board->SetGameElementType(elementClicked, DEAD);
 }
 
 struct PositionComparator {
@@ -232,13 +232,22 @@ void Graphics::MoveForwardGeneration(void) {
 		//get neighbors
 		std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(tempElement);
 
-#if 0 //do logic based on neighbors
+		ObjType tempElementType = m_board->GetGameElementType(tempElement);
+		int aliveNeighbors = 0;
+		bool isAlive = false;
+		if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
+			isAlive = true;
 
-#else //temporarily change all skins to show it works
-		ObjType type = m_board->GetGameElementType(tempElement);
-		type = (ObjType)((static_cast<int>(type) + 1) % ObjType::NUM_TYPES);
-		updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, type));
-#endif
+		for (const glm::uvec3 & e : neighbors) {
+			ObjType typeTemp = m_board->GetGameElementType(e);
+			if (typeTemp == P1_ALIVE || typeTemp == P2_ALIVE)
+				++aliveNeighbors;
+		}
+
+		if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) //rule 1 & 3 - death by under & over population
+			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
+		else if (!isAlive && aliveNeighbors == 3) //rule 4 - growth
+			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE));
 
 		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
@@ -247,8 +256,10 @@ void Graphics::MoveForwardGeneration(void) {
 	for (const std::pair<glm::uvec3, ObjType> & x : updates) {
 		m_board->SetGameElementType(x.first, x.second);
 	}
-  
+
 	++m_generation;
+
+	printf("\nGeneration %i done!\n", m_generation);
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
@@ -299,13 +310,13 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 	start = btVector3(worldRayStart.x, worldRayStart.y, worldRayStart.z);
 	end = btVector3(worldRayMax.x, worldRayMax.y, worldRayMax.z);
 
-//get the raycast callback ready
+	//get the raycast callback ready
 	btCollisionWorld::ClosestRayResultCallback closestResults(start, end);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
 
 	m_board->GetBulletWorld()->rayTest(start, end, closestResults);
 
-//if it hit, grab the position of the collider, otherwise throw not found error
+	//if it hit, grab the position of the collider, otherwise throw not found error
 	if (closestResults.hasHit()) {
 		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
 		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position
