@@ -1,5 +1,7 @@
 #include "graphics.h"
 
+#include <unordered_set>
+
 Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const GameInfo & game) :
 		m_camera(windowSize.x, windowSize.y, eyePos, eyeFocus), m_yaw(0.f), m_pitch(0.f), m_board(nullptr), m_generation(0), m_screenSize(windowSize) {
 
@@ -212,9 +214,23 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 }
 
+struct PositionComparator {
+public:
+	inline bool operator()(const std::pair<glm::uvec3, ObjType> & x1, const std::pair<glm::uvec3, ObjType> & x2) const {
+		return x1.first == x2.first;
+	}
+};
+
+struct PositionHasher {
+	inline std::size_t operator()(const std::pair<glm::uvec3, ObjType> & x) const {
+		return (std::hash<unsigned int>()(x.first.x * 100 + x.first.y * 100 + x.first.z * 100));
+	}
+};
+
 // Updates the board one generation, according to Conway's rules
 void Graphics::MoveForwardGeneration(void) {
 	glm::uvec3 tempElement(0, 0, 0);
+	std::unordered_set<std::pair<glm::uvec3, ObjType>, PositionHasher, PositionComparator> updates; //keep track of updated in hash table - effecient
 
 	do { //go through all the elements
 
@@ -223,14 +239,19 @@ void Graphics::MoveForwardGeneration(void) {
 
 #if 0 //do logic based on neighbors
 
-#else //temporarily change all skins to show it works		
+#else //temporarily change all skins to show it works
 		ObjType type = m_board->GetGameElementType(tempElement);
-		type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
-		m_board->SetGameElementType(tempElement, type);
+		type = (ObjType)((static_cast<int>(type) + 1) % ObjType::NUM_TYPES);
+		updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, type));
 #endif
 
 		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
+
+	//update elements
+	for (const std::pair<glm::uvec3, ObjType> & x : updates) {
+		m_board->SetGameElementType(x.first, x.second);
+	}
 
 	++m_generation;
 }
