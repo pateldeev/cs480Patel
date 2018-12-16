@@ -7,6 +7,7 @@
 #include <btBulletDynamicsCommon.h>
 
 class Board {
+
 public:
 	Board(void) = delete;
 	Board(const GameInfo & game);
@@ -44,9 +45,7 @@ public:
 	std::vector<glm::uvec3> GetGameElementNeighbors(const glm::uvec3 & element) const;
 	ObjType GetGameElementType(const glm::uvec3 & element) const;
 	void SetGameElementType(const glm::uvec3 & element, const ObjType type = ObjType::DEAD);
-
-  // Updates the board one generation, according to Conway's rules
-  void MoveForwardGeneration();
+	glm::uvec3 GetNextGameElement(const glm::uvec3 & currentElement) const;
 
 private:
 	void EnforceBounds(glm::vec3 & v, float min = 0.f, float max = 1.f); //rounds everything to be in range [min, max]
@@ -93,8 +92,6 @@ private:
 	btSequentialImpulseConstraintSolver * m_solver;
 	btDiscreteDynamicsWorld * m_dynamicsWorld;
 	std::vector<btRigidBody*> m_rigidBodies;
-
-  int m_generation; // What generation number the board is at
 };
 
 #endif /* BOARD_H */

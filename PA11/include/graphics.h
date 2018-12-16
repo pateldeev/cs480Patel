@@ -47,8 +47,8 @@ public:
 
 	void LeftClick(const glm::vec2 & mousePosition); //call this from engine, and it should successfully click on object
 
-  // Updates the board one generation, according to Conway's rules
-  void MoveForwardGeneration();
+	// Updates the board one generation, according to Conway's rules
+	void MoveForwardGeneration(void);
 
 private:
 	std::string ErrorString(const GLenum error) const;
@@ -63,6 +63,7 @@ private:
 	float m_pitch;
 
 	Board * m_board;
+	int m_generation; // What generation number the board is at
 
 	glm::uvec2 m_screenSize; //required for calculating mouse position in 3d space
 };

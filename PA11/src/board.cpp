@@ -15,8 +15,6 @@ Board::Board(const GameInfo & game) :
 	m_sides[0]->BindTextures();
 
 	InitializeBullet(); //start bullet for raycasting
-
-  m_generation = 0; // Since no generations have occured
 }
 
 Board::~Board(void) {
@@ -86,7 +84,7 @@ void Board::UseShaderSet(const std::string & setName) {
 	glUniform1iv(m_samplers, 11, samplerNums);
 }
 
-void Board::Update() {
+void Board::Update(void) {
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
 		m_sides[i]->Update();
 }
@@ -492,10 +490,15 @@ void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
 	m_sides[element.x]->SetType(element.y, element.z, type);
 }
 
-// Where all the calculations using Conway's rules will occur
-void Board::MoveForwardGeneration() {
-
-  return;
+glm::uvec3 Board::GetNextGameElement(const glm::uvec3 & currentElement) const {
+	if (m_sides[currentElement.x]->IsValidElement(glm::uvec2(currentElement.y, currentElement.z + 1))) //try next element in row
+		return glm::uvec3(currentElement.x, currentElement.y, currentElement.z + 1);
+	else if (m_sides[currentElement.x]->IsValidElement(glm::uvec2(currentElement.y + 1, 0))) //try next row
+		return glm::uvec3(currentElement.x, currentElement.y + 1, 0);
+	else if (currentElement.x + 1 < BoardSides::NUM_SIDES) //try next face
+		return glm::uvec3(currentElement.x + 1, 0, 0);
+	else
+		return glm::uvec3(0, 0, 0); //done go back to first element
 }
 
 //rounds everything to be in range [min, max]

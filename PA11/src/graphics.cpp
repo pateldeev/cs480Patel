@@ -1,7 +1,7 @@
 #include "graphics.h"
 
 Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, const glm::vec3 & eyeFocus, const GameInfo & game) :
-		m_camera(windowSize.x, windowSize.y, eyePos, eyeFocus), m_yaw(0.f), m_pitch(0.f), m_board(nullptr), m_screenSize(windowSize) {
+		m_camera(windowSize.x, windowSize.y, eyePos, eyeFocus), m_yaw(0.f), m_pitch(0.f), m_board(nullptr), m_generation(0), m_screenSize(windowSize) {
 
 // Used for the linux OS
 #if !defined(__APPLE__) && !defined(MACOSX)
@@ -201,22 +201,38 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 
 	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
-	type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
+	type = (ObjType)((static_cast<int>(type) + 1) % ObjType::NUM_TYPES);
 	m_board->SetGameElementType(elementClicked, type);
 
-#if 1 //type of selected object's neighbors to show it works
+#if 0 //type of selected object's neighbors to show it works
 	std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(elementClicked);
 	for (const glm::uvec3 & e : neighbors)
-		m_board->SetGameElementType(e, type);
+	m_board->SetGameElementType(e, type);
 #endif
 
 }
 
 // Updates the board one generation, according to Conway's rules
-void Graphics::MoveForwardGeneration() {
-  m_board->MoveForwardGeneration();
+void Graphics::MoveForwardGeneration(void) {
+	glm::uvec3 tempElement(0, 0, 0);
 
-  return;
+	do { //go through all the elements
+
+		//get neighbors
+		std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(tempElement);
+
+#if 0 //do logic based on neighbors
+
+#else //temporarily change all skins to show it works		
+		ObjType type = m_board->GetGameElementType(tempElement);
+		type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
+		m_board->SetGameElementType(tempElement, type);
+#endif
+
+		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
+
+	++m_generation;
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {
@@ -267,13 +283,13 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 	start = btVector3(worldRayStart.x, worldRayStart.y, worldRayStart.z);
 	end = btVector3(worldRayMax.x, worldRayMax.y, worldRayMax.z);
 
-	//get the raycast callback ready
+//get the raycast callback ready
 	btCollisionWorld::ClosestRayResultCallback closestResults(start, end);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
 
 	m_board->GetBulletWorld()->rayTest(start, end, closestResults);
 
-	//if it hit, grab the position of the collider, otherwise throw not found error
+//if it hit, grab the position of the collider, otherwise throw not found error
 	if (closestResults.hasHit()) {
 		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
 		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position
