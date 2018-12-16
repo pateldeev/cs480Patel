@@ -50,6 +50,11 @@ public:
 	// Updates the board one generation, according to Conway's rules
 	void MoveForwardGeneration(void);
 
+  // Changes between player 1 and player 2
+  void ChangePlayer(void);
+
+  //Changes between singleplayer and multiplayer
+  void ChangeGamemode(void);
 private:
 	std::string ErrorString(const GLenum error) const;
 
@@ -64,6 +69,12 @@ private:
 
 	Board * m_board;
 	int m_generation; // What generation number the board is at
+
+  bool m_playerTurnFlag; // True = Player1, False = Player2
+  bool m_isMultiplayer; // True if game is multiplayer, False if singleplayer
+  bool m_hasPlacedNewCell; // True if player has used up their placement of cell
+  bool m_hasMarkedEnemyCell; // True if player has marked an enemy cell for death
+  int m_ownCellsKilled; // Used to see if player has marked two of its own cells for death before creating a new cell
 
 	glm::uvec2 m_screenSize; //required for calculating mouse position in 3d space
 };

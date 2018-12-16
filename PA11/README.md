@@ -52,6 +52,8 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
   * Game Controls
     * c: switch to selection mode - can how click on cubes
     * g: move one generation forward
+    * p: switch between player 1's and player 2's turns
+    * n: switch between a multiplayer and singleplayer game
   * Camera Movement
     * w: move forward
     * s: move backward

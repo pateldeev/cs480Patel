@@ -36,6 +36,7 @@ Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, cons
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	m_board = new Board(game); //load board
+  m_isMultiplayer = false;
 }
 
 Graphics::~Graphics(void) {
@@ -201,12 +202,51 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 		return;
 	}
 
-	//increment type of selected object by 2 to show it works
 	ObjType type = m_board->GetGameElementType(elementClicked);
-	if (type == DEAD)
-		m_board->SetGameElementType(elementClicked, P1_ALIVE);
-	else
-		m_board->SetGameElementType(elementClicked, DEAD);
+
+  // If it is a multiplayer game
+  if (m_isMultiplayer) {
+    // If player 1 is clicking a dead cell
+  	if (type == DEAD && m_playerTurnFlag == true && m_ownCellsKilled == 2 && !m_hasPlacedNewCell && !m_hasMarkedEnemyCell) {
+  	  m_board->SetGameElementType(elementClicked, P1_ALIVE);
+      m_hasPlacedNewCell = true;
+    }
+    // If player 2 is clicking a dead cell
+    else if (type == DEAD && m_playerTurnFlag == false && m_ownCellsKilled == 2 && !m_hasPlacedNewCell && !m_hasMarkedEnemyCell) {
+      m_board->SetGameElementType(elementClicked, P2_ALIVE);
+      m_hasPlacedNewCell = true;
+    }
+    // If player 1 is marking a player 2 cell for death
+    else if (type == P2_ALIVE && m_playerTurnFlag == true && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) {
+  		m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
+      m_hasMarkedEnemyCell = true;
+    }
+    // If player 2 is marking a player 1 cell for death
+    else if (type == P1_ALIVE && m_playerTurnFlag == false && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) {
+      m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
+      m_hasMarkedEnemyCell = true;
+    }
+    // If player 2 is marking one of their own cells for death
+    else if (type == P2_ALIVE && m_playerTurnFlag == false && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) {
+      m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
+      ++m_ownCellsKilled;
+    }
+    // If player 1 is marking one of their own cells for death
+    else if (type == P1_ALIVE && m_playerTurnFlag == true && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) {
+      m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
+      ++m_ownCellsKilled;
+    }
+  }
+  else {
+    if (type == DEAD) {
+  	  m_board->SetGameElementType(elementClicked, P1_ALIVE);
+    }
+    else if (type == P1_ALIVE) {
+      m_board->SetGameElementType(elementClicked, P2_ALIVE);
+    }
+    else
+      m_board->SetGameElementType(elementClicked, DEAD);
+  }
 }
 
 struct PositionComparator {
@@ -234,22 +274,41 @@ void Graphics::MoveForwardGeneration(void) {
 
 		ObjType tempElementType = m_board->GetGameElementType(tempElement);
 		int aliveNeighbors = 0;
+    int blueNeighbors = 0;
+    int redNeighbors = 0;
 		bool isAlive = false;
-		if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
-			isAlive = true;
+    if (tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_MARKED) {
+      updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
+      tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+    }
+    else {
+  		if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
+  			isAlive = true;
 
-		for (const glm::uvec3 & e : neighbors) {
-			ObjType typeTemp = m_board->GetGameElementType(e);
-			if (typeTemp == P1_ALIVE || typeTemp == P2_ALIVE)
-				++aliveNeighbors;
-		}
+  		for (const glm::uvec3 & e : neighbors) {
+  			ObjType typeTemp = m_board->GetGameElementType(e);
+  			if (typeTemp == P1_ALIVE) {
+  				++aliveNeighbors;
+          ++blueNeighbors;
+        }
+        else if (typeTemp == P2_ALIVE) {
+          ++aliveNeighbors;
+          ++redNeighbors;
+        }
+  		}
 
-		if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) //rule 1 & 3 - death by under & over population
-			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-		else if (!isAlive && aliveNeighbors == 3) //rule 4 - growth
-			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE));
+  		if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) //rule 1 & 3 - death by under & over population
+  			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
+      //rule 4 - growth
+  		else if (!isAlive && aliveNeighbors == 3) {
+        if (blueNeighbors > redNeighbors)
+          updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE));
+        else
+          updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE));
+      }
 
-		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+  		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+    }
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 	//update elements
@@ -277,6 +336,34 @@ std::string Graphics::ErrorString(const GLenum error) const {
 		return "None";
 }
 
+//Changes between player 1 and player 2
+void Graphics::ChangePlayer(void) {
+  if (m_playerTurnFlag == true)
+    m_playerTurnFlag = false;
+  else {
+    MoveForwardGeneration();
+    m_playerTurnFlag = true;
+  }
+  m_hasPlacedNewCell = false;
+  m_hasMarkedEnemyCell = false;
+  m_ownCellsKilled = 0;
+}
+
+// Changes between singleplayer and multiplayer
+void Graphics::ChangeGamemode(void) {
+  if (m_isMultiplayer == true) {
+    m_isMultiplayer = false;
+    printf("Multiplayer mode is now false\n");
+  }
+  else {
+    printf("Multiplayer mode is now true\n");
+    m_isMultiplayer = true;
+  }
+  m_hasMarkedEnemyCell = false;
+  m_hasPlacedNewCell = false;
+  m_playerTurnFlag = true;
+  m_ownCellsKilled = 0;
+}
 //updates bindings for camera in shader - need to call for camera change to take effect
 void Graphics::UpdateCameraBindings(void) {
 	m_board->UpdateCameraBindings(m_camera.GetView(), m_camera.GetProjection(), m_camera.GetEyePos());
