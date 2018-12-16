@@ -494,7 +494,18 @@ void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
 
 // Where all the calculations using Conway's rules will occur
 void Board::MoveForwardGeneration() {
-
+  for (unsigned int i = 0; i < 6; ++i) {
+    glm::uvec2 iter = m_sides[i]->GetSize();
+    for (unsigned int j = 0; j < iter.x; ++j)
+    {
+      for (unsigned int k = 0; k < iter.y; ++k)
+      {
+        ObjType type = GetGameElementType(glm::uvec3(i, j, k));
+        type = (ObjType)((static_cast<int>(type) + 2) % ObjType::NUM_TYPES);
+        SetGameElementType(glm::uvec3(i, j, k), type);
+      }
+    }
+  }
   return;
 }
 
