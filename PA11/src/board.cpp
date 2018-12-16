@@ -15,8 +15,6 @@ Board::Board(const GameInfo & game) :
 	m_sides[0]->BindTextures();
 
 	InitializeBullet(); //start bullet for raycasting
-
-  m_generation = 0; // Since no generations have occured
 }
 
 Board::~Board(void) {
@@ -86,7 +84,7 @@ void Board::UseShaderSet(const std::string & setName) {
 	glUniform1iv(m_samplers, 11, samplerNums);
 }
 
-void Board::Update() {
+void Board::Update(void) {
 	for (unsigned int i = 0; i < BoardSides::NUM_SIDES; ++i)
 		m_sides[i]->Update();
 }
@@ -492,40 +490,15 @@ void Board::SetGameElementType(const glm::uvec3 & element, const ObjType type) {
 	m_sides[element.x]->SetType(element.y, element.z, type);
 }
 
-// Where all the calculations using Conway's rules will occur
-Board* Board::MoveForwardGeneration(Board* board) {
-  Board *tempBoard = board;
-  for (unsigned int i = 0; i < 6; ++i) {
-    glm::uvec2 iter = m_sides[i]->GetSize();
-    for (unsigned int j = 0; j < iter.x; ++j)
-    {
-      for (unsigned int k = 0; k < iter.y; ++k)
-      {
-        ObjType type = GetGameElementType(glm::uvec3(i, j, k));
-        int aliveNeighbors = 0;
-        bool isAlive = false;
-        if (type == P1_ALIVE || type == P2_ALIVE)
-          isAlive = true;
-
-        std::vector<glm::uvec3> neighbors = GetGameElementNeighbors(glm::uvec3(i, j, k));
-        for (const glm::uvec3 & e : neighbors) {
-          ObjType typeTemp = GetGameElementType(glm::uvec3(e.x, e.y, e.z));
-          if (typeTemp == P1_ALIVE || typeTemp == P2_ALIVE)
-            aliveNeighbors++;
-        }
-
-        if (isAlive && (aliveNeighbors == 2 || aliveNeighbors == 3)) {
-          tempBoard->SetGameElementType(glm::uvec3(i, j, k), P1_ALIVE);
-        } else if (aliveNeighbors < 2 || aliveNeighbors > 3){
-          tempBoard->SetGameElementType(glm::uvec3(i, j, k), DEAD);
-        }
-        if (!isAlive && aliveNeighbors == 3) {
-          tempBoard->SetGameElementType(glm::uvec3(i, j, k), P1_ALIVE);
-        }
-      }
-    }
-  }
-  return tempBoard;
+glm::uvec3 Board::GetNextGameElement(const glm::uvec3 & currentElement) const {
+	if (m_sides[currentElement.x]->IsValidElement(glm::uvec2(currentElement.y, currentElement.z + 1))) //try next element in row
+		return glm::uvec3(currentElement.x, currentElement.y, currentElement.z + 1);
+	else if (m_sides[currentElement.x]->IsValidElement(glm::uvec2(currentElement.y + 1, 0))) //try next row
+		return glm::uvec3(currentElement.x, currentElement.y + 1, 0);
+	else if (currentElement.x + 1 < BoardSides::NUM_SIDES) //try next face
+		return glm::uvec3(currentElement.x + 1, 0, 0);
+	else
+		return glm::uvec3(0, 0, 0); //done go back to first element
 }
 
 //rounds everything to be in range [min, max]

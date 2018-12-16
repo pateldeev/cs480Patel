@@ -36,16 +36,16 @@ AMBIENT_LEVEL=1.0,1.0,1.0
 
 //For various textures
 TEXTURE_DEAD=objFiles/textures/dead.png
-TEXTURE_P1_ALIVE_FUTURE=objFiles/textures/dead.png
-TEXTURE_P2_ALIVE_FUTURE=objFiles/textures/dead.png
+TEXTURE_P1_ALIVE_FUTURE=objFiles/textures/blue_birth.png
+TEXTURE_P2_ALIVE_FUTURE=objFiles/textures/red_birth.png
 TEXTURE_P1_ALIVE=objFiles/textures/blue_alive.png
-TEXTURE_P2_ALIVE=objFiles/textures/blue_alive.png
+TEXTURE_P2_ALIVE=objFiles/textures/red_alive.png
 TEXTURE_P1_DEAD_FUTURE=objFiles/textures/blue_dying.png
-TEXTURE_P2_DEAD_FUTURE=objFiles/textures/blue_dying.png
-TEXTURE_P1_ALIVE_MARKED=objFiles/textures/dead.png
-TEXTURE_P2_ALIVE_MARKED=objFiles/textures/dead.png
+TEXTURE_P2_DEAD_FUTURE=objFiles/textures/red_dying.png
+TEXTURE_P1_ALIVE_MARKED=objFiles/textures/blue_marked_for_life.png
+TEXTURE_P2_ALIVE_MARKED=objFiles/textures/red_marked_for_life.png
 TEXTURE_P1_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
-TEXTURE_P2_DEAD_MARKED=objFiles/textures/blue_marked_for_death.png
+TEXTURE_P2_DEAD_MARKED=objFiles/textures/red_marked_for_death.png
 
 
 #Floor

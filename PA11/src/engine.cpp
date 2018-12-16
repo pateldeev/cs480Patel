@@ -144,7 +144,7 @@ void Engine::EventChecker(void) {
 			else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS || event.key.keysym.sym == SDLK_m
 					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
 					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_SPACE
-					|| event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c)
+					|| event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c || event.key.keysym.sym == SDLK_p)
 				HandleEvent(event);
 			else
 				m_menu->HandleEvent(event);
@@ -174,8 +174,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = true;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
-    else if (event.key.keysym.sym == SDLK_g)
-      m_graphics->MoveForwardGeneration();
+		else if (event.key.keysym.sym == SDLK_g)
+			m_graphics->MoveForwardGeneration();
 		else if (event.key.keysym.sym == SDLK_SPACE)
 			m_spacebar = true;
 		else if (event.key.keysym.sym == SDLK_LSHIFT)
@@ -189,7 +189,8 @@ void Engine::HandleEvent(const SDL_Event & event) {
 				SDL_SetRelativeMouseMode (SDL_FALSE);
 				SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
 			}
-		}
+		} else if (event.key.keysym.sym == SDLK_p)
+			m_graphics->MoveForwardGeneration();
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_w)
 			m_w = false;
