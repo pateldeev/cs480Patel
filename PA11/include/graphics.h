@@ -50,6 +50,7 @@ public:
 
 	// Updates the board one generation, according to Conway's rules
 	void MoveForwardGeneration(void);
+        void Reset();
 
 	// Changes between player 1 and player 2
 	void ChangePlayer(void);
