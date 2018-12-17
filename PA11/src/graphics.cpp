@@ -209,18 +209,19 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 	if (m_isMultiplayer) {
 		if (type == DEAD && m_ownCellsKilled == 2 && !m_hasPlacedNewCell && !m_hasMarkedEnemyCell) { // clicking on a dead cell
 			//change according to which player
-			(m_playerTurnFlag) ? m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED) : m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
+			(m_playerTurnFlag) ?
+					m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED) : m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
 			m_hasPlacedNewCell = true;
-		} else if (type == P2_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 1 is marking a player 2 cell for death
-			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
+		} else if (type == P2_ALIVE && m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 1 is marking a player 2 cell for death
+			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
 			m_hasMarkedEnemyCell = true;
 		} else if (type == P1_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 2 is marking a player 1 cell for death
-			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
+			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
 			m_hasMarkedEnemyCell = true;
-		} else if ((type == P1_ALIVE || type == P1_DEAD_FUTURE) && m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { //player 1 is marking one of their own cells for death
+		} else if (type == P1_ALIVE && m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { //player 1 is marking one of their own cells for death
 			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
 			++m_ownCellsKilled;
-		} else if ((type == P2_ALIVE || type == P2_DEAD_FUTURE) && !m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { // player 2 is marking one of their own cells for death
+		} else if (type == P2_ALIVE && !m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { // player 2 is marking one of their own cells for death
 			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
 			++m_ownCellsKilled;
 		}
@@ -323,6 +324,8 @@ void Graphics::ChangePlayer(void) {
 		m_ownCellsKilled = 0;
 
 		m_playerTurnFlag ? printf("\nIt is now Player 1 (Blue) turn\n") : printf("\nIt is now Player 2 (Red) turn\n");
+		printf("mark 2 of your cells for death & 1 dead cell for life OR 1 opponent cell for death\n");
+		printf("press 'p' to progress to next players turn\n");
 
 	} else {
 		MoveForwardGeneration();
@@ -361,6 +364,8 @@ void Graphics::ChangeGamemode(void) {
 		m_generation = 0;
 		MoveForwardGeneration();
 		printf("\nIt is now Player 1 (Blue) turn\n");
+		printf("mark 2 of your cells for death & 1 dead cell for life OR 1 opponent cell for death\n");
+		printf("press 'p' to progress to next players turn\n");
 		m_isMultiplayer = true;
 	}
 
@@ -417,13 +422,13 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 	start = btVector3(worldRayStart.x, worldRayStart.y, worldRayStart.z);
 	end = btVector3(worldRayMax.x, worldRayMax.y, worldRayMax.z);
 
-//get the raycast callback ready
+	//get the raycast callback ready
 	btCollisionWorld::ClosestRayResultCallback closestResults(start, end);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
 
 	m_board->GetBulletWorld()->rayTest(start, end, closestResults);
 
-//if it hit, grab the position of the collider, otherwise throw not found error
+	//if it hit, grab the position of the collider, otherwise throw not found error
 	if (closestResults.hasHit()) {
 		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
 		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position
