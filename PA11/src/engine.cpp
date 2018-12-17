@@ -175,9 +175,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_d = true;
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
-		else if (event.key.keysym.sym == SDLK_g)
+		else if (event.key.keysym.sym == SDLK_g) {
 			m_graphics->MoveForwardGeneration();
-		else if (event.key.keysym.sym == SDLK_p)
+			printf("\nIt is now Player 1 (Blue) turn\n");
+		} else if (event.key.keysym.sym == SDLK_p)
 			m_graphics->ChangePlayer();
 		else if (event.key.keysym.sym == SDLK_n)
 			m_graphics->ChangeGamemode();
