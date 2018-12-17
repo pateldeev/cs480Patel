@@ -1,4 +1,4 @@
-# PA11: Final Project - UNDER DEVELOPMENT
+# PA11: Final Project - 3-D multiplayer derivation of Conway's Game of Life
 
 ## Group
 This is the main repository for the code. The group members include
@@ -43,14 +43,13 @@ make
 ```
 
 ## General Comments & Features
-* Movement
-* Raycasting with bullet for clicking
+This project is a 2-player adaptation of Conway’s Game of Life. Notably, it is played on a 3-D board that surrounds the players on all sides. Notably the project makes use of instancing, ray casting, and realistic movement controls to create a usable 2-player game.
 
 ## Keyboard Controls
 IMPORTANT: For controls to work as intended, ensure the main window (not menu window) is selected. <br>
 * Keyboard Controls
   * Game Controls
-    * c: switch to selection mode - can how click on cubes
+    * c: switch to selection mode - can now click on cubes
     * g: move one generation forward
     * p: switch between player 1's and player 2's turns
     * n: switch between a multiplayer and singleplayer game
@@ -70,6 +69,17 @@ IMPORTANT: For controls to work as intended, ensure the main window (not menu wi
       * ESC: Will properly close all windows and exit program
 
 ## Gameplay
+For the most part, the game’s progression is dictated by the 4 rules of Conway's Game of Life:
+* Death by underpopulation
+  * Any live cell with fewer than two live neighbors dies.
+* Continuation of life
+  * Any live cell with two or three live neighbors lives on to the next generation.
+* Death by overpopulation
+  * Any live cell with more than three live neighbors dies.
+* Reproduction
+  * Any dead cell with exactly three live neighbors becomes a live cell.
+However, since this is a multiplayer game, any cell that comes to life takes the dominant color of its neighbors. So, if a cell is surrounded by two cells of Player 1 and one cell of Player 2, it will belong to Player 1 at the end of the round. Additionally, before each round, players are given the ability to either (1) Mark 2 of their own cells for death & mark 1 dead cell for life or (2) Mark 1 opposing cell for destruction
+
 
 ## Configuration File
 This program makes use of configuration files to initialize various parameters. The configuration file can be loaded with the '-l' command line flag. By default, the "launch/DefaultConfig.txt" file is loaded. The data in the file must appear in the order shown. Note that changing certain parameters may cause unintended consequences. Adding new lines/variables may cause errors.
