@@ -144,8 +144,8 @@ void Engine::EventChecker(void) {
 			else if (event.key.keysym.sym == SDLK_EQUALS || event.key.keysym.sym == SDLK_MINUS || event.key.keysym.sym == SDLK_m
 					|| event.key.keysym.sym == SDLK_l || event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s
 					|| event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_SPACE
-					|| event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c || event.key.keysym.sym == SDLK_p || event.key.keysym.sym == SDLK_g
-          || event.key.keysym.sym == SDLK_n)
+					|| event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_c || event.key.keysym.sym == SDLK_p
+					|| event.key.keysym.sym == SDLK_g || event.key.keysym.sym == SDLK_n)
 				HandleEvent(event);
 			else
 				m_menu->HandleEvent(event);
@@ -177,10 +177,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_a = true;
 		else if (event.key.keysym.sym == SDLK_g)
 			m_graphics->MoveForwardGeneration();
-    else if (event.key.keysym.sym == SDLK_p)
-      m_graphics->ChangePlayer();
-    else if (event.key.keysym.sym == SDLK_n)
-      m_graphics->ChangeGamemode();
+		else if (event.key.keysym.sym == SDLK_p)
+			m_graphics->ChangePlayer();
+		else if (event.key.keysym.sym == SDLK_n)
+			m_graphics->ChangeGamemode();
 		else if (event.key.keysym.sym == SDLK_SPACE)
 			m_spacebar = true;
 		else if (event.key.keysym.sym == SDLK_LSHIFT)
