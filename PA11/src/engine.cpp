@@ -176,8 +176,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
 		else if (event.key.keysym.sym == SDLK_g) {
+                    if (!m_graphics->IsGenerating()) {
 			m_graphics->MoveForwardGeneration();
 			printf("\nIt is now Player 1 (Blue) turn\n");
+                    }
 		} else if (event.key.keysym.sym == SDLK_p)
 			m_graphics->ChangePlayer();
 		else if (event.key.keysym.sym == SDLK_n)
@@ -218,7 +220,7 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		} else {
 			m_mouseWarp = false;
 		}
-	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
+	} else if (event.type == SDL_MOUSEBUTTONDOWN && !m_graphics->IsGenerating()) {
 		if (event.button.button == SDL_BUTTON_LEFT) {
 			if (!m_captureMouse)
 				m_graphics->LeftClick(glm::vec2((float) event.button.x, (float) event.button.y));

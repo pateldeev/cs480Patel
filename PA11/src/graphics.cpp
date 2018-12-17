@@ -36,11 +36,15 @@ Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, cons
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        calculatingGeneration.store(false);
 	m_board = new Board(game); //load board
 	srand(time(nullptr));
 }
 
 Graphics::~Graphics(void) {
+    if (calculatingGeneration.load()) {
+        generationThread.join();
+    }
 	delete m_board;
 }
 
@@ -249,28 +253,34 @@ struct PositionHasher {
 
 // Updates the board one generation, according to Conway's rules
 void Graphics::MoveForwardGeneration(void) {
+    calculatingGeneration.store(true);
+#ifdef DEBUG
+    printf("launching thread");
+#endif
+    generationThread = new std::thread([this]{
 	glm::uvec3 tempElement(0, 0, 0);
 	std::unordered_set<std::pair<glm::uvec3, ObjType>, PositionHasher, PositionComparator> updates; //keep track of updated in hash table - effecient
 
 	do { //go through all the elements
 
 		//get neighbors
-		std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(tempElement);
+		std::vector < glm::uvec3 > neighbors = this->m_board->GetGameElementNeighbors(tempElement);
 
-		ObjType tempElementType = m_board->GetGameElementType(tempElement);
+		ObjType tempElementType = this->m_board->GetGameElementType(tempElement);
 		int aliveNeighbors = 0;
 		int blueNeighbors = 0;
 		int redNeighbors = 0;
 		bool isAlive = false;
+                
 		if (tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_MARKED) {
 			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-			tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+			tempElement = this->m_board->GetNextGameElement(tempElement); //go to next element
 		} else {
 			if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
 				isAlive = true;
 
 			for (const glm::uvec3 & e : neighbors) {
-				ObjType typeTemp = m_board->GetGameElementType(e);
+				ObjType typeTemp = this->m_board->GetGameElementType(e);
 				if (typeTemp == P1_ALIVE) {
 					++aliveNeighbors;
 					++blueNeighbors;
@@ -290,18 +300,24 @@ void Graphics::MoveForwardGeneration(void) {
 					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE));
 			}
 
-			tempElement = m_board->GetNextGameElement(tempElement); //go to next element
+			tempElement = this->m_board->GetNextGameElement(tempElement); //go to next element
 		}
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 //update elements
 	for (const std::pair<glm::uvec3, ObjType> & x : updates) {
-		m_board->SetGameElementType(x.first, x.second);
+		this->m_board->SetGameElementType(x.first, x.second);
 	}
 
-	++m_generation;
+	this->m_generation = this->m_generation + 1;
 
+#ifdef DEBUG
 	printf("\nGeneration %i done!\n", m_generation);
+        printf("Exiting thread\n");
+#endif
+        calculatingGeneration.store(false);
+    });
+    generationThread->detach();
 }
 
 //Changes between player 1 and player 2
@@ -359,6 +375,10 @@ void Graphics::ChangeGamemode(void) {
 	m_hasMarkedEnemyCell = m_hasPlacedNewCell = false;
 	m_playerTurnFlag = true;
 	m_ownCellsKilled = 0;
+}
+
+bool Graphics::IsGenerating() {
+    return calculatingGeneration.load();
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {

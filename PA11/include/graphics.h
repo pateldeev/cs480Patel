@@ -55,6 +55,9 @@ public:
 
 	//Changes between singleplayer and multiplayer
 	void ChangeGamemode(void);
+        
+        //check if MoveForewardGeneration() is running
+        bool IsGenerating(void);
 private:
 	std::string ErrorString(const GLenum error) const;
 
@@ -77,6 +80,10 @@ private:
 	int m_ownCellsKilled; // Used to see if player has marked two of their own cells for death before creating a new cell
 
 	glm::uvec2 m_screenSize; //required for calculating mouse position in 3d space
+        
+        std::thread* generationThread;
+        std::atomic<bool> calculatingGeneration;
+        
 };
 
 #endif /* GRAPHICS_H */
