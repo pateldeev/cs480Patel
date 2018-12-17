@@ -36,6 +36,6 @@ This uses the Bullet physics engine to create simple object collisons with light
 ## PA10: Pinball
 This project is a fully functional pinball game. To run this project ```cd PA10``` then follow the instructions in the README.md.
 
-## PA11: Final Project - UNDER DEVLOPMENT
-This project is a two player game based on Conway's Game of Life. To run this project ```cd PA11``` then follow the instructions in the README.md.
+## PA11: Final Project
+This project is a two player game based on Conway's Game of Life. It is played on a 3-D board. To run this project ```cd PA11``` then follow the instructions in the README.md.
 

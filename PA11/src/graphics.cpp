@@ -216,14 +216,15 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 	// If it is a multiplayer game
 	if (m_isMultiplayer) {
 		if (type == DEAD && m_ownCellsKilled == 2 && !m_hasPlacedNewCell && !m_hasMarkedEnemyCell) { // clicking on a dead cell
-			//change according to which player 
-			(m_playerTurnFlag) ? m_board->SetGameElementType(elementClicked, P1_ALIVE) : m_board->SetGameElementType(elementClicked, P2_ALIVE);
+			//change according to which player
+			(m_playerTurnFlag) ?
+					m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED) : m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
 			m_hasPlacedNewCell = true;
-		} else if (type == P2_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 1 is marking a player 2 cell for death
-			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
+		} else if (type == P2_ALIVE && m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 1 is marking a player 2 cell for death
+			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
 			m_hasMarkedEnemyCell = true;
 		} else if (type == P1_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 2 is marking a player 1 cell for death
-			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
+			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
 			m_hasMarkedEnemyCell = true;
 		} else if (type == P1_ALIVE && m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { //player 1 is marking one of their own cells for death
 			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
@@ -233,12 +234,13 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 			++m_ownCellsKilled;
 		}
 	} else {
+
 		if (type == DEAD)
-			m_board->SetGameElementType(elementClicked, P1_ALIVE);
-		else if (type == P1_ALIVE)
-			m_board->SetGameElementType(elementClicked, P2_ALIVE);
+			m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED);
+		else if (type == P1_ALIVE_MARKED)
+			m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
 		else
-			m_board->SetGameElementType(elementClicked, DEAD);
+			m_board->SetGameElementType(elementClicked);
 	}
 }
 
@@ -266,46 +268,50 @@ void Graphics::MoveForwardGeneration(void) {
 	std::unordered_set<std::pair<glm::uvec3, ObjType>, PositionHasher, PositionComparator> updates; //keep track of updated in hash table - effecient
 
 	do { //go through all the elements
+		ObjType tempElementType = m_board->GetGameElementType(tempElement);
 
-		//get neighbors
+		//update marked ones
+		if (tempElementType == P1_DEAD_FUTURE || tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_FUTURE
+				|| tempElementType == P2_DEAD_MARKED) {
+			this->m_board->SetGameElementType(tempElement);
+			tempElementType = DEAD;
+		} else if (tempElementType == P1_ALIVE_FUTURE || tempElementType == P1_ALIVE_MARKED) {
+			this->m_board->SetGameElementType(tempElement, P1_ALIVE);
+			tempElementType = P1_ALIVE;
+		} else if (tempElementType == P2_ALIVE_FUTURE || tempElementType == P2_ALIVE_MARKED) {
+			this->m_board->SetGameElementType(tempElement, P2_ALIVE);
+			tempElementType = P2_ALIVE;
+		}
+
+		int aliveNeighbors = 0, blueNeighbors = 0, redNeighbors = 0;
+		bool isAlive = false;
 		std::vector < glm::uvec3 > neighbors = this->m_board->GetGameElementNeighbors(tempElement);
 
-		ObjType tempElementType = this->m_board->GetGameElementType(tempElement);
-		int aliveNeighbors = 0;
-		int blueNeighbors = 0;
-		int redNeighbors = 0;
-		bool isAlive = false;
-                
-		if (tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_MARKED) {
-			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-			tempElement = this->m_board->GetNextGameElement(tempElement); //go to next element
-		} else {
-			if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
-				isAlive = true;
+		if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
+			isAlive = true;
 
-			for (const glm::uvec3 & e : neighbors) {
-				ObjType typeTemp = this->m_board->GetGameElementType(e);
-				if (typeTemp == P1_ALIVE) {
-					++aliveNeighbors;
-					++blueNeighbors;
-				} else if (typeTemp == P2_ALIVE) {
-					++aliveNeighbors;
-					++redNeighbors;
-				}
+		//get count of neighbors
+		for (const glm::uvec3 & e : neighbors) {
+			ObjType typeTemp = m_board->GetGameElementType(e);
+			if (typeTemp == P1_ALIVE || typeTemp == P1_ALIVE_FUTURE || typeTemp == P1_ALIVE_MARKED) {
+				++aliveNeighbors;
+				++blueNeighbors;
+			} else if (typeTemp == P2_ALIVE || typeTemp == P2_ALIVE_FUTURE || typeTemp == P2_ALIVE_MARKED) {
+				++aliveNeighbors;
+				++redNeighbors;
 			}
-
-			if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) //rule 1 & 3 - death by under & over population
-				updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-			//rule 4 - growth
-			else if (!isAlive && aliveNeighbors == 3) {
-				if (blueNeighbors > redNeighbors)
-					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE));
-				else
-					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE));
-			}
-
-			tempElement = this->m_board->GetNextGameElement(tempElement); //go to next element
 		}
+
+		if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) { //rule 1 & 3 - death by under & over population
+			(tempElementType == P1_ALIVE) ?
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_DEAD_FUTURE)) :
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_DEAD_FUTURE));
+		} else if (!isAlive && aliveNeighbors == 3) { 				//rule 4 - growth
+			(blueNeighbors > redNeighbors) ?
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE_FUTURE)) :
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE_FUTURE));
+		}
+		tempElement = this->m_board->GetNextGameElement(tempElement); //go to next element
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 //update elements
@@ -372,6 +378,8 @@ void Graphics::ChangePlayer(void) {
 		m_ownCellsKilled = 0;
 
 		m_playerTurnFlag ? printf("\nIt is now Player 1 (Blue) turn\n") : printf("\nIt is now Player 2 (Red) turn\n");
+		printf("mark 2 of your cells for death & 1 dead cell for life OR 1 opponent cell for death\n");
+		printf("press 'p' to progress to next players turn\n");
 
 	} else {
 		MoveForwardGeneration();
@@ -407,7 +415,11 @@ void Graphics::ChangeGamemode(void) {
 		} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 		printf("\nMultiplayer mode is now true. Blocks have been randomly initailized!\n");
+		m_generation = 0;
+		MoveForwardGeneration();
 		printf("\nIt is now Player 1 (Blue) turn\n");
+		printf("mark 2 of your cells for death & 1 dead cell for life OR 1 opponent cell for death\n");
+		printf("press 'p' to progress to next players turn\n");
 		m_isMultiplayer = true;
 	}
 
@@ -464,13 +476,13 @@ glm::vec3 Graphics::GetPositionUnder(const glm::vec2 & mousePosition) {
 	start = btVector3(worldRayStart.x, worldRayStart.y, worldRayStart.z);
 	end = btVector3(worldRayMax.x, worldRayMax.y, worldRayMax.z);
 
-//get the raycast callback ready
+	//get the raycast callback ready
 	btCollisionWorld::ClosestRayResultCallback closestResults(start, end);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
 
 	m_board->GetBulletWorld()->rayTest(start, end, closestResults);
 
-//if it hit, grab the position of the collider, otherwise throw not found error
+	//if it hit, grab the position of the collider, otherwise throw not found error
 	if (closestResults.hasHit()) {
 		btVector3 hitResults = closestResults.m_collisionObject->getWorldTransform().getOrigin();
 		glm::vec3 cubePosition = glm::vec3(hitResults.x(), hitResults.y(), hitResults.z()); //get position

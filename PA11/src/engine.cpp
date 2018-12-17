@@ -177,8 +177,10 @@ void Engine::HandleEvent(const SDL_Event & event) {
 			m_a = true;
 		else if (event.key.keysym.sym == SDLK_g) {
                     if (!m_graphics->IsGenerating() && !m_graphics->IsAutoplaying()) {
-			m_graphics->MoveForwardGeneration();
-			printf("\nIt is now Player 1 (Blue) turn\n");
+			                    m_graphics->MoveForwardGeneration();
+			                    printf("\nIt is now Player 1 (Blue) turn\n");
+                      printf("mark 2 of your cells for death & 1 dead cell for life OR 1 opponent cell for death\n");
+			printf("press 'p' to progress to next players turn\n");
                     }
 		} else if (event.key.keysym.sym == SDLK_p)
 			m_graphics->ChangePlayer();
