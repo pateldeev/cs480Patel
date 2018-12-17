@@ -36,14 +36,18 @@ Graphics::Graphics(const glm::uvec2 & windowSize, const glm::vec3 & eyePos, cons
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        calculatingGeneration.store(false);
+        m_calculatingGeneration.store(false);
+        m_isAutoplaying = false;
+        m_autoplayInterval = 500; //half second interval
 	m_board = new Board(game); //load board
 	srand(time(nullptr));
 }
 
 Graphics::~Graphics(void) {
-    if (calculatingGeneration.load()) {
-        generationThread.join();
+    if (m_calculatingGeneration.load()) {
+        m_generationThread->join();
+    } else if (m_isAutoplaying.load()) {
+        StopAutoplay();
     }
 	delete m_board;
 }
@@ -253,11 +257,11 @@ struct PositionHasher {
 
 // Updates the board one generation, according to Conway's rules
 void Graphics::MoveForwardGeneration(void) {
-    calculatingGeneration.store(true);
+    m_calculatingGeneration.store(true);
 #ifdef DEBUG
     printf("launching thread");
 #endif
-    generationThread = new std::thread([this]{
+    m_generationThread = new std::thread([this]{
 	glm::uvec3 tempElement(0, 0, 0);
 	std::unordered_set<std::pair<glm::uvec3, ObjType>, PositionHasher, PositionComparator> updates; //keep track of updated in hash table - effecient
 
@@ -315,9 +319,44 @@ void Graphics::MoveForwardGeneration(void) {
 	printf("\nGeneration %i done!\n", m_generation);
         printf("Exiting thread\n");
 #endif
-        calculatingGeneration.store(false);
+        m_calculatingGeneration.store(false);
     });
-    generationThread->detach();
+    m_generationThread->detach();
+}
+
+bool Graphics::IsGenerating() {
+    return m_calculatingGeneration.load();
+}
+
+bool Graphics::IsMultiplayer() {
+    return m_isMultiplayer;
+}
+
+bool Graphics::IsAutoplaying() {
+    return m_isAutoplaying.load();
+}
+
+void Graphics::StartAutoplay() {
+    m_isAutoplaying = true;
+    m_autoplayThread = new std::thread([this](){
+        std::chrono::high_resolution_clock::time_point t1, t2;
+        float duration;
+        while(this->m_isAutoplaying.load()) {
+            t1 = std::chrono::high_resolution_clock::now();
+            this->MoveForwardGeneration();
+            while(m_calculatingGeneration.load());
+            t2 = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration_cast < std::chrono::milliseconds > (t2 - t1).count();
+            if (duration < m_autoplayInterval)
+		std::this_thread::sleep_for(std::chrono::milliseconds((int) (this->m_autoplayInterval - duration)));
+        }
+    });
+    m_autoplayThread->detach();
+}
+
+void Graphics::StopAutoplay() {
+    m_isAutoplaying.store(false);
+    while (m_calculatingGeneration);
 }
 
 //Changes between player 1 and player 2
@@ -375,10 +414,6 @@ void Graphics::ChangeGamemode(void) {
 	m_hasMarkedEnemyCell = m_hasPlacedNewCell = false;
 	m_playerTurnFlag = true;
 	m_ownCellsKilled = 0;
-}
-
-bool Graphics::IsGenerating() {
-    return calculatingGeneration.load();
 }
 
 std::string Graphics::ErrorString(const GLenum error) const {

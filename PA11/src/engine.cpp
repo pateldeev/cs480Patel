@@ -176,15 +176,21 @@ void Engine::HandleEvent(const SDL_Event & event) {
 		else if (event.key.keysym.sym == SDLK_a)
 			m_a = true;
 		else if (event.key.keysym.sym == SDLK_g) {
-                    if (!m_graphics->IsGenerating()) {
+                    if (!m_graphics->IsGenerating() && !m_graphics->IsAutoplaying()) {
 			m_graphics->MoveForwardGeneration();
 			printf("\nIt is now Player 1 (Blue) turn\n");
                     }
 		} else if (event.key.keysym.sym == SDLK_p)
 			m_graphics->ChangePlayer();
-		else if (event.key.keysym.sym == SDLK_n)
-			m_graphics->ChangeGamemode();
-		else if (event.key.keysym.sym == SDLK_SPACE)
+		else if (event.key.keysym.sym == SDLK_n) {
+                    if (!m_graphics->IsAutoplaying())
+                        m_graphics->ChangeGamemode();
+#ifdef DEBUG
+                    else
+                        printf("Can't change gamemodes while autoplaying\n");
+#endif
+                        
+		} else if (event.key.keysym.sym == SDLK_SPACE)
 			m_spacebar = true;
 		else if (event.key.keysym.sym == SDLK_LSHIFT)
 			m_leftShift = true;
@@ -197,8 +203,15 @@ void Engine::HandleEvent(const SDL_Event & event) {
 				SDL_SetRelativeMouseMode (SDL_FALSE);
 				SDL_WarpMouseInWindow(nullptr, m_window->GetWindowWidth() / 2, m_window->GetWindowHeight() / 2);
 			}
-		} else if (event.key.keysym.sym == SDLK_p)
+		} else if (event.key.keysym.sym == SDLK_p) {
+                    if (!m_graphics->IsGenerating())
 			m_graphics->MoveForwardGeneration();
+                } else if (event.key.keysym.sym == SDLK_RETURN && !m_graphics->IsMultiplayer()) {//press enter to pause/play in single player
+                    if (m_graphics->IsAutoplaying())
+                        m_graphics->StopAutoplay();
+                    else
+                        m_graphics->StartAutoplay();
+                }
 	} else if (event.type == SDL_KEYUP) {
 		if (event.key.keysym.sym == SDLK_w)
 			m_w = false;
