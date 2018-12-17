@@ -18,6 +18,8 @@
 #include <glm/ext.hpp>
 
 #include <string>
+#include <thread>
+#include <atomic>
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
 

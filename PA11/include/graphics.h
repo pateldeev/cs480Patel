@@ -3,6 +3,7 @@
 
 #include "camera.h"
 #include "board.h"
+#include <chrono>
 
 #include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 
@@ -55,6 +56,15 @@ public:
 
 	//Changes between singleplayer and multiplayer
 	void ChangeGamemode(void);
+        
+        //check if MoveForewardGeneration() is running
+        bool IsGenerating(void);
+        
+        bool IsMultiplayer();
+        
+        bool IsAutoplaying();
+        void StartAutoplay();
+        void StopAutoplay();
 private:
 	std::string ErrorString(const GLenum error) const;
 
@@ -69,7 +79,7 @@ private:
 
 	Board * m_board;
 	int m_generation; // What generation number the board is at
-
+        
 	bool m_playerTurnFlag; // True = Player1, False = Player2
 	bool m_isMultiplayer; // True if game is multiplayer, False if singleplayer
 	bool m_hasPlacedNewCell; // True if player has used up their placement of cell
@@ -77,6 +87,12 @@ private:
 	int m_ownCellsKilled; // Used to see if player has marked two of their own cells for death before creating a new cell
 
 	glm::uvec2 m_screenSize; //required for calculating mouse position in 3d space
+        
+        std::thread* m_generationThread;
+        std::thread* m_autoplayThread;
+        float m_autoplayInterval;
+        std::atomic<bool> m_calculatingGeneration;
+        std::atomic<bool> m_isAutoplaying;
 };
 
 #endif /* GRAPHICS_H */
