@@ -208,8 +208,8 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 	// If it is a multiplayer game
 	if (m_isMultiplayer) {
 		if (type == DEAD && m_ownCellsKilled == 2 && !m_hasPlacedNewCell && !m_hasMarkedEnemyCell) { // clicking on a dead cell
-			//change according to which player 
-			(m_playerTurnFlag) ? m_board->SetGameElementType(elementClicked, P1_ALIVE) : m_board->SetGameElementType(elementClicked, P2_ALIVE);
+			//change according to which player
+			(m_playerTurnFlag) ? m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED) : m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
 			m_hasPlacedNewCell = true;
 		} else if (type == P2_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 1 is marking a player 2 cell for death
 			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
@@ -217,10 +217,10 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 		} else if (type == P1_ALIVE && !m_playerTurnFlag && !m_hasMarkedEnemyCell && m_ownCellsKilled == 0) { // player 2 is marking a player 1 cell for death
 			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
 			m_hasMarkedEnemyCell = true;
-		} else if (type == P1_ALIVE && m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { //player 1 is marking one of their own cells for death
+		} else if ((type == P1_ALIVE || type == P1_DEAD_FUTURE) && m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { //player 1 is marking one of their own cells for death
 			m_board->SetGameElementType(elementClicked, P1_DEAD_MARKED);
 			++m_ownCellsKilled;
-		} else if (type == P2_ALIVE && !m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { // player 2 is marking one of their own cells for death
+		} else if ((type == P2_ALIVE || type == P2_DEAD_FUTURE) && !m_playerTurnFlag && m_ownCellsKilled < 2 && !m_hasMarkedEnemyCell) { // player 2 is marking one of their own cells for death
 			m_board->SetGameElementType(elementClicked, P2_DEAD_MARKED);
 			++m_ownCellsKilled;
 		}
