@@ -501,6 +501,24 @@ glm::uvec3 Board::GetNextGameElement(const glm::uvec3 & currentElement) const {
 		return glm::uvec3(0, 0, 0); //done go back to first element
 }
 
+glm::uvec2 Board::GetScore(void) const {
+	glm::uvec3 tempElement(0, 0, 0);
+	glm::uvec2 score(0, 0);
+
+	do { //go through all the elements
+		ObjType tempElementType = GetGameElementType(tempElement);
+
+		if (tempElementType == P1_ALIVE || tempElementType == P1_DEAD_FUTURE)
+			++score.x;
+		else if (tempElementType == P2_ALIVE || tempElementType == P2_DEAD_FUTURE)
+			++score.y;
+
+		tempElement = GetNextGameElement(tempElement); //go to next element
+	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
+
+	return score;
+}
+
 //rounds everything to be in range [min, max]
 void Board::EnforceBounds(glm::vec3 & v, float min, float max) {
 	if (v.x < min)

@@ -48,6 +48,8 @@ public:
 	void SetGameElementType(const glm::uvec3 & element, const ObjType type = ObjType::DEAD);
 	glm::uvec3 GetNextGameElement(const glm::uvec3 & currentElement) const;
 
+	glm::uvec2 GetScore(void) const;
+
 private:
 	void EnforceBounds(glm::vec3 & v, float min = 0.f, float max = 1.f); //rounds everything to be in range [min, max]
 

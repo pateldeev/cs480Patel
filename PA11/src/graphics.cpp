@@ -225,12 +225,13 @@ void Graphics::LeftClick(const glm::vec2 & mousePosition) {
 			++m_ownCellsKilled;
 		}
 	} else {
+
 		if (type == DEAD)
-			m_board->SetGameElementType(elementClicked, P1_ALIVE);
-		else if (type == P1_ALIVE)
-			m_board->SetGameElementType(elementClicked, P2_ALIVE);
+			m_board->SetGameElementType(elementClicked, P1_ALIVE_MARKED);
+		else if (type == P1_ALIVE_MARKED)
+			m_board->SetGameElementType(elementClicked, P2_ALIVE_MARKED);
 		else
-			m_board->SetGameElementType(elementClicked, DEAD);
+			m_board->SetGameElementType(elementClicked);
 	}
 }
 
@@ -253,45 +254,50 @@ void Graphics::MoveForwardGeneration(void) {
 	std::unordered_set<std::pair<glm::uvec3, ObjType>, PositionHasher, PositionComparator> updates; //keep track of updated in hash table - effecient
 
 	do { //go through all the elements
+		ObjType tempElementType = m_board->GetGameElementType(tempElement);
 
-		//get neighbors
+		//update marked ones
+		if (tempElementType == P1_DEAD_FUTURE || tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_FUTURE
+				|| tempElementType == P2_DEAD_MARKED) {
+			m_board->SetGameElementType(tempElement);
+			tempElementType = DEAD;
+		} else if (tempElementType == P1_ALIVE_FUTURE || tempElementType == P1_ALIVE_MARKED) {
+			m_board->SetGameElementType(tempElement, P1_ALIVE);
+			tempElementType = P1_ALIVE;
+		} else if (tempElementType == P2_ALIVE_FUTURE || tempElementType == P2_ALIVE_MARKED) {
+			m_board->SetGameElementType(tempElement, P2_ALIVE);
+			tempElementType = P2_ALIVE;
+		}
+
+		int aliveNeighbors = 0, blueNeighbors = 0, redNeighbors = 0;
+		bool isAlive = false;
 		std::vector < glm::uvec3 > neighbors = m_board->GetGameElementNeighbors(tempElement);
 
-		ObjType tempElementType = m_board->GetGameElementType(tempElement);
-		int aliveNeighbors = 0;
-		int blueNeighbors = 0;
-		int redNeighbors = 0;
-		bool isAlive = false;
-		if (tempElementType == P1_DEAD_MARKED || tempElementType == P2_DEAD_MARKED) {
-			updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-			tempElement = m_board->GetNextGameElement(tempElement); //go to next element
-		} else {
-			if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
-				isAlive = true;
+		if (tempElementType == P1_ALIVE || tempElementType == P2_ALIVE)
+			isAlive = true;
 
-			for (const glm::uvec3 & e : neighbors) {
-				ObjType typeTemp = m_board->GetGameElementType(e);
-				if (typeTemp == P1_ALIVE) {
-					++aliveNeighbors;
-					++blueNeighbors;
-				} else if (typeTemp == P2_ALIVE) {
-					++aliveNeighbors;
-					++redNeighbors;
-				}
+		//get count of neighbors
+		for (const glm::uvec3 & e : neighbors) {
+			ObjType typeTemp = m_board->GetGameElementType(e);
+			if (typeTemp == P1_ALIVE || typeTemp == P1_ALIVE_FUTURE || typeTemp == P1_ALIVE_MARKED) {
+				++aliveNeighbors;
+				++blueNeighbors;
+			} else if (typeTemp == P2_ALIVE || typeTemp == P2_ALIVE_FUTURE || typeTemp == P2_ALIVE_MARKED) {
+				++aliveNeighbors;
+				++redNeighbors;
 			}
-
-			if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) //rule 1 & 3 - death by under & over population
-				updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, DEAD));
-			//rule 4 - growth
-			else if (!isAlive && aliveNeighbors == 3) {
-				if (blueNeighbors > redNeighbors)
-					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE));
-				else
-					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE));
-			}
-
-			tempElement = m_board->GetNextGameElement(tempElement); //go to next element
 		}
+
+		if (isAlive && (aliveNeighbors < 2 || aliveNeighbors > 3)) { //rule 1 & 3 - death by under & over population
+			(tempElementType == P1_ALIVE) ?
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_DEAD_FUTURE)) :
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_DEAD_FUTURE));
+		} else if (!isAlive && aliveNeighbors == 3) { 				//rule 4 - growth
+			(blueNeighbors > redNeighbors) ?
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P1_ALIVE_FUTURE)) :
+					updates.insert(std::pair<glm::uvec3, ObjType>(tempElement, P2_ALIVE_FUTURE));
+		}
+		tempElement = m_board->GetNextGameElement(tempElement); //go to next element
 	} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 //update elements
@@ -352,6 +358,8 @@ void Graphics::ChangeGamemode(void) {
 		} while (tempElement != glm::uvec3(0, 0, 0)); //check if all have been iterated through
 
 		printf("\nMultiplayer mode is now true. Blocks have been randomly initailized!\n");
+		m_generation = 0;
+		MoveForwardGeneration();
 		printf("\nIt is now Player 1 (Blue) turn\n");
 		m_isMultiplayer = true;
 	}
