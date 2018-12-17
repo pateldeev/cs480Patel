@@ -78,6 +78,7 @@ For the most part, the game’s progression is dictated by the 4 rules of Conway
   * Any live cell with more than three live neighbors dies.
 * Reproduction
   * Any dead cell with exactly three live neighbors becomes a live cell.
+<br>
 However, since this is a multiplayer game, any cell that comes to life takes the dominant color of its neighbors. So, if a cell is surrounded by two cells of Player 1 and one cell of Player 2, it will belong to Player 1 at the end of the round. Additionally, before each round, players are given the ability to either (1) Mark 2 of their own cells for death & mark 1 dead cell for life or (2) Mark 1 opposing cell for destruction
 
 
